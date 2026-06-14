@@ -29,7 +29,7 @@
       },
       "discovery_confirm": {
         "title": "Condizionatore Samsung trovato",
-        "description": "Trovato un condizionatore Samsung a {host}. Vuoi configurarlo ora? Nel passo successivo dovrai acquisire il token (accensione)."
+        "description": "Trovato un condizionatore Samsung a {host}. Vuoi configurarlo ora? Nel passo successivo dovrai acquisire il token (accensione), se non lo conosci già."
       }
     },
     "error": {

@@ -29,7 +29,7 @@
       },
       "discovery_confirm": {
         "title": "Samsung air conditioner found",
-        "description": "A Samsung air conditioner was discovered at {host}. Set it up now? You will need to acquire a token (power-on step) next."
+        "description": "A Samsung air conditioner was discovered at {host}. Set it up now? In the next step you will acquire a token (power-on), unless you already know it."
       }
     },
     "error": {
