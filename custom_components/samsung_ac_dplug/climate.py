@@ -73,10 +73,12 @@ class SamsungAcClimate(SamsungAcEntity, ClimateEntity):
 
     @property
     def swing_modes(self) -> list[str]:
+        # "both" (Rotation) needs the horizontal louver, so it is only offered
+        # together with horizontal when the unit has left/right swing.
         opts = self._options
-        modes = ["off", "vertical", "both"]
+        modes = ["off", "vertical"]
         if opts and opts.lr_swing:
-            modes.insert(2, "horizontal")
+            modes += ["horizontal", "both"]
         return modes
 
     @property
