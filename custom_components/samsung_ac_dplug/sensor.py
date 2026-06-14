@@ -19,6 +19,7 @@ from .const import (
     ATTR_ERROR,
     ATTR_FILTER_TIME,
     ATTR_OUTDOOR_TEMP,
+    ATTR_TEMPNOW,
     ATTR_USED_TIME,
     DOMAIN,
 )
@@ -48,6 +49,14 @@ class AcSensor(SensorEntityDescription):
 
 
 SENSORS: tuple[AcSensor, ...] = (
+    AcSensor(
+        key="temperature",
+        translation_key="temperature",
+        attr=ATTR_TEMPNOW,
+        device_class=SensorDeviceClass.TEMPERATURE,
+        native_unit_of_measurement=UnitOfTemperature.CELSIUS,
+        state_class=SensorStateClass.MEASUREMENT,
+    ),
     AcSensor(
         key="outdoor_temperature",
         translation_key="outdoor_temperature",

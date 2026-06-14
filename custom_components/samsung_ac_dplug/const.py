@@ -45,7 +45,9 @@ DEVICE_TO_HVAC = {v: k for k, v in HVAC_TO_DEVICE.items()}
 FAN_TO_DEVICE = {"auto": "Auto", "low": "Low", "medium": "Mid", "high": "High", "turbo": "Turbo"}
 DEVICE_TO_FAN = {v: k for k, v in FAN_TO_DEVICE.items()}
 
-SWING_TO_DEVICE = {"off": "Fixed", "vertical": "SwingUD", "horizontal": "SwingLR", "both": "Rotation"}
+# NB: the device accepts any value without reporting which it supports; this set
+# mirrors the official app for this product family (no horizontal/SwingLR).
+SWING_TO_DEVICE = {"off": "Fixed", "vertical": "SwingUD", "both": "Rotation"}
 DEVICE_TO_SWING = {v: k for k, v in SWING_TO_DEVICE.items()}
 
 # Preset (AC_FUN_COMODE). Keep device value as the HA preset name for clarity.

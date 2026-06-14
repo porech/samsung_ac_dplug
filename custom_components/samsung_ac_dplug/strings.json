@@ -44,6 +44,7 @@
   },
   "entity": {
     "sensor": {
+      "temperature": { "name": "Temperature" },
       "outdoor_temperature": { "name": "Outdoor temperature" },
       "used_time": { "name": "Operating time" },
       "filter_use_time": { "name": "Filter use time" },
