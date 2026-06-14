@@ -42,6 +42,21 @@
       "not_samsung_ac": "This device does not speak the Samsung DPLUG protocol."
     }
   },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Samsung AC options",
+        "data": {
+          "live_updates": "Live updates (persistent connection)",
+          "scan_interval": "Refresh interval (seconds)"
+        },
+        "data_description": {
+          "live_updates": "Keep one persistent connection for instant push updates. If off, the integration polls and uses no persistent connection (more resilient).",
+          "scan_interval": "Polling interval when live updates are off; fallback/keepalive poll when they are on."
+        }
+      }
+    }
+  },
   "entity": {
     "sensor": {
       "temperature": { "name": "Temperature" },

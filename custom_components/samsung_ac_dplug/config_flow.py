@@ -4,7 +4,13 @@ from __future__ import annotations
 import asyncio
 
 import voluptuous as vol
-from homeassistant.config_entries import ConfigFlow, ConfigFlowResult
+from homeassistant.config_entries import (
+    ConfigEntry,
+    ConfigFlow,
+    ConfigFlowResult,
+    OptionsFlow,
+)
+from homeassistant.core import callback
 from homeassistant.helpers.service_info.dhcp import DhcpServiceInfo
 from samsung_dplug import (
     AuthError,
@@ -14,13 +20,27 @@ from samsung_dplug import (
     build_ssl_context,
 )
 
-from .const import CONF_DUID, CONF_HOST, CONF_TOKEN, DOMAIN
+from .const import (
+    CONF_DUID,
+    CONF_HOST,
+    CONF_LIVE_UPDATES,
+    CONF_SCAN_INTERVAL,
+    CONF_TOKEN,
+    DEFAULT_LIVE_UPDATES,
+    DEFAULT_SCAN_INTERVAL,
+    DOMAIN,
+)
 
 
 class SamsungAcConfigFlow(ConfigFlow, domain=DOMAIN):
     """Handle a config flow for Samsung AC DPLUG."""
 
     VERSION = 1
+
+    @staticmethod
+    @callback
+    def async_get_options_flow(config_entry: ConfigEntry) -> "SamsungAcOptionsFlow":
+        return SamsungAcOptionsFlow()
 
     def __init__(self) -> None:
         self._host: str | None = None
@@ -110,3 +130,25 @@ class SamsungAcConfigFlow(ConfigFlow, domain=DOMAIN):
             title=f"Samsung AC {self._host}",
             data={CONF_HOST: self._host, CONF_TOKEN: self._token, CONF_DUID: self._duid},
         )
+
+
+class SamsungAcOptionsFlow(OptionsFlow):
+    """Options: enable live (push) updates and set the refresh interval."""
+
+    async def async_step_init(self, user_input=None) -> ConfigFlowResult:
+        if user_input is not None:
+            return self.async_create_entry(title="", data=user_input)
+        opts = self.config_entry.options
+        schema = vol.Schema(
+            {
+                vol.Required(
+                    CONF_LIVE_UPDATES,
+                    default=opts.get(CONF_LIVE_UPDATES, DEFAULT_LIVE_UPDATES),
+                ): bool,
+                vol.Required(
+                    CONF_SCAN_INTERVAL,
+                    default=opts.get(CONF_SCAN_INTERVAL, DEFAULT_SCAN_INTERVAL),
+                ): vol.All(int, vol.Range(min=5, max=3600)),
+            }
+        )
+        return self.async_show_form(step_id="init", data_schema=schema)

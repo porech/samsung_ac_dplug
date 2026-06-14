@@ -9,6 +9,11 @@ CONF_HOST = "host"
 CONF_TOKEN = "token"
 CONF_DUID = "duid"
 CONF_NAME = "name"
+CONF_LIVE_UPDATES = "live_updates"
+CONF_SCAN_INTERVAL = "scan_interval"
+
+DEFAULT_LIVE_UPDATES = False
+DEFAULT_SCAN_INTERVAL = 30  # seconds (polling, or fallback poll when live)
 
 # Samsung Electronics OUIs used by the Wi-Fi modules (for DHCP discovery)
 SAMSUNG_OUIS = ("f8042e", "f47b5e", "8425db", "5cf6dc")
