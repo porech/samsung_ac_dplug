@@ -1,0 +1,58 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Samsung Air Conditioner (DPLUG / 2878)",
+        "description": "How would you like to set up your air conditioner?",
+        "menu_options": {
+          "onboard": "Connect a new unit to Wi-Fi (instructions)",
+          "manual": "It is already on my Wi-Fi (enter IP)"
+        }
+      },
+      "onboard": {
+        "title": "Connect the unit to your Wi-Fi",
+        "description": "Old Samsung units are not joined to Wi-Fi over the network protocol — do it once, physically:\n\n**Option A — WPS (easiest, recommended)**\n1. Make sure the unit is **not** in AP mode.\n2. On the remote, **hold `Settings` for 4 seconds** (hidden function: the display only blinks) to start WPS.\n3. Within 2 minutes, **press the WPS button on your router**.\n4. When the Wi-Fi LED on the module stays solid, it has joined.\n\n**Option B — AP provisioning (no WPS router)**\nUse the `provision.py` CLI from a computer connected to the unit’s `SMARTAIRCON` network (the integration cannot do this step, because Home Assistant is not on that temporary network).\n\nWhen the unit is on your Wi-Fi, press **Submit**. If you enabled DHCP discovery it may already have been found automatically; otherwise enter its IP on the next screen."
+      },
+      "manual": {
+        "title": "Connect to the air conditioner",
+        "description": "Enter the unit’s IP address. Leave the token empty to acquire one on the next step (you will need to power the unit on).",
+        "data": {
+          "host": "IP address",
+          "token": "Token (optional, if you already have one)"
+        }
+      },
+      "token": {
+        "title": "Acquire the access token",
+        "description": "The unit at {host} only issues a token at power-on (a physical proof-of-access step).\n\n1. **Turn the air conditioner OFF** with the remote, if it is on.\n2. Press **Submit** below.\n3. Within ~30 seconds, **turn the air conditioner ON** with the remote.\n\nThe token will be captured automatically and stored."
+      },
+      "discovery_confirm": {
+        "title": "Samsung air conditioner found",
+        "description": "A Samsung air conditioner was discovered at {host}. Set it up now? You will need to acquire a token (power-on step) next."
+      }
+    },
+    "error": {
+      "cannot_connect": "Cannot connect. Check the IP address and that the unit is on the network.",
+      "auth": "The token was rejected. Leave it empty to acquire a new one.",
+      "no_token": "No token received. Make sure the unit was OFF, then turned ON within the window. Try again."
+    },
+    "abort": {
+      "already_configured": "This air conditioner is already configured.",
+      "not_samsung_ac": "This device does not speak the Samsung DPLUG protocol."
+    }
+  },
+  "entity": {
+    "sensor": {
+      "outdoor_temperature": { "name": "Outdoor temperature" },
+      "used_time": { "name": "Operating time" },
+      "filter_use_time": { "name": "Filter use time" },
+      "error": { "name": "Error code" }
+    },
+    "switch": {
+      "purify": { "name": "Purify (SPi)" },
+      "auto_clean": { "name": "Auto clean" }
+    },
+    "number": {
+      "sleep_timer": { "name": "Sleep timer" }
+    }
+  }
+}

@@ -1,0 +1,58 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Condizionatore Samsung (DPLUG / 2878)",
+        "description": "Come vuoi configurare il condizionatore?",
+        "menu_options": {
+          "onboard": "Collega una nuova unità al Wi-Fi (istruzioni)",
+          "manual": "È già sul mio Wi-Fi (inserisci IP)"
+        }
+      },
+      "onboard": {
+        "title": "Collega l'unità al Wi-Fi",
+        "description": "Le vecchie unità Samsung non si agganciano al Wi-Fi via protocollo: va fatto una volta, fisicamente.\n\n**Opzione A — WPS (più semplice, consigliata)**\n1. Assicurati che l'unità **non** sia in modalità AP.\n2. Sul telecomando **tieni premuto `Settings` per 4 secondi** (funzione nascosta: il display lampeggia soltanto) per avviare il WPS.\n3. Entro 2 minuti **premi il tasto WPS sul router**.\n4. Quando la spia Wi-Fi sul modulo resta fissa, si è agganciata.\n\n**Opzione B — provisioning AP (router senza WPS)**\nUsa lo script `provision.py` da un computer connesso alla rete `SMARTAIRCON` dell'unità (l'integrazione non può fare questo passo, perché Home Assistant non è su quella rete temporanea).\n\nQuando l'unità è sul Wi-Fi, premi **Invia**. Se hai la discovery DHCP attiva potrebbe essere già stata trovata; altrimenti inserisci l'IP nella schermata successiva."
+      },
+      "manual": {
+        "title": "Connessione al condizionatore",
+        "description": "Inserisci l'indirizzo IP dell'unità. Lascia vuoto il token per ottenerne uno nel passo successivo (dovrai accendere l'unità).",
+        "data": {
+          "host": "Indirizzo IP",
+          "token": "Token (opzionale, se ne hai già uno)"
+        }
+      },
+      "token": {
+        "title": "Acquisizione del token",
+        "description": "L'unità a {host} rilascia il token solo all'accensione (prova di accesso fisico).\n\n1. **Spegni il condizionatore** col telecomando, se è acceso.\n2. Premi **Invia** qui sotto.\n3. Entro ~30 secondi **accendi il condizionatore** col telecomando.\n\nIl token verrà catturato e salvato automaticamente."
+      },
+      "discovery_confirm": {
+        "title": "Condizionatore Samsung trovato",
+        "description": "Trovato un condizionatore Samsung a {host}. Vuoi configurarlo ora? Nel passo successivo dovrai acquisire il token (accensione)."
+      }
+    },
+    "error": {
+      "cannot_connect": "Connessione fallita. Verifica l'IP e che l'unità sia in rete.",
+      "auth": "Token rifiutato. Lascialo vuoto per acquisirne uno nuovo.",
+      "no_token": "Nessun token ricevuto. Assicurati che l'unità fosse spenta e accesa entro la finestra. Riprova."
+    },
+    "abort": {
+      "already_configured": "Questo condizionatore è già configurato.",
+      "not_samsung_ac": "Questo dispositivo non parla il protocollo Samsung DPLUG."
+    }
+  },
+  "entity": {
+    "sensor": {
+      "outdoor_temperature": { "name": "Temperatura esterna" },
+      "used_time": { "name": "Tempo di funzionamento" },
+      "filter_use_time": { "name": "Ore filtro" },
+      "error": { "name": "Codice errore" }
+    },
+    "switch": {
+      "purify": { "name": "Purify (SPi)" },
+      "auto_clean": { "name": "Auto-pulizia" }
+    },
+    "number": {
+      "sleep_timer": { "name": "Timer sleep" }
+    }
+  }
+}
