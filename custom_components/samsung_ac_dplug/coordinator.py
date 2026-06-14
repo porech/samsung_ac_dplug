@@ -7,6 +7,7 @@ Two modes:
 """
 from __future__ import annotations
 
+import asyncio
 import logging
 from datetime import timedelta
 
@@ -58,8 +59,17 @@ class SamsungAcCoordinator(DataUpdateCoordinator[dict]):
 
     async def async_set(self, attr: str, value: str) -> None:
         if self.stream is not None:
+            # stream.async_set waits for the device to confirm via push
             await self.stream.async_set(attr, value)
-            # state will arrive via push; no manual refresh needed
-        else:
-            await self.client.async_set(attr, value)
-            await self.async_request_refresh()
+            return
+        # polling: send, then re-poll once per second for up to 5s until applied,
+        # so the entity reflects the confirmed value immediately rather than at
+        # the next scheduled poll.
+        await self.client.async_set(attr, value)
+        loop = asyncio.get_running_loop()
+        end = loop.time() + 5
+        data = await self.client.async_get_state()
+        while str(data.get(attr)) != str(value) and loop.time() < end:
+            await asyncio.sleep(1)
+            data = await self.client.async_get_state()
+        self.async_set_updated_data(data)
