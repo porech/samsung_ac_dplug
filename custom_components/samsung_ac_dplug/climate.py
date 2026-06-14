@@ -28,7 +28,6 @@ from .const import (
     HVAC_TO_DEVICE,
     MAX_TEMP,
     MIN_TEMP,
-    PRESETS,
     SWING_TO_DEVICE,
 )
 from .entity import SamsungAcEntity
@@ -40,27 +39,57 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_e
 
 class SamsungAcClimate(SamsungAcEntity, ClimateEntity):
     _attr_name = None
-    _attr_temperature_unit = UnitOfTemperature.CELSIUS
     _attr_target_temperature_step = 1
-    _attr_min_temp = MIN_TEMP
-    _attr_max_temp = MAX_TEMP
     _attr_fan_modes = list(FAN_TO_DEVICE)
-    _attr_swing_modes = list(SWING_TO_DEVICE)
-    _attr_preset_modes = PRESETS
 
     def __init__(self, coordinator):
         super().__init__(coordinator)
         self._attr_unique_id = self._duid
 
     @property
+    def temperature_unit(self) -> str:
+        opts = self._options
+        if opts and opts.fahrenheit:
+            return UnitOfTemperature.FAHRENHEIT
+        return UnitOfTemperature.CELSIUS
+
+    @property
+    def min_temp(self) -> float:
+        return 60 if self.temperature_unit == UnitOfTemperature.FAHRENHEIT else MIN_TEMP
+
+    @property
+    def max_temp(self) -> float:
+        return 86 if self.temperature_unit == UnitOfTemperature.FAHRENHEIT else MAX_TEMP
+
+    @property
     def hvac_modes(self) -> list[HVACMode]:
-        # Cooling-side modes are universal on these units; heating only if the
-        # unit declares a heating capability.
+        # Cooling-side modes are universal; heating only if the unit supports it.
         modes = [HVACMode.OFF, HVACMode.COOL, HVACMode.DRY, HVACMode.FAN_ONLY]
-        warm = self._state.get(ATTR_WARM_CAP)
-        if warm and warm.isdigit() and int(warm) > 0:
+        opts = self._options
+        heater = opts.heater if opts else bool((self._state.get(ATTR_WARM_CAP) or "0").isdigit() and int(self._state.get(ATTR_WARM_CAP) or 0) > 0)
+        if heater:
             modes += [HVACMode.HEAT, HVACMode.AUTO]
         return modes
+
+    @property
+    def swing_modes(self) -> list[str]:
+        opts = self._options
+        modes = ["off", "vertical", "both"]
+        if opts and opts.lr_swing:
+            modes.insert(2, "horizontal")
+        return modes
+
+    @property
+    def preset_modes(self) -> list[str]:
+        # Only presets the OptionCode proves are supported.
+        opts = self._options
+        presets = ["Off"]
+        if opts:
+            if opts.quiet:
+                presets.append("Quiet")
+            if opts.turbo_softcool:
+                presets += ["TurboMode", "SoftCool"]
+        return presets
 
     @property
     def supported_features(self) -> ClimateEntityFeature:

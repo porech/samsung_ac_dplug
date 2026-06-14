@@ -3,8 +3,9 @@ from __future__ import annotations
 
 from homeassistant.helpers.device_registry import DeviceInfo
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
+from samsung_dplug import OptionCode
 
-from .const import ATTR_COOL_CAP, ATTR_WARM_CAP, DOMAIN, MANUFACTURER
+from .const import ATTR_COOL_CAP, DOMAIN, MANUFACTURER
 from .coordinator import SamsungAcCoordinator
 
 
@@ -20,6 +21,10 @@ class SamsungAcEntity(CoordinatorEntity[SamsungAcCoordinator]):
     @property
     def _state(self) -> dict:
         return self.coordinator.data or {}
+
+    @property
+    def _options(self) -> OptionCode | None:
+        return OptionCode.from_state(self._state)
 
     @property
     def device_info(self) -> DeviceInfo:

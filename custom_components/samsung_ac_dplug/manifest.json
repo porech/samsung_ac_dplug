@@ -8,7 +8,7 @@
   "codeowners": ["@porech"],
   "iot_class": "local_polling",
   "integration_type": "device",
-  "requirements": ["pysamsung-dplug==0.2.0"],
+  "requirements": ["pysamsung-dplug==0.3.0"],
   "dependencies": [],
   "dhcp": [
     { "macaddress": "F8042E*" },
