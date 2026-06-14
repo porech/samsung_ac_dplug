@@ -44,45 +44,33 @@ class SamsungAcConfigFlow(ConfigFlow, domain=DOMAIN):
         return self.async_show_form(step_id="onboard", data_schema=vol.Schema({}), last_step=False)
 
     async def async_step_manual(self, user_input=None) -> ConfigFlowResult:
-        errors: dict[str, str] = {}
         if user_input is not None:
             self._host = user_input[CONF_HOST].strip()
-            token = (user_input.get(CONF_TOKEN) or "").strip()
-            if token:
-                self._token = token
-                try:
-                    self._duid = await self._discover()
-                except AuthError:
-                    errors["base"] = "auth"
-                except SamsungAcError:
-                    errors["base"] = "cannot_connect"
-                else:
-                    return await self._create()
-            else:
-                return await self.async_step_token()
-        schema = vol.Schema(
-            {
-                vol.Required(CONF_HOST, default=self._host or ""): str,
-                vol.Optional(CONF_TOKEN): str,
-            }
-        )
-        return self.async_show_form(step_id="manual", data_schema=schema, errors=errors)
+            return await self.async_step_token()
+        schema = vol.Schema({vol.Required(CONF_HOST, default=self._host or ""): str})
+        return self.async_show_form(step_id="manual", data_schema=schema)
 
     async def async_step_token(self, user_input=None) -> ConfigFlowResult:
-        """Acquire a token: user powers the unit ON during the window."""
+        """Acquire a token via power-on, or accept one the user already has."""
         errors: dict[str, str] = {}
         if user_input is not None:
-            client = SamsungAcClient(self._host, ssl_context=await self._ssl_ctx())
+            manual = (user_input.get(CONF_TOKEN) or "").strip()
             try:
-                self._token = await client.async_get_token(power_on_timeout=40)
+                if manual:
+                    self._token = manual
+                else:
+                    client = SamsungAcClient(self._host, ssl_context=await self._ssl_ctx())
+                    self._token = await client.async_get_token(power_on_timeout=40)
                 self._duid = await self._discover()
+            except AuthError:
+                errors["base"] = "auth"
             except (SamsungAcError, asyncio.TimeoutError):
                 errors["base"] = "no_token"
             else:
                 return await self._create()
         return self.async_show_form(
             step_id="token",
-            data_schema=vol.Schema({}),
+            data_schema=vol.Schema({vol.Optional(CONF_TOKEN): str}),
             errors=errors,
             description_placeholders={"host": self._host or ""},
             last_step=True,

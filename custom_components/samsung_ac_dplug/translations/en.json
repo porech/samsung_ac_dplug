@@ -15,15 +15,17 @@
       },
       "manual": {
         "title": "Connect to the air conditioner",
-        "description": "Enter the unit’s IP address. Leave the token empty to acquire one on the next step (you will need to power the unit on).",
+        "description": "Enter the unit’s IP address. The token is handled on the next step.",
         "data": {
-          "host": "IP address",
-          "token": "Token (optional, if you already have one)"
+          "host": "IP address"
         }
       },
       "token": {
         "title": "Acquire the access token",
-        "description": "The unit at {host} only issues a token at power-on (a physical proof-of-access step).\n\n1. **Turn the air conditioner OFF** with the remote, if it is on.\n2. Press **Submit** below.\n3. Within ~30 seconds, **turn the air conditioner ON** with the remote.\n\nThe token will be captured automatically and stored."
+        "description": "The unit at {host} only issues a token at power-on (a physical proof-of-access step).\n\n1. **Turn the air conditioner OFF** with the remote, if it is on.\n2. Press **Submit** below (leave the field empty).\n3. Within ~30 seconds, **turn the air conditioner ON** with the remote.\n\nThe token will be captured automatically and stored.\n\n**Alternatively**, if you already have this unit's token, enter it below and press Submit.",
+        "data": {
+          "token": "Token (optional)"
+        }
       },
       "discovery_confirm": {
         "title": "Samsung air conditioner found",

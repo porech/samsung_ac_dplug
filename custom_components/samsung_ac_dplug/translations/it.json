@@ -15,15 +15,17 @@
       },
       "manual": {
         "title": "Connessione al condizionatore",
-        "description": "Inserisci l'indirizzo IP dell'unità. Lascia vuoto il token per ottenerne uno nel passo successivo (dovrai accendere l'unità).",
+        "description": "Inserisci l'indirizzo IP dell'unità. Il token si gestisce nel passo successivo.",
         "data": {
-          "host": "Indirizzo IP",
-          "token": "Token (opzionale, se ne hai già uno)"
+          "host": "Indirizzo IP"
         }
       },
       "token": {
         "title": "Acquisizione del token",
-        "description": "L'unità a {host} rilascia il token solo all'accensione (prova di accesso fisico).\n\n1. **Spegni il condizionatore** col telecomando, se è acceso.\n2. Premi **Invia** qui sotto.\n3. Entro ~30 secondi **accendi il condizionatore** col telecomando.\n\nIl token verrà catturato e salvato automaticamente."
+        "description": "L'unità a {host} rilascia il token solo all'accensione (prova di accesso fisico).\n\n1. **Spegni il condizionatore** col telecomando, se è acceso.\n2. Premi **Invia** qui sotto (lasciando il campo vuoto).\n3. Entro ~30 secondi **accendi il condizionatore** col telecomando.\n\nIl token verrà catturato e salvato automaticamente.\n\n**In alternativa**, se hai già il token di questo dispositivo, scrivilo qui sotto e premi Invia.",
+        "data": {
+          "token": "Token (opzionale)"
+        }
       },
       "discovery_confirm": {
         "title": "Condizionatore Samsung trovato",

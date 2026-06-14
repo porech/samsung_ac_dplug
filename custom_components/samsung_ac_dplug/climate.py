@@ -18,6 +18,7 @@ from .const import (
     ATTR_POWER,
     ATTR_TEMPNOW,
     ATTR_TEMPSET,
+    ATTR_WARM_CAP,
     ATTR_WINDLEVEL,
     DEVICE_TO_FAN,
     DEVICE_TO_HVAC,
@@ -43,22 +44,38 @@ class SamsungAcClimate(SamsungAcEntity, ClimateEntity):
     _attr_target_temperature_step = 1
     _attr_min_temp = MIN_TEMP
     _attr_max_temp = MAX_TEMP
-    _attr_hvac_modes = [HVACMode.OFF, HVACMode.COOL, HVACMode.HEAT, HVACMode.DRY, HVACMode.FAN_ONLY, HVACMode.AUTO]
     _attr_fan_modes = list(FAN_TO_DEVICE)
     _attr_swing_modes = list(SWING_TO_DEVICE)
     _attr_preset_modes = PRESETS
-    _attr_supported_features = (
-        ClimateEntityFeature.TARGET_TEMPERATURE
-        | ClimateEntityFeature.FAN_MODE
-        | ClimateEntityFeature.SWING_MODE
-        | ClimateEntityFeature.PRESET_MODE
-        | ClimateEntityFeature.TURN_ON
-        | ClimateEntityFeature.TURN_OFF
-    )
 
     def __init__(self, coordinator):
         super().__init__(coordinator)
         self._attr_unique_id = self._duid
+
+    @property
+    def hvac_modes(self) -> list[HVACMode]:
+        # Cooling-side modes are universal on these units; heating only if the
+        # unit declares a heating capability.
+        modes = [HVACMode.OFF, HVACMode.COOL, HVACMode.DRY, HVACMode.FAN_ONLY]
+        warm = self._state.get(ATTR_WARM_CAP)
+        if warm and warm.isdigit() and int(warm) > 0:
+            modes += [HVACMode.HEAT, HVACMode.AUTO]
+        return modes
+
+    @property
+    def supported_features(self) -> ClimateEntityFeature:
+        # Only advertise a control if the device actually reports its attribute.
+        feats = ClimateEntityFeature.TURN_ON | ClimateEntityFeature.TURN_OFF
+        state = self._state
+        if ATTR_TEMPSET in state:
+            feats |= ClimateEntityFeature.TARGET_TEMPERATURE
+        if ATTR_WINDLEVEL in state:
+            feats |= ClimateEntityFeature.FAN_MODE
+        if ATTR_DIRECTION in state:
+            feats |= ClimateEntityFeature.SWING_MODE
+        if ATTR_COMODE in state:
+            feats |= ClimateEntityFeature.PRESET_MODE
+        return feats
 
     @property
     def hvac_mode(self) -> HVACMode | None:
