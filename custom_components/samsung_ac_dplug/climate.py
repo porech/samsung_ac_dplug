@@ -22,11 +22,13 @@ from .const import (
     ATTR_WINDLEVEL,
     DEVICE_TO_FAN,
     DEVICE_TO_HVAC,
+    DEVICE_TO_PRESET,
     DEVICE_TO_SWING,
     FAN_TO_DEVICE,
     HVAC_TO_DEVICE,
     MAX_TEMP,
     MIN_TEMP,
+    PRESET_TO_DEVICE,
     SWING_TO_DEVICE,
 )
 from .entity import SamsungAcEntity
@@ -41,6 +43,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_e
 
 class SamsungAcClimate(SamsungAcEntity, ClimateEntity):
     _attr_name = None
+    _attr_translation_key = "samsung_ac"
     _attr_target_temperature_step = 1
     _attr_fan_modes = list(FAN_TO_DEVICE)
 
@@ -87,12 +90,19 @@ class SamsungAcClimate(SamsungAcEntity, ClimateEntity):
     def preset_modes(self) -> list[str]:
         # Only presets the OptionCode proves are supported.
         opts = self._options
-        presets = ["Off"]
-        if opts:
-            if opts.quiet:
-                presets.append("Quiet")
-            if opts.turbo_softcool:
-                presets += ["TurboMode", "SoftCool"]
+        if not opts:
+            return ["none"]
+        presets = ["none"]
+        if opts.quiet:
+            presets.append("quiet")
+        if opts.turbo_softcool:
+            presets += ["fast_turbo", "comfort"]
+        if opts.dlight_cool:
+            presets.append("dlight_cool")
+        if opts.ecorun_cool or opts.ecorun_heat:
+            presets.append("smart_saver")
+        if opts.color_of_wind:
+            presets += ["color_of_wind_alps", "color_of_wind_florida", "color_of_wind_savanna"]
         return presets
 
     @property
@@ -136,7 +146,7 @@ class SamsungAcClimate(SamsungAcEntity, ClimateEntity):
 
     @property
     def preset_mode(self) -> str | None:
-        return self._state.get(ATTR_COMODE)
+        return DEVICE_TO_PRESET.get(self._state.get(ATTR_COMODE))
 
     async def async_set_hvac_mode(self, hvac_mode: HVACMode) -> None:
         if hvac_mode == HVACMode.OFF:
@@ -163,4 +173,4 @@ class SamsungAcClimate(SamsungAcEntity, ClimateEntity):
         await self.coordinator.async_set(ATTR_DIRECTION, SWING_TO_DEVICE[swing_mode])
 
     async def async_set_preset_mode(self, preset_mode: str) -> None:
-        await self.coordinator.async_set(ATTR_COMODE, preset_mode)
+        await self.coordinator.async_set(ATTR_COMODE, PRESET_TO_DEVICE[preset_mode])

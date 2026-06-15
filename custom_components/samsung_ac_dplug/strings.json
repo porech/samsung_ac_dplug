@@ -66,6 +66,25 @@
     }
   },
   "entity": {
+    "climate": {
+      "samsung_ac": {
+        "state_attributes": {
+          "preset_mode": {
+            "state": {
+              "none": "Off",
+              "quiet": "Quiet",
+              "fast_turbo": "Fast Turbo",
+              "comfort": "Comfort",
+              "dlight_cool": "d'light Cool",
+              "smart_saver": "Smart Saver",
+              "color_of_wind_alps": "Color of Wind: Alps",
+              "color_of_wind_florida": "Color of Wind: Florida",
+              "color_of_wind_savanna": "Color of Wind: Savanna"
+            }
+          }
+        }
+      }
+    },
     "sensor": {
       "temperature": { "name": "Temperature" },
       "outdoor_temperature": { "name": "Outdoor temperature" },

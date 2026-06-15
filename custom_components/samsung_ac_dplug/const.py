@@ -55,8 +55,21 @@ DEVICE_TO_FAN = {v: k for k, v in FAN_TO_DEVICE.items()}
 SWING_TO_DEVICE = {"off": "Fixed", "vertical": "SwingUD", "horizontal": "SwingLR", "both": "Rotation"}
 DEVICE_TO_SWING = {v: k for k, v in SWING_TO_DEVICE.items()}
 
-# Preset (AC_FUN_COMODE). Keep device value as the HA preset name for clarity.
-PRESETS = ["Off", "Quiet", "Sleep", "Smart", "SoftCool", "TurboMode", "WindMode1", "WindMode2", "WindMode3"]
+# Preset (AC_FUN_COMODE). HA preset name (translation key) <-> device value.
+# Names follow the official app: Quiet, Fast Turbo, Comfort (SoftCool),
+# d'light Cool, Smart Saver, and Color of Wind styles Alps/Florida/Savanna.
+PRESET_TO_DEVICE = {
+    "none": "Off",
+    "quiet": "Quiet",
+    "fast_turbo": "TurboMode",
+    "comfort": "SoftCool",
+    "dlight_cool": "DlightCool",
+    "smart_saver": "Smart",
+    "color_of_wind_alps": "WindMode1",
+    "color_of_wind_florida": "WindMode2",
+    "color_of_wind_savanna": "WindMode3",
+}
+DEVICE_TO_PRESET = {v: k for k, v in PRESET_TO_DEVICE.items()}
 
 MIN_TEMP = 16
 MAX_TEMP = 30
