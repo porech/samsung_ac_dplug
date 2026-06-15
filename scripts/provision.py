@@ -202,6 +202,87 @@ KBHcLDDiEU3llprD8FRV3unYrl0F0B2GGdRk
 """
 
 
+def _read_masked(prompt):
+    """Read a line showing '*' per character. Raises RuntimeError if the
+    terminal can't be driven char-by-char (caller falls back to getpass)."""
+    try:
+        import msvcrt  # Windows
+    except ImportError:
+        msvcrt = None
+
+    sys.stdout.write(prompt)
+    sys.stdout.flush()
+
+    def star():
+        sys.stdout.write("*")
+        sys.stdout.flush()
+
+    def rubout():
+        sys.stdout.write("\b \b")
+        sys.stdout.flush()
+
+    if msvcrt is not None:  # Windows
+        chars = []
+        while True:
+            ch = msvcrt.getwch()
+            if ch in ("\r", "\n"):
+                break
+            if ch == "\x03":
+                raise KeyboardInterrupt
+            if ch in ("\b", "\x7f"):
+                if chars:
+                    chars.pop()
+                    rubout()
+            else:
+                chars.append(ch)
+                star()
+        sys.stdout.write("\n")
+        sys.stdout.flush()
+        return "".join(chars)
+
+    # POSIX: read raw bytes (os.read, unbuffered) one at a time.
+    if not sys.stdin.isatty():
+        raise RuntimeError("stdin is not a tty")
+    import termios
+    import tty
+
+    fd = sys.stdin.fileno()
+    old = termios.tcgetattr(fd)
+    data = bytearray()
+    try:
+        tty.setraw(fd)
+        while True:
+            b = os.read(fd, 1)
+            if not b or b in (b"\r", b"\n"):
+                break
+            if b == b"\x03":
+                raise KeyboardInterrupt
+            if b in (b"\x7f", b"\x08"):
+                if data:
+                    data.pop()
+                    rubout()
+            else:
+                data += b
+                star()
+    finally:
+        termios.tcsetattr(fd, termios.TCSADRAIN, old)
+        sys.stdout.write("\n")
+        sys.stdout.flush()
+    return data.decode("utf-8", "ignore")
+
+
+def prompt_password(prompt="Wi-Fi password: "):
+    """Prompt for a password, masking it with '*'. Falls back to no on-screen
+    feedback (and says so) if the terminal can't be masked."""
+    try:
+        return _read_masked(prompt)
+    except KeyboardInterrupt:
+        raise
+    except Exception:
+        print("(the password won't be shown as you type)")
+        return getpass.getpass(prompt)
+
+
 def build_message(ssid, password, auth_mode, encrypt_type):
     """Build the APConnectionConfig request the unit expects (no <?xml?> prologue)."""
     inner = "<ConnectionConfig SSID=%s AuthMode=%s" % (quoteattr(ssid), quoteattr(auth_mode))
@@ -371,7 +452,7 @@ def main():
     elif args.password is not None:
         password = args.password
     else:
-        password = getpass.getpass("Wi-Fi password: ")
+        password = prompt_password()
 
     ok = provision(ssid, password, args.auth, args.encrypt, args.host, ctx)
     sys.exit(0 if ok else 1)
