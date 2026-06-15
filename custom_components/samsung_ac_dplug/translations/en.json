@@ -221,12 +221,12 @@
           "description": "Whether the unit turns on or off."
         },
         "repeat": {
-          "name": "Repeat",
-          "description": "How often the schedule repeats."
+          "name": "Frequency",
+          "description": "How often it runs: once, every day, or weekly on the selected days."
         },
         "days": {
           "name": "Days",
-          "description": "Days of the week (used for 'once' and 'weekly')."
+          "description": "Which days to run on — required for 'Once' and 'Weekly', ignored for 'Every day'."
         },
         "enabled": {
           "name": "Enabled",

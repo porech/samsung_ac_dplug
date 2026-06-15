@@ -36,14 +36,16 @@ _WEEKDAYS = vol.All(cv.ensure_list, [vol.In(list(_WEEKDAY_TO_PY))])
 _REPEAT_TO_LIB = {REPEAT_ONCE: ONCE, REPEAT_DAILY: EVERYDAY_TYPE, REPEAT_WEEKLY: EVERYWEEK}
 _LIB_TO_REPEAT = {v: k for k, v in _REPEAT_TO_LIB.items()}
 
+# `repeat` and `enabled` are Required (with defaults) so the HA UI shows them as
+# always-active controls rather than fields gated behind an opt-in checkbox.
 SET_SCHEDULE_SCHEMA = {
     vol.Required(ATTR_SCHEDULE_TIME): cv.time,
     vol.Required(ATTR_SCHEDULE_POWER): vol.In(["on", "off"]),
-    vol.Optional(ATTR_SCHEDULE_REPEAT, default=REPEAT_ONCE): vol.In(
+    vol.Required(ATTR_SCHEDULE_REPEAT, default=REPEAT_ONCE): vol.In(
         [REPEAT_ONCE, REPEAT_DAILY, REPEAT_WEEKLY]
     ),
     vol.Optional(ATTR_SCHEDULE_DAYS): _WEEKDAYS,
-    vol.Optional(ATTR_SCHEDULE_ENABLED, default=True): cv.boolean,
+    vol.Required(ATTR_SCHEDULE_ENABLED, default=True): cv.boolean,
     vol.Optional(ATTR_SCHEDULE_ID): cv.string,
 }
 
@@ -59,9 +61,7 @@ def schedule_from_call(data) -> Schedule:
     repeat = _REPEAT_TO_LIB[data[ATTR_SCHEDULE_REPEAT]]
     days = data.get(ATTR_SCHEDULE_DAYS) or []
     if repeat in (ONCE, EVERYWEEK) and not days:
-        raise vol.Invalid(
-            f"'{data[ATTR_SCHEDULE_REPEAT]}' schedules require at least one day"
-        )
+        raise vol.Invalid("Select at least one day for 'once' and 'weekly' schedules.")
     when = data[ATTR_SCHEDULE_TIME]
     power = "On" if data[ATTR_SCHEDULE_POWER] == "on" else "Off"
     return Schedule(

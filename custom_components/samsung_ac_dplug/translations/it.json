@@ -221,12 +221,12 @@
           "description": "Se l'unità si accende o si spegne."
         },
         "repeat": {
-          "name": "Ripetizione",
-          "description": "Con quale frequenza si ripete la programmazione."
+          "name": "Frequenza",
+          "description": "Quando viene eseguita: una volta, ogni giorno, oppure nei giorni scelti."
         },
         "days": {
           "name": "Giorni",
-          "description": "Giorni della settimana (per 'una volta' e 'settimanale')."
+          "description": "In quali giorni eseguirla — richiesto per 'Una volta' e 'Settimanale', ignorato per 'Ogni giorno'."
         },
         "enabled": {
           "name": "Abilitata",
