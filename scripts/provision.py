@@ -24,17 +24,42 @@ import os
 import re
 import socket
 import ssl
+import subprocess
 import sys
 import tempfile
 import time
 from xml.sax.saxutils import quoteattr
 
 _DUID_RE = re.compile(r'DUID="([0-9A-Fa-f]{12})"')
+_MAC_RE = re.compile(r"([0-9A-Fa-f]{2}(?:[:-][0-9A-Fa-f]{2}){5})")
 
 
 def _format_mac(duid: str) -> str:
     d = duid.lower()
     return ":".join(d[i : i + 2] for i in range(0, 12, 2))
+
+
+def mac_from_arp(ip):
+    """Look up `ip`'s MAC in the OS ARP table (after we've talked to it).
+
+    Cross-platform via the system `arp`/`ip` tools (no extra Python deps). This
+    is the AP interface's MAC — usually the same as the unit's Wi-Fi MAC, but on
+    some chipsets it can differ slightly, so it's only a fallback.
+    """
+    for cmd in (["arp", "-n", ip], ["arp", "-a", ip], ["ip", "neigh", "show", ip]):
+        try:
+            res = subprocess.run(cmd, capture_output=True, text=True, timeout=5)
+        except (OSError, subprocess.SubprocessError):
+            continue
+        for line in ((res.stdout or "") + (res.stderr or "")).splitlines():
+            if ip not in line:
+                continue
+            m = _MAC_RE.search(line)
+            if m:
+                mac = m.group(1).replace("-", ":").lower()
+                if mac not in ("00:00:00:00:00:00", "ff:ff:ff:ff:ff:ff"):
+                    return mac
+    return None
 
 # The unit's address and port while it is broadcasting the SMARTAIRCON network.
 AP_HOST = "192.168.1.254"
@@ -326,9 +351,10 @@ def main():
 
     ctx = make_ssl_context()
 
-    # Show the unit's MAC first (if it reports it) so a DHCP reservation can be
-    # prepared before the unit joins the network.
-    mac = read_device_mac(args.host, ctx)
+    # Show the unit's MAC first (if we can determine it) so a DHCP reservation
+    # can be prepared before the unit joins the network. Prefer the protocol
+    # DUID; fall back to the ARP table (the TLS attempt above populates it).
+    mac = read_device_mac(args.host, ctx) or mac_from_arp(args.host)
     if mac:
         print("Air conditioner found — its Wi-Fi MAC address is: %s" % mac.upper())
         print(
