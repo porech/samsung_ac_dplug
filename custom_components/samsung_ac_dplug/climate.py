@@ -11,6 +11,7 @@ from homeassistant.const import ATTR_TEMPERATURE, UnitOfTemperature
 from homeassistant.core import HomeAssistant, ServiceResponse, SupportsResponse
 from homeassistant.helpers import entity_platform
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
+from homeassistant.util import dt as dt_util
 
 from .const import (
     ATTR_COMODE,
@@ -35,7 +36,29 @@ from .const import (
     SERVICE_SET_SCHEDULE,
     SWING_ALL_TO_DEVICE,
 )
-from .const import ATTR_SCHEDULE_ID
+from .const import (
+    ATTR_CODE,
+    ATTR_ENABLE,
+    ATTR_END,
+    ATTR_NICKNAME,
+    ATTR_SCHEDULE_ID,
+    ATTR_START,
+    ATTR_UNIT,
+    SERVICE_GET_POWER_USAGE,
+    SERVICE_GET_REGION_CODE,
+    SERVICE_RESET_POWER_LOGGING,
+    SERVICE_SET_NICKNAME,
+    SERVICE_SET_POWER_LOGGING,
+    SERVICE_SET_REGION_CODE,
+)
+from .command_helpers import (
+    GET_POWER_USAGE_SCHEMA,
+    SET_NICKNAME_SCHEMA,
+    SET_POWER_LOGGING_SCHEMA,
+    SET_REGION_CODE_SCHEMA,
+    UNIT_TO_LIB,
+    power_usage_to_dict,
+)
 from .entity import SamsungAcEntity
 from .schedule_helpers import (
     DELETE_SCHEDULE_SCHEMA,
@@ -64,6 +87,32 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_e
     )
     platform.async_register_entity_service(
         SERVICE_DELETE_SCHEDULE, DELETE_SCHEDULE_SCHEMA, "async_delete_schedule_service"
+    )
+
+    # Extra device commands: power usage/logging, nickname, region code.
+    platform.async_register_entity_service(
+        SERVICE_GET_POWER_USAGE,
+        GET_POWER_USAGE_SCHEMA,
+        "async_get_power_usage_service",
+        supports_response=SupportsResponse.ONLY,
+    )
+    platform.async_register_entity_service(
+        SERVICE_SET_POWER_LOGGING, SET_POWER_LOGGING_SCHEMA, "async_set_power_logging_service"
+    )
+    platform.async_register_entity_service(
+        SERVICE_RESET_POWER_LOGGING, None, "async_reset_power_logging_service"
+    )
+    platform.async_register_entity_service(
+        SERVICE_SET_NICKNAME, SET_NICKNAME_SCHEMA, "async_set_nickname_service"
+    )
+    platform.async_register_entity_service(
+        SERVICE_GET_REGION_CODE,
+        None,
+        "async_get_region_code_service",
+        supports_response=SupportsResponse.ONLY,
+    )
+    platform.async_register_entity_service(
+        SERVICE_SET_REGION_CODE, SET_REGION_CODE_SCHEMA, "async_set_region_code_service"
     )
 
 
@@ -223,3 +272,27 @@ class SamsungAcClimate(SamsungAcEntity, ClimateEntity):
     async def async_delete_schedule_service(self, **kwargs) -> None:
         """Delete an on-device schedule by id."""
         await self.coordinator.async_delete_schedule(kwargs[ATTR_SCHEDULE_ID])
+
+    # -- extra device commands ----------------------------------------------
+    async def async_get_power_usage_service(self, **kwargs) -> ServiceResponse:
+        """Return the unit's recorded power-usage history."""
+        end = kwargs.get(ATTR_END) or dt_util.now()
+        entries = await self.coordinator.async_get_power_usage(
+            kwargs[ATTR_START], end, UNIT_TO_LIB[kwargs[ATTR_UNIT]]
+        )
+        return {"usage": [power_usage_to_dict(e) for e in entries]}
+
+    async def async_set_power_logging_service(self, **kwargs) -> None:
+        await self.coordinator.async_set_power_logging(kwargs[ATTR_ENABLE])
+
+    async def async_reset_power_logging_service(self, **kwargs) -> None:
+        await self.coordinator.async_reset_power_logging()
+
+    async def async_set_nickname_service(self, **kwargs) -> None:
+        await self.coordinator.async_set_nickname(kwargs[ATTR_NICKNAME])
+
+    async def async_get_region_code_service(self, **kwargs) -> ServiceResponse:
+        return {"code": await self.coordinator.async_get_region_code()}
+
+    async def async_set_region_code_service(self, **kwargs) -> None:
+        await self.coordinator.async_set_region_code(kwargs[ATTR_CODE])

@@ -247,6 +247,62 @@
           "description": "ID of the schedule to delete (see the Schedules sensor or get_schedules)."
         }
       }
+    },
+    "get_power_usage": {
+      "name": "Get power usage",
+      "description": "Retrieve the air conditioner's recorded power-usage history over a time range.",
+      "fields": {
+        "start": {
+          "name": "Start",
+          "description": "Start of the range (local time)."
+        },
+        "end": {
+          "name": "End",
+          "description": "End of the range (defaults to now)."
+        },
+        "unit": {
+          "name": "Aggregation",
+          "description": "Aggregate the usage per hour or per day."
+        }
+      }
+    },
+    "set_power_logging": {
+      "name": "Set power logging",
+      "description": "Turn the unit's power-usage logging on or off.",
+      "fields": {
+        "enable": {
+          "name": "Enable",
+          "description": "Whether power-usage logging is on."
+        }
+      }
+    },
+    "reset_power_logging": {
+      "name": "Reset power logging",
+      "description": "Clear the power-usage history recorded on the unit."
+    },
+    "set_nickname": {
+      "name": "Set nickname",
+      "description": "Set the nickname stored on the unit.",
+      "fields": {
+        "nickname": {
+          "name": "Nickname",
+          "description": "The new nickname."
+        }
+      }
+    },
+    "get_region_code": {
+      "name": "Get region code",
+      "description": "Read the region code stored on the unit."
+    },
+    "set_region_code": {
+      "name": "Set region code",
+      "description": "Set the region code stored on the unit.",
+      "fields": {
+        "code": {
+          "name": "Code",
+          "description": "The region code."
+        }
+      }
     }
   },
   "selector": {
@@ -272,6 +328,12 @@
         "fri": "Friday",
         "sat": "Saturday",
         "sun": "Sunday"
+      }
+    },
+    "power_unit": {
+      "options": {
+        "hour": "Per hour",
+        "day": "Per day"
       }
     }
   }

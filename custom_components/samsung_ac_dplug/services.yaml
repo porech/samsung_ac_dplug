@@ -71,3 +71,75 @@ delete_schedule:
       example: "0"
       selector:
         text:
+
+get_power_usage:
+  target:
+    entity:
+      integration: samsung_ac_dplug
+      domain: climate
+  fields:
+    start:
+      required: true
+      selector:
+        datetime:
+    end:
+      required: false
+      selector:
+        datetime:
+    unit:
+      required: true
+      default: hour
+      selector:
+        select:
+          translation_key: power_unit
+          options:
+            - hour
+            - day
+
+set_power_logging:
+  target:
+    entity:
+      integration: samsung_ac_dplug
+      domain: climate
+  fields:
+    enable:
+      required: true
+      default: true
+      selector:
+        boolean:
+
+reset_power_logging:
+  target:
+    entity:
+      integration: samsung_ac_dplug
+      domain: climate
+
+set_nickname:
+  target:
+    entity:
+      integration: samsung_ac_dplug
+      domain: climate
+  fields:
+    nickname:
+      required: true
+      example: "Living room"
+      selector:
+        text:
+
+get_region_code:
+  target:
+    entity:
+      integration: samsung_ac_dplug
+      domain: climate
+
+set_region_code:
+  target:
+    entity:
+      integration: samsung_ac_dplug
+      domain: climate
+  fields:
+    code:
+      required: true
+      example: "EU"
+      selector:
+        text:

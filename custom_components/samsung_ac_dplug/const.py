@@ -137,3 +137,18 @@ ATTR_SCHEDULE_ENABLED = "enabled"
 REPEAT_ONCE = "once"
 REPEAT_DAILY = "daily"
 REPEAT_WEEKLY = "weekly"
+
+# Extra device commands: power usage/logging, nickname, region code.
+SERVICE_GET_POWER_USAGE = "get_power_usage"
+SERVICE_SET_POWER_LOGGING = "set_power_logging"
+SERVICE_RESET_POWER_LOGGING = "reset_power_logging"
+SERVICE_SET_NICKNAME = "set_nickname"
+SERVICE_GET_REGION_CODE = "get_region_code"
+SERVICE_SET_REGION_CODE = "set_region_code"
+
+ATTR_UNIT = "unit"
+ATTR_START = "start"
+ATTR_END = "end"
+ATTR_ENABLE = "enable"
+ATTR_NICKNAME = "nickname"
+ATTR_CODE = "code"

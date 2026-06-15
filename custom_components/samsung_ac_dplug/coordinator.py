@@ -101,6 +101,25 @@ class SamsungAcCoordinator(DataUpdateCoordinator[dict]):
         await self._api.async_delete_schedule(schedule_id)
         await self.async_refresh_schedules()
 
+    # -- extra device commands (power usage/logging, nickname, region) --
+    async def async_get_power_usage(self, date_from, date_to, unit):
+        return await self._api.async_get_power_usage(date_from, date_to, unit, tz=self._tz)
+
+    async def async_set_power_logging(self, enable: bool) -> None:
+        await self._api.async_set_power_logging(enable)
+
+    async def async_reset_power_logging(self) -> None:
+        await self._api.async_reset_power_logging()
+
+    async def async_set_nickname(self, nickname: str) -> None:
+        await self._api.async_set_nickname(nickname)
+
+    async def async_get_region_code(self):
+        return await self._api.async_get_region_code()
+
+    async def async_set_region_code(self, code: str) -> None:
+        await self._api.async_set_region_code(code)
+
     async def async_set(self, attr: str, value: str) -> None:
         if self.stream is not None:
             # stream.async_set waits for the device to confirm via push

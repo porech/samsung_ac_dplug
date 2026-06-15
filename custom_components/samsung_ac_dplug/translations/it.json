@@ -247,6 +247,62 @@
           "description": "ID della programmazione da eliminare (vedi il sensore Programmazioni o get_schedules)."
         }
       }
+    },
+    "get_power_usage": {
+      "name": "Leggi consumi",
+      "description": "Recupera lo storico dei consumi registrati dal condizionatore in un intervallo di tempo.",
+      "fields": {
+        "start": {
+          "name": "Inizio",
+          "description": "Inizio dell'intervallo (ora locale)."
+        },
+        "end": {
+          "name": "Fine",
+          "description": "Fine dell'intervallo (predefinito: adesso)."
+        },
+        "unit": {
+          "name": "Aggregazione",
+          "description": "Aggrega i consumi per ora o per giorno."
+        }
+      }
+    },
+    "set_power_logging": {
+      "name": "Imposta registrazione consumi",
+      "description": "Attiva o disattiva la registrazione dei consumi sull'unità.",
+      "fields": {
+        "enable": {
+          "name": "Attiva",
+          "description": "Se la registrazione dei consumi è attiva."
+        }
+      }
+    },
+    "reset_power_logging": {
+      "name": "Azzera registrazione consumi",
+      "description": "Cancella lo storico dei consumi registrato sull'unità."
+    },
+    "set_nickname": {
+      "name": "Imposta nickname",
+      "description": "Imposta il nickname salvato sull'unità.",
+      "fields": {
+        "nickname": {
+          "name": "Nickname",
+          "description": "Il nuovo nickname."
+        }
+      }
+    },
+    "get_region_code": {
+      "name": "Leggi codice regione",
+      "description": "Legge il codice regione salvato sull'unità."
+    },
+    "set_region_code": {
+      "name": "Imposta codice regione",
+      "description": "Imposta il codice regione salvato sull'unità.",
+      "fields": {
+        "code": {
+          "name": "Codice",
+          "description": "Il codice regione."
+        }
+      }
     }
   },
   "selector": {
@@ -272,6 +328,12 @@
         "fri": "Venerdì",
         "sat": "Sabato",
         "sun": "Domenica"
+      }
+    },
+    "power_unit": {
+      "options": {
+        "hour": "Per ora",
+        "day": "Per giorno"
       }
     }
   }
