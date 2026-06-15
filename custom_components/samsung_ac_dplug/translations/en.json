@@ -91,7 +91,8 @@
       "used_time": { "name": "Operating time" },
       "filter_use_time": { "name": "Filter use time" },
       "filter_life": { "name": "Filter life" },
-      "error": { "name": "Error code" }
+      "error": { "name": "Error code" },
+      "device_clock": { "name": "Device clock" }
     },
     "switch": {
       "purify": { "name": "Purify (SPi)" },

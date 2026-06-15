@@ -62,6 +62,11 @@ class SamsungAcCoordinator(DataUpdateCoordinator[dict]):
         """Called by the stream when new state arrives."""
         self.async_set_updated_data(state)
 
+    @property
+    def device_clock(self):
+        """The unit's internal clock (UTC datetime) from the last auth, or None."""
+        return self.stream.start_from if self.stream is not None else self.client.start_from
+
     async def async_set(self, attr: str, value: str) -> None:
         if self.stream is not None:
             # stream.async_set waits for the device to confirm via push

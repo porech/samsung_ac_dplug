@@ -136,9 +136,27 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_e
     def supported(desc: AcSensor) -> bool:
         return desc.attr in state and all(req in state for req in desc.requires)
 
-    async_add_entities(
+    entities: list[SensorEntity] = [
         SamsungAcSensor(coordinator, desc) for desc in SENSORS if supported(desc)
-    )
+    ]
+    entities.append(SamsungAcClockSensor(coordinator))
+    async_add_entities(entities)
+
+
+class SamsungAcClockSensor(SamsungAcEntity, SensorEntity):
+    """The unit's internal UTC clock (diagnostic), read from the AuthToken response."""
+
+    _attr_translation_key = "device_clock"
+    _attr_device_class = SensorDeviceClass.TIMESTAMP
+    _attr_entity_category = EntityCategory.DIAGNOSTIC
+
+    def __init__(self, coordinator):
+        super().__init__(coordinator)
+        self._attr_unique_id = f"{self._duid}_device_clock"
+
+    @property
+    def native_value(self):
+        return self.coordinator.device_clock
 
 
 class SamsungAcSensor(SamsungAcEntity, SensorEntity):
