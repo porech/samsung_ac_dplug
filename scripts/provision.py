@@ -28,6 +28,7 @@ import subprocess
 import sys
 import tempfile
 import time
+import warnings
 from xml.sax.saxutils import quoteattr
 
 _DUID_RE = re.compile(r'DUID="([0-9A-Fa-f]{12})"')
@@ -299,7 +300,10 @@ def make_ssl_context():
     ctx = ssl.SSLContext(ssl.PROTOCOL_TLS_CLIENT)
     ctx.check_hostname = False
     ctx.verify_mode = ssl.CERT_NONE
-    ctx.minimum_version = ssl.TLSVersion.TLSv1
+    # These old modules require TLS 1.0; silence the (expected) deprecation notice.
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore", DeprecationWarning)
+        ctx.minimum_version = ssl.TLSVersion.TLSv1
     ctx.set_ciphers("HIGH:!DH:!aNULL:@SECLEVEL=0")
     # load_cert_chain needs a path, so write the embedded PEM to a temp file.
     tmp = tempfile.NamedTemporaryFile("w", suffix=".pem", delete=False)
@@ -315,19 +319,24 @@ def make_ssl_context():
     return ctx
 
 
-def read_device_mac(host, ctx, timeout=6.0):
-    """Best-effort: read the module's DUID (its Wi-Fi MAC) before provisioning,
-    so a DHCP reservation can be prepared in advance. Returns the MAC
-    ("aa:bb:cc:dd:ee:ff") or None if the unit doesn't report it."""
+def probe(host, ctx, timeout=6.0):
+    """Open the TLS connection and read the unit's greeting.
+
+    Returns (is_dplug, mac): is_dplug is True only if the device speaks the DPLUG
+    protocol (greets with "DPLUG"); mac is the protocol DUID (its Wi-Fi MAC) if
+    the unit reports it, else None. Used to confirm we're really talking to a
+    Samsung air conditioner before doing anything.
+    """
     try:
         sock = ctx.wrap_socket(
             socket.create_connection((host, PORT), timeout=10), server_hostname=host
         )
     except OSError:
-        return None
+        return (False, None)
     sock.settimeout(2)
     buf = ""
     asked = False
+    dplug = False
     deadline = time.time() + timeout
     try:
         while time.time() < deadline:
@@ -337,9 +346,11 @@ def read_device_mac(host, ctx, timeout=6.0):
                 data = ""
             if data:
                 buf += data
+                if "DPLUG" in buf:
+                    dplug = True
                 m = _DUID_RE.search(buf)
                 if m:
-                    return _format_mac(m.group(1))
+                    return (True, _format_mac(m.group(1)))
             # Once greeted, ask the unit to identify itself (ignored on some units).
             if not asked and ("InvalidateAccount" in buf or "DPLUG" in buf or not data):
                 try:
@@ -352,7 +363,7 @@ def read_device_mac(host, ctx, timeout=6.0):
     finally:
         sock.close()
     m = _DUID_RE.search(buf)
-    return _format_mac(m.group(1)) if m else None
+    return (dplug, _format_mac(m.group(1)) if m else None)
 
 
 def provision(ssid, password, auth_mode, encrypt_type, host, ctx, timeout=30):
@@ -428,20 +439,39 @@ def main():
     parser.add_argument(
         "--host", default=AP_HOST, help="unit address in AP mode (default: %s)" % AP_HOST
     )
+    parser.add_argument(
+        "--skip-protocol-check",
+        action="store_true",
+        help="proceed even if the device doesn't look like a Samsung DPLUG air conditioner",
+    )
     args = parser.parse_args()
 
     ctx = make_ssl_context()
 
-    # Show the unit's MAC first (if we can determine it) so a DHCP reservation
-    # can be prepared before the unit joins the network. Prefer the protocol
-    # DUID; fall back to the ARP table (the TLS attempt above populates it).
-    mac = read_device_mac(args.host, ctx) or mac_from_arp(args.host)
-    if mac:
-        print("Air conditioner found — its Wi-Fi MAC address is: %s" % mac.upper())
-        print(
-            "Tip: if you'd like it to keep a fixed IP, you can add a DHCP reservation\n"
-            "for this MAC on your router now, before it joins your network.\n"
-        )
+    # First make sure we're actually talking to a Samsung DPLUG air conditioner,
+    # so we don't reconfigure some other device that happens to live at this IP.
+    is_dplug, mac = probe(args.host, ctx)
+    if not is_dplug:
+        if not args.skip_protocol_check:
+            print(
+                "No Samsung air conditioner (DPLUG) responded at %s:%d.\n"
+                "Make sure the unit is in AP mode and the computer is connected to its\n"
+                "SMARTAIRCON network. To proceed anyway, re-run with --skip-protocol-check."
+                % (args.host, PORT)
+            )
+            sys.exit(1)
+        print("Warning: couldn't confirm a DPLUG air conditioner at %s; continuing anyway.\n" % args.host)
+
+    # Show the unit's MAC (only when confirmed) so a DHCP reservation can be set
+    # up in advance. Prefer the protocol DUID; fall back to the ARP table.
+    if is_dplug:
+        mac = mac or mac_from_arp(args.host)
+        if mac:
+            print("Air conditioner found — its Wi-Fi MAC address is: %s" % mac.upper())
+            print(
+                "Tip: if you'd like it to keep a fixed IP, you can add a DHCP reservation\n"
+                "for this MAC on your router now, before it joins your network.\n"
+            )
 
     ssid = args.ssid if args.ssid is not None else input("Wi-Fi network name (SSID): ").strip()
     if not ssid:
