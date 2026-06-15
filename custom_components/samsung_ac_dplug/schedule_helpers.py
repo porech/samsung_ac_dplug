@@ -7,6 +7,8 @@ multi-step scenarios) use Home Assistant automations instead.
 """
 from __future__ import annotations
 
+from typing import Any
+
 import voluptuous as vol
 from homeassistant.exceptions import ServiceValidationError
 from homeassistant.helpers import config_validation as cv
@@ -40,7 +42,7 @@ _LIB_TO_REPEAT = {v: k for k, v in _REPEAT_TO_LIB.items()}
 
 # `repeat` is Required (with a default) so the HA UI shows the frequency radio
 # group as always-active rather than gated behind an opt-in checkbox.
-SET_SCHEDULE_SCHEMA = {
+SET_SCHEDULE_SCHEMA: dict[Any, Any] = {
     vol.Required(ATTR_SCHEDULE_TIME): cv.time,
     vol.Required(ATTR_SCHEDULE_POWER): vol.In(["on", "off"]),
     vol.Required(ATTR_SCHEDULE_REPEAT, default=REPEAT_ONCE): vol.In(
@@ -51,10 +53,10 @@ SET_SCHEDULE_SCHEMA = {
     vol.Optional(ATTR_SCHEDULE_ID): cv.string,
 }
 
-DELETE_SCHEDULE_SCHEMA = {vol.Required(ATTR_SCHEDULE_ID): cv.string}
+DELETE_SCHEDULE_SCHEMA: dict[Any, Any] = {vol.Required(ATTR_SCHEDULE_ID): cv.string}
 
 
-def schedule_from_call(data) -> Schedule:
+def schedule_from_call(data: dict[str, Any]) -> Schedule:
     """Build a library Schedule from validated set_schedule service data.
 
     Raises ServiceValidationError when 'once'/'weekly' is requested without any
@@ -79,7 +81,7 @@ def schedule_from_call(data) -> Schedule:
     )
 
 
-def schedule_to_dict(sched: Schedule) -> dict:
+def schedule_to_dict(sched: Schedule) -> dict[str, Any]:
     """Render a Schedule as a plain dict for service responses / attributes."""
     power = sched.power
     return {

@@ -5,7 +5,11 @@ the official app, exposed here as services.
 """
 from __future__ import annotations
 
+from typing import Any
+
 import voluptuous as vol
+from samsung_dplug import PowerUsageEntry
+
 from homeassistant.helpers import config_validation as cv
 
 from .const import (
@@ -17,23 +21,23 @@ from .const import (
     ATTR_UNIT,
 )
 
-GET_POWER_USAGE_SCHEMA = {
+GET_POWER_USAGE_SCHEMA: dict[Any, Any] = {
     vol.Required(ATTR_START): cv.datetime,
     vol.Optional(ATTR_END): cv.datetime,
     vol.Required(ATTR_UNIT, default="hour"): vol.In(["hour", "day"]),
 }
 
-SET_POWER_LOGGING_SCHEMA = {vol.Required(ATTR_ENABLE): cv.boolean}
+SET_POWER_LOGGING_SCHEMA: dict[Any, Any] = {vol.Required(ATTR_ENABLE): cv.boolean}
 
-SET_NICKNAME_SCHEMA = {vol.Required(ATTR_NICKNAME): cv.string}
+SET_NICKNAME_SCHEMA: dict[Any, Any] = {vol.Required(ATTR_NICKNAME): cv.string}
 
-SET_REGION_CODE_SCHEMA = {vol.Required(ATTR_CODE): cv.string}
+SET_REGION_CODE_SCHEMA: dict[Any, Any] = {vol.Required(ATTR_CODE): cv.string}
 
 # HA option -> library Unit value.
 UNIT_TO_LIB = {"hour": "Hour", "day": "Day"}
 
 
-def power_usage_to_dict(entry) -> dict:
+def power_usage_to_dict(entry: PowerUsageEntry) -> dict[str, Any]:
     return {
         "time": entry.time.isoformat(),
         "power_kwh": round(entry.power_kwh, 3),

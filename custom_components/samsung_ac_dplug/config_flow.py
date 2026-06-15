@@ -2,6 +2,10 @@
 from __future__ import annotations
 
 import asyncio
+import functools
+import ssl
+from collections.abc import Mapping
+from typing import Any
 
 import voluptuous as vol
 from homeassistant.config_entries import (
@@ -48,18 +52,18 @@ class SamsungAcConfigFlow(ConfigFlow, domain=DOMAIN):
         self._token: str | None = None
         self._duid: str | None = None
         self._token_discovered: bool = False
-        self._ssl = None
+        self._ssl: ssl.SSLContext | None = None
 
-    async def _ssl_ctx(self):
+    async def _ssl_ctx(self) -> ssl.SSLContext:
         if self._ssl is None:
-            self._ssl = await self.hass.async_add_executor_job(build_ssl_context)
+            self._ssl = await self.hass.async_add_executor_job(functools.partial(build_ssl_context))
         return self._ssl
 
     # ---- entry points -------------------------------------------------
-    async def async_step_user(self, user_input=None) -> ConfigFlowResult:
+    async def async_step_user(self, user_input: dict[str, Any] | None = None) -> ConfigFlowResult:
         return self.async_show_menu(step_id="user", menu_options=["onboard", "manual"])
 
-    async def async_step_onboard(self, user_input=None) -> ConfigFlowResult:
+    async def async_step_onboard(self, user_input: dict[str, Any] | None = None) -> ConfigFlowResult:
         """Informational only: how to get the unit onto the home Wi-Fi.
 
         We don't chain into IP entry here — once the unit joins Wi-Fi it is
@@ -79,14 +83,14 @@ class SamsungAcConfigFlow(ConfigFlow, domain=DOMAIN):
             },
         )
 
-    async def async_step_manual(self, user_input=None) -> ConfigFlowResult:
+    async def async_step_manual(self, user_input: dict[str, Any] | None = None) -> ConfigFlowResult:
         if user_input is not None:
             self._host = user_input[CONF_HOST].strip()
             return await self.async_step_token()
         schema = vol.Schema({vol.Required(CONF_HOST, default=self._host or ""): str})
         return self.async_show_form(step_id="manual", data_schema=schema)
 
-    async def async_step_token(self, user_input=None) -> ConfigFlowResult:
+    async def async_step_token(self, user_input: dict[str, Any] | None = None) -> ConfigFlowResult:
         """Acquire a token via power-on, or accept one the user already has."""
         errors: dict[str, str] = {}
         if user_input is not None:
@@ -96,6 +100,7 @@ class SamsungAcConfigFlow(ConfigFlow, domain=DOMAIN):
                     self._token = manual
                     self._token_discovered = False
                 else:
+                    assert self._host is not None
                     client = SamsungAcClient(self._host, ssl_context=await self._ssl_ctx())
                     self._token = await client.async_get_token(power_on_timeout=40)
                     self._token_discovered = True
@@ -118,7 +123,7 @@ class SamsungAcConfigFlow(ConfigFlow, domain=DOMAIN):
             last_step=True,
         )
 
-    async def async_step_save_token(self, user_input=None) -> ConfigFlowResult:
+    async def async_step_save_token(self, user_input: dict[str, Any] | None = None) -> ConfigFlowResult:
         """Show the freshly discovered token so the user can save it for next time."""
         if user_input is not None:
             return await self._create()
@@ -131,12 +136,12 @@ class SamsungAcConfigFlow(ConfigFlow, domain=DOMAIN):
         )
 
     # ---- reauth -------------------------------------------------------
-    async def async_step_reauth(self, entry_data) -> ConfigFlowResult:
+    async def async_step_reauth(self, entry_data: Mapping[str, Any]) -> ConfigFlowResult:
         self._host = entry_data[CONF_HOST]
         self._duid = entry_data.get(CONF_DUID)
         return await self.async_step_reauth_confirm()
 
-    async def async_step_reauth_confirm(self, user_input=None) -> ConfigFlowResult:
+    async def async_step_reauth_confirm(self, user_input: dict[str, Any] | None = None) -> ConfigFlowResult:
         errors: dict[str, str] = {}
         if user_input is not None:
             manual = (user_input.get(CONF_TOKEN) or "").strip()
@@ -144,6 +149,7 @@ class SamsungAcConfigFlow(ConfigFlow, domain=DOMAIN):
                 if manual:
                     self._token = manual
                 else:
+                    assert self._host is not None
                     client = SamsungAcClient(self._host, ssl_context=await self._ssl_ctx())
                     self._token = await client.async_get_token(power_on_timeout=40)
                 await self._discover()  # validates the new token
@@ -163,7 +169,7 @@ class SamsungAcConfigFlow(ConfigFlow, domain=DOMAIN):
         )
 
     # ---- reconfigure --------------------------------------------------
-    async def async_step_reconfigure(self, user_input=None) -> ConfigFlowResult:
+    async def async_step_reconfigure(self, user_input: dict[str, Any] | None = None) -> ConfigFlowResult:
         """Let the user point an existing unit at a new IP address."""
         entry = self._get_reconfigure_entry()
         self._token = entry.data[CONF_TOKEN]
@@ -203,7 +209,7 @@ class SamsungAcConfigFlow(ConfigFlow, domain=DOMAIN):
         self.context["title_placeholders"] = {"name": f"Samsung AC {duid_to_mac(duid).upper()}"}
         return await self.async_step_discovery_confirm()
 
-    async def async_step_discovery_confirm(self, user_input=None) -> ConfigFlowResult:
+    async def async_step_discovery_confirm(self, user_input: dict[str, Any] | None = None) -> ConfigFlowResult:
         if user_input is not None:
             return await self.async_step_token()
         self._set_confirm_only()
@@ -214,10 +220,13 @@ class SamsungAcConfigFlow(ConfigFlow, domain=DOMAIN):
 
     # ---- helpers ------------------------------------------------------
     async def _discover(self) -> str:
+        assert self._host is not None
         client = SamsungAcClient(self._host, token=self._token, ssl_context=await self._ssl_ctx())
-        return await client.async_discover_duid()
+        duid: str = await client.async_discover_duid()
+        return duid
 
     async def _create(self) -> ConfigFlowResult:
+        assert self._duid is not None
         await self.async_set_unique_id(self._duid)
         self._abort_if_unique_id_configured(updates={CONF_HOST: self._host})
         return self.async_create_entry(
@@ -232,7 +241,7 @@ class SamsungAcConfigFlow(ConfigFlow, domain=DOMAIN):
 class SamsungAcOptionsFlow(OptionsFlow):
     """Options: enable live (push) updates and set the refresh interval."""
 
-    async def async_step_init(self, user_input=None) -> ConfigFlowResult:
+    async def async_step_init(self, user_input: dict[str, Any] | None = None) -> ConfigFlowResult:
         if user_input is not None:
             return self.async_create_entry(title="", data=user_input)
         opts = self.config_entry.options

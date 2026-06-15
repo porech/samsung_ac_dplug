@@ -25,27 +25,30 @@ from .const import (
     ATTR_TEMPNOW,
     ATTR_USED_TIME,
 )
+import datetime
+
+from .coordinator import SamsungAcCoordinator
 from .entity import SamsungAcEntity
 from .schedule_helpers import schedule_to_dict
 
 
-def _to_int(v):
+def _to_int(v: str | None) -> int | None:
     return int(v) if v and v.lstrip("-").isdigit() else None
 
 
-def _outdoor_c(v):
+def _outdoor_c(v: str | None) -> float | None:
     """AC_OUTDOOR_TEMP is reported in Fahrenheit -> convert to Celsius."""
     i = _to_int(v)
     return round((i - 32) * 5 / 9, 1) if i is not None else None
 
 
-def _error(v):
-    if v in (None, "", "NULL", "0"):
+def _error(v: str | None) -> str:
+    if not v or v in ("NULL", "0"):
         return "OK"
     return v
 
 
-def _filter_life(state: dict) -> int | None:
+def _filter_life(state: dict[str, str]) -> int | None:
     """Remaining filter life as a percentage.
 
     used = hours since last clean (AC_ADD2_FILTER_USE_TIME),
@@ -63,10 +66,10 @@ def _filter_life(state: dict) -> int | None:
 @dataclass(frozen=True, kw_only=True)
 class AcSensor(SensorEntityDescription):
     attr: str
-    convert: Callable = _to_int
+    convert: Callable[[str | None], Any] = _to_int
     # When set, the value is computed from the full coordinator state instead of
     # a single attribute (used for derived sensors like filter life %).
-    value_from_state: Callable[[dict], Any] | None = None
+    value_from_state: Callable[[dict[str, str]], Any] | None = None
     # Extra attributes that must also be present in state for the sensor to be
     # created (in addition to `attr`).
     requires: tuple[str, ...] = ()
@@ -162,12 +165,12 @@ class SamsungAcClockSensor(SamsungAcEntity, SensorEntity):
     _attr_device_class = SensorDeviceClass.TIMESTAMP
     _attr_entity_category = EntityCategory.DIAGNOSTIC
 
-    def __init__(self, coordinator):
+    def __init__(self, coordinator: SamsungAcCoordinator) -> None:
         super().__init__(coordinator)
         self._attr_unique_id = f"{self._duid}_device_clock"
 
     @property
-    def native_value(self):
+    def native_value(self) -> datetime.datetime | None:
         return self.coordinator.device_clock
 
 
@@ -184,7 +187,7 @@ class SamsungAcSchedulesSensor(SamsungAcEntity, SensorEntity):
     _attr_entity_category = EntityCategory.DIAGNOSTIC
     _attr_state_class = SensorStateClass.MEASUREMENT
 
-    def __init__(self, coordinator):
+    def __init__(self, coordinator: SamsungAcCoordinator) -> None:
         super().__init__(coordinator)
         self._attr_unique_id = f"{self._duid}_schedules"
 
@@ -211,13 +214,13 @@ class SamsungAcSchedulesSensor(SamsungAcEntity, SensorEntity):
 class SamsungAcSensor(SamsungAcEntity, SensorEntity):
     entity_description: AcSensor
 
-    def __init__(self, coordinator, description: AcSensor):
+    def __init__(self, coordinator: SamsungAcCoordinator, description: AcSensor) -> None:
         super().__init__(coordinator)
         self.entity_description = description
         self._attr_unique_id = f"{self._duid}_{description.key}"
 
     @property
-    def native_value(self):
+    def native_value(self) -> Any:
         if self.entity_description.value_from_state is not None:
             return self.entity_description.value_from_state(self._state)
         return self.entity_description.convert(self._state.get(self.entity_description.attr))

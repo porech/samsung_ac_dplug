@@ -28,7 +28,7 @@ class SamsungAcEntity(CoordinatorEntity[SamsungAcCoordinator]):
         return stream.connected if stream is not None else True
 
     @property
-    def _state(self) -> dict:
+    def _state(self) -> dict[str, str]:
         return self.coordinator.data or {}
 
     @property

@@ -19,6 +19,7 @@ from .const import (
     PANEL_TO_DEVICE,
     VOLUME_TO_DEVICE,
 )
+from .coordinator import SamsungAcCoordinator
 from .entity import SamsungAcEntity
 
 
@@ -71,7 +72,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_e
 class SamsungAcSelect(SamsungAcEntity, SelectEntity):
     entity_description: AcSelect
 
-    def __init__(self, coordinator, description: AcSelect):
+    def __init__(self, coordinator: SamsungAcCoordinator, description: AcSelect) -> None:
         super().__init__(coordinator)
         self.entity_description = description
         self._attr_unique_id = f"{self._duid}_{description.key}"
@@ -80,7 +81,7 @@ class SamsungAcSelect(SamsungAcEntity, SelectEntity):
 
     @property
     def current_option(self) -> str | None:
-        return self._inverse.get(self._state.get(self.entity_description.attr))
+        return self._inverse.get(self._state.get(self.entity_description.attr) or "")
 
     async def async_select_option(self, option: str) -> None:
         await self.coordinator.async_set(

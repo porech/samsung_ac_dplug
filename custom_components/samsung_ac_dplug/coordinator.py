@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import asyncio
 import logging
+import datetime
 from datetime import timedelta
 
 from homeassistant.config_entries import ConfigEntry
@@ -18,6 +19,7 @@ from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, Upda
 from homeassistant.util import dt as dt_util
 from samsung_dplug import (
     AuthError,
+    PowerUsageEntry,
     SamsungAcClient,
     SamsungAcError,
     SamsungAcStream,
@@ -31,7 +33,7 @@ _LOGGER = logging.getLogger(__name__)
 type SamsungAcConfigEntry = ConfigEntry[SamsungAcCoordinator]
 
 
-class SamsungAcCoordinator(DataUpdateCoordinator[dict]):
+class SamsungAcCoordinator(DataUpdateCoordinator[dict[str, str]]):
     def __init__(
         self,
         hass: HomeAssistant,
@@ -55,10 +57,11 @@ class SamsungAcCoordinator(DataUpdateCoordinator[dict]):
         # On-device schedules (cached; refreshed on demand and after mutations).
         self.schedules: list[Schedule] = []
 
-    async def _async_update_data(self) -> dict:
+    async def _async_update_data(self) -> dict[str, str]:
         if self.stream is not None:
             # push mode: coordinator does not poll; return last known state.
             return self.data or self.stream.state
+        assert self.client is not None
         try:
             return await self.client.async_get_state()
         except AuthError as err:
@@ -67,7 +70,7 @@ class SamsungAcCoordinator(DataUpdateCoordinator[dict]):
             raise UpdateFailed(str(err)) from err
 
     @callback
-    def handle_push(self, state: dict) -> None:
+    def handle_push(self, state: dict[str, str]) -> None:
         """Called by the stream when new state arrives."""
         self.async_set_updated_data(state)
 
@@ -82,18 +85,23 @@ class SamsungAcCoordinator(DataUpdateCoordinator[dict]):
         self.async_update_listeners()
 
     @property
-    def device_clock(self):
+    def device_clock(self) -> datetime.datetime | None:
         """The unit's internal clock (UTC datetime) from the last auth, or None."""
-        return self.stream.start_from if self.stream is not None else self.client.start_from
+        if self.stream is not None:
+            return self.stream.start_from
+        assert self.client is not None
+        return self.client.start_from
 
     # -- on-device scheduling -----------------------------------------------
     @property
-    def _api(self):
+    def _api(self) -> SamsungAcStream | SamsungAcClient:
         """Whichever connection is active (stream in live mode, else client)."""
-        return self.stream if self.stream is not None else self.client
+        api = self.stream if self.stream is not None else self.client
+        assert api is not None
+        return api
 
     @property
-    def _tz(self):
+    def _tz(self) -> datetime.tzinfo:
         """Home Assistant's configured timezone, for local<->UTC conversion."""
         return dt_util.DEFAULT_TIME_ZONE
 
@@ -112,7 +120,9 @@ class SamsungAcCoordinator(DataUpdateCoordinator[dict]):
         await self.async_refresh_schedules()
 
     # -- extra device commands (power usage/logging, nickname, region) --
-    async def async_get_power_usage(self, date_from, date_to, unit):
+    async def async_get_power_usage(
+        self, date_from: datetime.datetime, date_to: datetime.datetime, unit: str
+    ) -> list[PowerUsageEntry]:
         return await self._api.async_get_power_usage(date_from, date_to, unit, tz=self._tz)
 
     async def async_set_power_logging(self, enable: bool) -> None:
@@ -124,7 +134,7 @@ class SamsungAcCoordinator(DataUpdateCoordinator[dict]):
     async def async_set_nickname(self, nickname: str) -> None:
         await self._api.async_set_nickname(nickname)
 
-    async def async_get_region_code(self):
+    async def async_get_region_code(self) -> str | None:
         return await self._api.async_get_region_code()
 
     async def async_set_region_code(self, code: str) -> None:
@@ -138,6 +148,7 @@ class SamsungAcCoordinator(DataUpdateCoordinator[dict]):
         # polling: send, then re-poll once per second for up to 5s until applied,
         # so the entity reflects the confirmed value immediately rather than at
         # the next scheduled poll.
+        assert self.client is not None
         await self.client.async_set(attr, value)
         loop = asyncio.get_running_loop()
         end = loop.time() + 5

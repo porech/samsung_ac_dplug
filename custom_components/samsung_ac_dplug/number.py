@@ -14,6 +14,7 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from .const import ATTR_OFFTIMER, ATTR_ONTIMER, ATTR_SETKWH, ATTR_SLEEP
+from .coordinator import SamsungAcCoordinator
 from .entity import SamsungAcEntity
 
 
@@ -88,7 +89,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_e
 class SamsungAcNumber(SamsungAcEntity, NumberEntity):
     entity_description: AcNumber
 
-    def __init__(self, coordinator, description: AcNumber):
+    def __init__(self, coordinator: SamsungAcCoordinator, description: AcNumber) -> None:
         super().__init__(coordinator)
         self.entity_description = description
         self._attr_unique_id = f"{self._duid}_{description.key}"

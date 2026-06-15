@@ -77,6 +77,4 @@ rules:
   inject-websession:
     status: exempt
     comment: The device speaks a raw mutual-TLS socket protocol, not HTTP; there is no web session to inject.
-  strict-typing:
-    status: todo
-    comment: The integration is typed but not yet verified under Home Assistant's strict-typing checks.
+  strict-typing: done

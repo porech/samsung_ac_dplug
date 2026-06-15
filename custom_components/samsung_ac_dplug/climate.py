@@ -2,12 +2,11 @@
 from __future__ import annotations
 
 import functools
+from collections.abc import Awaitable, Callable
+from typing import Any, TypeVar
 
-from homeassistant.components.climate import (
-    ClimateEntity,
-    ClimateEntityFeature,
-    HVACMode,
-)
+from homeassistant.components.climate import ClimateEntity
+from homeassistant.components.climate.const import ClimateEntityFeature, HVACMode
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import ATTR_TEMPERATURE, UnitOfTemperature
 from homeassistant.core import HomeAssistant, ServiceResponse, SupportsResponse
@@ -17,13 +16,70 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.util import dt as dt_util
 from samsung_dplug import SamsungAcError
 
+from .const import (
+    ATTR_CODE,
+    ATTR_COMODE,
+    ATTR_DIRECTION,
+    ATTR_ENABLE,
+    ATTR_END,
+    ATTR_NICKNAME,
+    ATTR_OPMODE,
+    ATTR_POWER,
+    ATTR_SCHEDULE_ID,
+    ATTR_START,
+    ATTR_TEMPNOW,
+    ATTR_TEMPSET,
+    ATTR_UNIT,
+    ATTR_WARM_CAP,
+    ATTR_WINDLEVEL,
+    DEVICE_TO_FAN,
+    DEVICE_TO_HVAC,
+    DEVICE_TO_PRESET,
+    DEVICE_TO_SWING,
+    DOMAIN,
+    FAN_TO_DEVICE,
+    HVAC_TO_DEVICE,
+    MAX_TEMP,
+    MIN_TEMP,
+    PRESET_TO_DEVICE,
+    SERVICE_DELETE_SCHEDULE,
+    SERVICE_GET_POWER_USAGE,
+    SERVICE_GET_REGION_CODE,
+    SERVICE_GET_SCHEDULES,
+    SERVICE_RESET_POWER_LOGGING,
+    SERVICE_SET_NICKNAME,
+    SERVICE_SET_POWER_LOGGING,
+    SERVICE_SET_REGION_CODE,
+    SERVICE_SET_SCHEDULE,
+    SWING_ALL_TO_DEVICE,
+)
+from .command_helpers import (
+    GET_POWER_USAGE_SCHEMA,
+    SET_NICKNAME_SCHEMA,
+    SET_POWER_LOGGING_SCHEMA,
+    SET_REGION_CODE_SCHEMA,
+    UNIT_TO_LIB,
+    power_usage_to_dict,
+)
+from .coordinator import SamsungAcCoordinator
+from .entity import SamsungAcEntity
+from .schedule_helpers import (
+    DELETE_SCHEDULE_SCHEMA,
+    SET_SCHEDULE_SCHEMA,
+    schedule_from_call,
+    schedule_to_dict,
+)
 
-def _service(func):
+
+_T = TypeVar("_T")
+
+
+def _service(func: Callable[..., Awaitable[_T]]) -> Callable[..., Awaitable[_T]]:
     """Surface device/communication failures in a service action as a clean
     HomeAssistantError (ServiceValidationError from input checks passes through)."""
 
     @functools.wraps(func)
-    async def wrapper(self, *args, **kwargs):
+    async def wrapper(self: "SamsungAcClimate", *args: Any, **kwargs: Any) -> _T:
         try:
             return await func(self, *args, **kwargs)
         except SamsungAcError as err:
@@ -34,61 +90,6 @@ def _service(func):
             ) from err
 
     return wrapper
-
-from .const import (
-    ATTR_COMODE,
-    ATTR_DIRECTION,
-    ATTR_OPMODE,
-    ATTR_POWER,
-    ATTR_TEMPNOW,
-    ATTR_TEMPSET,
-    ATTR_WARM_CAP,
-    ATTR_WINDLEVEL,
-    DEVICE_TO_FAN,
-    DEVICE_TO_HVAC,
-    DEVICE_TO_PRESET,
-    DEVICE_TO_SWING,
-    FAN_TO_DEVICE,
-    HVAC_TO_DEVICE,
-    MAX_TEMP,
-    MIN_TEMP,
-    PRESET_TO_DEVICE,
-    SERVICE_DELETE_SCHEDULE,
-    SERVICE_GET_SCHEDULES,
-    SERVICE_SET_SCHEDULE,
-    SWING_ALL_TO_DEVICE,
-)
-from .const import (
-    ATTR_CODE,
-    ATTR_ENABLE,
-    ATTR_END,
-    ATTR_NICKNAME,
-    ATTR_SCHEDULE_ID,
-    ATTR_START,
-    ATTR_UNIT,
-    DOMAIN,
-    SERVICE_GET_POWER_USAGE,
-    SERVICE_GET_REGION_CODE,
-    SERVICE_RESET_POWER_LOGGING,
-    SERVICE_SET_NICKNAME,
-    SERVICE_SET_POWER_LOGGING,
-    SERVICE_SET_REGION_CODE,
-)
-from .command_helpers import (
-    GET_POWER_USAGE_SCHEMA,
-    SET_NICKNAME_SCHEMA,
-    SET_POWER_LOGGING_SCHEMA,
-    SET_REGION_CODE_SCHEMA,
-    UNIT_TO_LIB,
-    power_usage_to_dict,
-)
-from .entity import SamsungAcEntity
-from .schedule_helpers import (
-    DELETE_SCHEDULE_SCHEMA,
-    SET_SCHEDULE_SCHEMA,
-    schedule_from_call,
-    schedule_to_dict,
-)
 
 
 PARALLEL_UPDATES = 0
@@ -148,7 +149,7 @@ class SamsungAcClimate(SamsungAcEntity, ClimateEntity):
     # compatibility path (and its deprecation warning).
     _enable_turn_on_off_backwards_compatibility = False
 
-    def __init__(self, coordinator):
+    def __init__(self, coordinator: SamsungAcCoordinator) -> None:
         super().__init__(coordinator)
         self._attr_unique_id = self._duid
 
@@ -188,7 +189,7 @@ class SamsungAcClimate(SamsungAcEntity, ClimateEntity):
         # Some units report a fixed directional vane position outside the base
         # set; surface it only while it is actually in use so the selector stays
         # uncluttered on units that don't use these positions.
-        current = DEVICE_TO_SWING.get(self._state.get(ATTR_DIRECTION))
+        current = DEVICE_TO_SWING.get(self._state.get(ATTR_DIRECTION) or "")
         if current is not None and current not in modes:
             modes.append(current)
         return modes
@@ -231,7 +232,8 @@ class SamsungAcClimate(SamsungAcEntity, ClimateEntity):
     def hvac_mode(self) -> HVACMode | None:
         if self._state.get(ATTR_POWER) == "Off":
             return HVACMode.OFF
-        return DEVICE_TO_HVAC.get(self._state.get(ATTR_OPMODE), None)
+        mode = DEVICE_TO_HVAC.get(self._state.get(ATTR_OPMODE) or "")
+        return HVACMode(mode) if mode else None
 
     @property
     def current_temperature(self) -> float | None:
@@ -245,15 +247,15 @@ class SamsungAcClimate(SamsungAcEntity, ClimateEntity):
 
     @property
     def fan_mode(self) -> str | None:
-        return DEVICE_TO_FAN.get(self._state.get(ATTR_WINDLEVEL))
+        return DEVICE_TO_FAN.get(self._state.get(ATTR_WINDLEVEL) or "")
 
     @property
     def swing_mode(self) -> str | None:
-        return DEVICE_TO_SWING.get(self._state.get(ATTR_DIRECTION))
+        return DEVICE_TO_SWING.get(self._state.get(ATTR_DIRECTION) or "")
 
     @property
     def preset_mode(self) -> str | None:
-        return DEVICE_TO_PRESET.get(self._state.get(ATTR_COMODE))
+        return DEVICE_TO_PRESET.get(self._state.get(ATTR_COMODE) or "")
 
     async def async_set_hvac_mode(self, hvac_mode: HVACMode) -> None:
         if hvac_mode == HVACMode.OFF:
@@ -269,7 +271,7 @@ class SamsungAcClimate(SamsungAcEntity, ClimateEntity):
     async def async_turn_off(self) -> None:
         await self.coordinator.async_set(ATTR_POWER, "Off")
 
-    async def async_set_temperature(self, **kwargs) -> None:
+    async def async_set_temperature(self, **kwargs: Any) -> None:
         if (temp := kwargs.get(ATTR_TEMPERATURE)) is not None:
             await self.coordinator.async_set(ATTR_TEMPSET, str(int(temp)))
 
@@ -284,24 +286,24 @@ class SamsungAcClimate(SamsungAcEntity, ClimateEntity):
 
     # -- on-device scheduler services ---------------------------------------
     @_service
-    async def async_get_schedules_service(self, **kwargs) -> ServiceResponse:
+    async def async_get_schedules_service(self, **kwargs: Any) -> ServiceResponse:
         """Return the schedules stored on the unit (built-in scheduler)."""
         schedules = await self.coordinator.async_refresh_schedules()
         return {"schedules": [schedule_to_dict(s) for s in schedules]}
 
     @_service
-    async def async_set_schedule_service(self, **kwargs) -> None:
+    async def async_set_schedule_service(self, **kwargs: Any) -> None:
         """Create or edit an on-device on/off schedule."""
         await self.coordinator.async_set_schedule(schedule_from_call(kwargs))
 
     @_service
-    async def async_delete_schedule_service(self, **kwargs) -> None:
+    async def async_delete_schedule_service(self, **kwargs: Any) -> None:
         """Delete an on-device schedule by id."""
         await self.coordinator.async_delete_schedule(kwargs[ATTR_SCHEDULE_ID])
 
     # -- extra device commands ----------------------------------------------
     @_service
-    async def async_get_power_usage_service(self, **kwargs) -> ServiceResponse:
+    async def async_get_power_usage_service(self, **kwargs: Any) -> ServiceResponse:
         """Return the unit's recorded power-usage history."""
         end = kwargs.get(ATTR_END) or dt_util.now()
         entries = await self.coordinator.async_get_power_usage(
@@ -310,21 +312,21 @@ class SamsungAcClimate(SamsungAcEntity, ClimateEntity):
         return {"usage": [power_usage_to_dict(e) for e in entries]}
 
     @_service
-    async def async_set_power_logging_service(self, **kwargs) -> None:
+    async def async_set_power_logging_service(self, **kwargs: Any) -> None:
         await self.coordinator.async_set_power_logging(kwargs[ATTR_ENABLE])
 
     @_service
-    async def async_reset_power_logging_service(self, **kwargs) -> None:
+    async def async_reset_power_logging_service(self, **kwargs: Any) -> None:
         await self.coordinator.async_reset_power_logging()
 
     @_service
-    async def async_set_nickname_service(self, **kwargs) -> None:
+    async def async_set_nickname_service(self, **kwargs: Any) -> None:
         await self.coordinator.async_set_nickname(kwargs[ATTR_NICKNAME])
 
     @_service
-    async def async_get_region_code_service(self, **kwargs) -> ServiceResponse:
+    async def async_get_region_code_service(self, **kwargs: Any) -> ServiceResponse:
         return {"code": await self.coordinator.async_get_region_code()}
 
     @_service
-    async def async_set_region_code_service(self, **kwargs) -> None:
+    async def async_set_region_code_service(self, **kwargs: Any) -> None:
         await self.coordinator.async_set_region_code(kwargs[ATTR_CODE])

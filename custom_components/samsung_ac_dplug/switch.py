@@ -18,6 +18,9 @@ from .const import (
     ATTR_STERILIZE,
     ATTR_WEATHER,
 )
+from typing import Any
+
+from .coordinator import SamsungAcCoordinator
 from .entity import SamsungAcEntity
 
 
@@ -58,7 +61,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_e
 class SamsungAcSwitch(SamsungAcEntity, SwitchEntity):
     entity_description: AcSwitch
 
-    def __init__(self, coordinator, description: AcSwitch):
+    def __init__(self, coordinator: SamsungAcCoordinator, description: AcSwitch) -> None:
         super().__init__(coordinator)
         self.entity_description = description
         self._attr_unique_id = f"{self._duid}_{description.key}"
@@ -67,8 +70,8 @@ class SamsungAcSwitch(SamsungAcEntity, SwitchEntity):
     def is_on(self) -> bool:
         return self._state.get(self.entity_description.attr) == "On"
 
-    async def async_turn_on(self, **kwargs) -> None:
+    async def async_turn_on(self, **kwargs: Any) -> None:
         await self.coordinator.async_set(self.entity_description.attr, "On")
 
-    async def async_turn_off(self, **kwargs) -> None:
+    async def async_turn_off(self, **kwargs: Any) -> None:
         await self.coordinator.async_set(self.entity_description.attr, "Off")
