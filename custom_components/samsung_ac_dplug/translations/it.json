@@ -99,9 +99,6 @@
     },
     "number": {
       "sleep_timer": { "name": "Timer sleep" }
-    },
-    "button": {
-      "reset_filter": { "name": "Reset indicatore filtro" }
     }
   }
 }

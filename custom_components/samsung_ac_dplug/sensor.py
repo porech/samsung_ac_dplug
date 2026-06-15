@@ -51,9 +51,11 @@ def _filter_life(state: dict) -> int | None:
     """
     used = _to_int(state.get(ATTR_FILTER_TIME))
     total = _to_int(state.get(ATTR_FILTER_MAX))
-    if used is None or total is None or total <= 0:
+    # Some units report sentinel values (e.g. used=10000, total=500) when the
+    # filter counter is not actually tracked; only report a trustworthy figure.
+    if used is None or total is None or total <= 0 or used > total:
         return None
-    return round(max(0, min(100, (1 - used / total) * 100)))
+    return round((1 - used / total) * 100)
 
 
 @dataclass(frozen=True, kw_only=True)

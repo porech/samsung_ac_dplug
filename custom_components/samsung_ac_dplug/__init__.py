@@ -20,7 +20,7 @@ from .const import (
 from .coordinator import SamsungAcConfigEntry, SamsungAcCoordinator
 
 _LOGGER = logging.getLogger(__name__)
-PLATFORMS = [Platform.CLIMATE, Platform.SENSOR, Platform.SWITCH, Platform.NUMBER, Platform.BUTTON]
+PLATFORMS = [Platform.CLIMATE, Platform.SENSOR, Platform.SWITCH, Platform.NUMBER]
 
 
 async def async_setup_entry(hass: HomeAssistant, entry: SamsungAcConfigEntry) -> bool:
