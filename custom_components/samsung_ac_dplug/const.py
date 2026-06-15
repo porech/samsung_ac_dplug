@@ -103,6 +103,9 @@ DEVICE_TO_PRESET = {v: k for k, v in PRESET_TO_DEVICE.items()}
 OPERATION_TO_DEVICE = {"single": "Solo", "couple": "Couple", "family": "Family"}
 VOLUME_TO_DEVICE = {"mute": "Mute", "33": "n33", "66": "n66", "100": "n100"}
 PANEL_TO_DEVICE = {"open": "Open", "close": "Close"}
+# Filter cleaning interval in hours (AC_ADD2_FILTERTIME); writing it is the
+# filter-service action the official app performs.
+FILTER_TIME_TO_DEVICE = {"180": "180", "300": "300", "500": "500", "700": "700"}
 
 MIN_TEMP = 16
 MAX_TEMP = 30

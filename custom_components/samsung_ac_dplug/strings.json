@@ -148,6 +148,15 @@
           "open": "Open",
           "close": "Close"
         }
+      },
+      "filter_clean_interval": {
+        "name": "Filter cleaning interval",
+        "state": {
+          "180": "180 h",
+          "300": "300 h",
+          "500": "500 h",
+          "700": "700 h"
+        }
       }
     }
   }

@@ -5,13 +5,16 @@ from dataclasses import dataclass
 
 from homeassistant.components.select import SelectEntity, SelectEntityDescription
 from homeassistant.config_entries import ConfigEntry
+from homeassistant.const import EntityCategory
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from .const import (
+    ATTR_FILTER_MAX,
     ATTR_OPERATION,
     ATTR_PANEL,
     ATTR_VOLUME,
+    FILTER_TIME_TO_DEVICE,
     OPERATION_TO_DEVICE,
     PANEL_TO_DEVICE,
     VOLUME_TO_DEVICE,
@@ -43,6 +46,13 @@ SELECTS: tuple[AcSelect, ...] = (
         translation_key="panel",
         attr=ATTR_PANEL,
         value_map=PANEL_TO_DEVICE,
+    ),
+    AcSelect(
+        key="filter_clean_interval",
+        translation_key="filter_clean_interval",
+        attr=ATTR_FILTER_MAX,
+        value_map=FILTER_TIME_TO_DEVICE,
+        entity_category=EntityCategory.CONFIG,
     ),
 )
 
