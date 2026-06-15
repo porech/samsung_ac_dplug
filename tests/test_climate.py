@@ -20,8 +20,73 @@ async def test_climate_state_and_attributes(hass):
     assert state.attributes["fan_mode"] == "auto"
 
 
+async def test_climate_capabilities_and_power_off(hass):
+    from .common import STATE
+
+    # Power off, plus a capability code that enables quiet/turbo/dlight/eco/color and
+    # left-right louver — exercises the preset/swing/hvac branches.
+    code = 32 | 8 | 8192 | 16 | 128 | 1024
+    state = {**STATE, "AC_FUN_POWER": "Off", "AC_ADD2_OPTIONCODE": str(code)}
+    await setup_polling(hass, state)
+    st = hass.states.get(await _climate_id(hass))
+    assert st.state == "off"
+    assert "quiet" in st.attributes["preset_modes"]
+    assert "both" in st.attributes["swing_modes"]
+    assert "heat" in st.attributes["hvac_modes"]
+
+
+async def test_climate_fahrenheit_unit(hass):
+    from .common import STATE
+
+    await setup_polling(hass, {**STATE, "AC_ADD2_OPTIONCODE": "4"})  # FAHRENHEIT bit
+    st = hass.states.get(await _climate_id(hass))
+    # The entity reports 60 °F as its min; HA converts to the system unit (°C),
+    # so a value well below the 16 °C metric minimum proves the Fahrenheit path.
+    assert st.attributes["min_temp"] == 15.6
+
+
+async def test_climate_without_capability_code(hass):
+    from .common import STATE
+
+    state = {k: v for k, v in STATE.items() if k != "AC_ADD2_OPTIONCODE"}
+    await setup_polling(hass, state)
+    st = hass.states.get(await _climate_id(hass))
+    assert st.attributes["preset_modes"] == ["none"]
+
+
+async def test_climate_fixed_vane_swing(hass):
+    from .common import STATE
+
+    await setup_polling(hass, {**STATE, "AC_FUN_DIRECTION": "Indirect"})
+    st = hass.states.get(await _climate_id(hass))
+    assert "indirect" in st.attributes["swing_modes"]
+
+
+async def test_set_preset_and_hvac_from_off(hass):
+    from homeassistant.const import ATTR_ENTITY_ID
+
+    from .common import STATE, setup_live
+
+    _, stream = await setup_live(hass, {**STATE, "AC_FUN_POWER": "Off"})
+    cid = await _climate_id(hass)
+    await hass.services.async_call(
+        "climate", "set_preset_mode", {ATTR_ENTITY_ID: cid, "preset_mode": "none"}, blocking=True
+    )
+    stream.async_set.assert_any_await("AC_FUN_COMODE", "Off")
+    # From OFF, setting a mode powers the unit on first, then sets the mode.
+    await hass.services.async_call(
+        "climate", "set_hvac_mode", {ATTR_ENTITY_ID: cid, "hvac_mode": "cool"}, blocking=True
+    )
+    stream.async_set.assert_any_await("AC_FUN_POWER", "On")
+    stream.async_set.assert_any_await("AC_FUN_OPMODE", "Cool")
+
+
 async def test_set_temperature_sends_command(hass):
+    # Polling path: async_set re-reads state until it reflects the change.
+    from .common import STATE
+
     _, client = await setup_polling(hass)
+    client.async_get_state.return_value = {**STATE, "AC_FUN_TEMPSET": "21"}
     await hass.services.async_call(
         "climate",
         "set_temperature",

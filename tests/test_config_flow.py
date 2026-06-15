@@ -161,6 +161,93 @@ async def test_reconfigure_rejects_wrong_device(hass):
     assert result["reason"] == "wrong_device"
 
 
+async def test_reauth_flow_updates_token(hass):
+    entry = MockConfigEntry(
+        domain=DOMAIN, unique_id=DUID, data={"host": HOST, "token": "old", "duid": DUID}
+    )
+    entry.add_to_hass(hass)
+    p_ssl, p_client = _patches()
+    with p_ssl, p_client as mock_client:
+        mock_client.return_value.async_discover_duid = AsyncMock(return_value=DUID)
+        result = await entry.start_reauth_flow(hass)
+        assert result["step_id"] == "reauth_confirm"
+        result = await hass.config_entries.flow.async_configure(
+            result["flow_id"], {"token": "new-token"}
+        )
+    assert result["type"] == FlowResultType.ABORT
+    assert result["reason"] == "reauth_successful"
+    assert entry.data["token"] == "new-token"
+
+
+async def test_reauth_auth_error(hass):
+    entry = MockConfigEntry(
+        domain=DOMAIN, unique_id=DUID, data={"host": HOST, "token": "old", "duid": DUID}
+    )
+    entry.add_to_hass(hass)
+    p_ssl, p_client = _patches()
+    with p_ssl, p_client as mock_client:
+        mock_client.return_value.async_get_token = AsyncMock(side_effect=AuthError("nope"))
+        result = await entry.start_reauth_flow(hass)
+        result = await hass.config_entries.flow.async_configure(result["flow_id"], {})
+    assert result["type"] == FlowResultType.FORM
+    assert result["errors"] == {"base": "auth"}
+
+
+async def test_reauth_no_token_error(hass):
+    entry = MockConfigEntry(
+        domain=DOMAIN, unique_id=DUID, data={"host": HOST, "token": "old", "duid": DUID}
+    )
+    entry.add_to_hass(hass)
+    p_ssl, p_client = _patches()
+    with p_ssl, p_client as mock_client:
+        mock_client.return_value.async_get_token = AsyncMock(side_effect=SamsungAcError("timeout"))
+        result = await entry.start_reauth_flow(hass)
+        result = await hass.config_entries.flow.async_configure(result["flow_id"], {})
+    assert result["errors"] == {"base": "no_token"}
+
+
+async def test_reconfigure_cannot_connect(hass):
+    entry = MockConfigEntry(
+        domain=DOMAIN, unique_id=DUID, data={"host": HOST, "token": "tok", "duid": DUID}
+    )
+    entry.add_to_hass(hass)
+    p_ssl, p_client = _patches()
+    with p_ssl, p_client as mock_client:
+        mock_client.return_value.async_discover_duid = AsyncMock(side_effect=SamsungAcError("x"))
+        result = await entry.start_reconfigure_flow(hass)
+        result = await hass.config_entries.flow.async_configure(result["flow_id"], {"host": "192.168.1.5"})
+    assert result["type"] == FlowResultType.FORM
+    assert result["errors"] == {"base": "cannot_connect"}
+
+
+async def test_dhcp_discovery_reaches_confirm(hass):
+    from homeassistant.helpers.service_info.dhcp import DhcpServiceInfo
+
+    info = DhcpServiceInfo(ip=HOST, hostname="ac", macaddress="f8042e3f89a6")
+    with patch(f"{_FLOW}.build_ssl_context", return_value=object()), patch(
+        f"{_FLOW}.async_probe", AsyncMock(return_value=True)
+    ):
+        result = await hass.config_entries.flow.async_init(
+            DOMAIN, context={"source": "dhcp"}, data=info
+        )
+    assert result["type"] == FlowResultType.FORM
+    assert result["step_id"] == "discovery_confirm"
+
+
+async def test_dhcp_discovery_rejects_non_dplug(hass):
+    from homeassistant.helpers.service_info.dhcp import DhcpServiceInfo
+
+    info = DhcpServiceInfo(ip=HOST, hostname="x", macaddress="f8042e3f89a6")
+    with patch(f"{_FLOW}.build_ssl_context", return_value=object()), patch(
+        f"{_FLOW}.async_probe", AsyncMock(return_value=False)
+    ):
+        result = await hass.config_entries.flow.async_init(
+            DOMAIN, context={"source": "dhcp"}, data=info
+        )
+    assert result["type"] == FlowResultType.ABORT
+    assert result["reason"] == "not_samsung_ac"
+
+
 async def test_options_flow(hass):
     entry = MockConfigEntry(domain=DOMAIN, unique_id=DUID, data={"host": HOST}, options={})
     entry.add_to_hass(hass)

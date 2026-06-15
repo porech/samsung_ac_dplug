@@ -1,7 +1,38 @@
 """Setup / unload / coordinator tests."""
+from unittest.mock import AsyncMock, MagicMock, patch
+
 from homeassistant.config_entries import ConfigEntryState
 
-from .common import setup_live, setup_polling
+from .common import _arm_api, _entry, setup_live, setup_polling
+
+
+async def _setup_live_stream(hass, *, connected=True, auth_failed=False):
+    entry = _entry(live=True)
+    entry.add_to_hass(hass)
+    with patch("custom_components.samsung_ac_dplug.build_ssl_context", return_value=object()), patch(
+        "custom_components.samsung_ac_dplug.SamsungAcStream"
+    ) as mock_stream:
+        s = _arm_api(mock_stream.return_value)
+        s.state = {}
+        s.connected = connected
+        s.auth_failed = auth_failed
+        s.start = AsyncMock()
+        s.stop = AsyncMock()
+        s.set_on_update = MagicMock()
+        s.set_on_availability = MagicMock()
+        await hass.config_entries.async_setup(entry.entry_id)
+        await hass.async_block_till_done()
+    return entry
+
+
+async def test_live_auth_failed_is_setup_error(hass):
+    entry = await _setup_live_stream(hass, auth_failed=True)
+    assert entry.state is ConfigEntryState.SETUP_ERROR
+
+
+async def test_live_not_connected_retries(hass):
+    entry = await _setup_live_stream(hass, connected=False)
+    assert entry.state is ConfigEntryState.SETUP_RETRY
 
 
 async def test_setup_and_unload_polling(hass):

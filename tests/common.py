@@ -9,7 +9,8 @@ DUID = "F8042E3F89A6"
 HOST = "192.168.1.53"
 _INIT = "custom_components.samsung_ac_dplug"
 
-# A representative DeviceState snapshot (device-side values).
+# A representative DeviceState snapshot (device-side values), rich enough to
+# create entities on every platform.
 STATE = {
     "AC_FUN_POWER": "On",
     "AC_FUN_OPMODE": "Cool",
@@ -20,6 +21,29 @@ STATE = {
     "AC_FUN_DIRECTION": "SwingUD",
     "AC_ADD2_OPTIONCODE": "2",  # SPI capability
     "AC_ADD_HUMIDI": "50",
+    # sensors
+    "AC_OUTDOOR_TEMP": "77",  # °F -> 25 °C
+    "AC_ADD2_USEDTIME": "100",
+    "AC_ADD2_FILTER_USE_TIME": "100",
+    "AC_ADD2_FILTERTIME": "500",
+    "AC_FUN_ERROR": "NULL",
+    "AC_COOL_CAPABILITY": "10",
+    # switches
+    "AC_ADD_SPI": "Off",
+    "AC_ADD_AUTOCLEAN": "On",
+    "AC_ADD_LIGHT": "On",
+    "AC_ADD_STERILIZE": "Off",
+    "AC_ADD_SMARTON": "Off",
+    "AC_ADD_WEATHER": "Off",
+    # numbers
+    "AC_FUN_SLEEP": "0",
+    "AC_FUN_ONTIMER": "0",
+    "AC_FUN_OFFTIMER": "0",
+    "AC_ADD_SETKWH": "0",
+    # selects
+    "AC_FUN_OPERATION": "Solo",
+    "AC_ADD_VOLUME": "n33",
+    "AC_ADD_PANEL": "Open",
 }
 
 

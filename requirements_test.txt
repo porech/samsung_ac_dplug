@@ -1,2 +1,3 @@
 pytest-homeassistant-custom-component
+pytest-cov
 pysamsung-dplug==0.9.0
