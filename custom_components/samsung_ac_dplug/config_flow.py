@@ -70,7 +70,7 @@ class SamsungAcConfigFlow(ConfigFlow, domain=DOMAIN):
             last_step=False,
             description_placeholders={
                 "python_url": "https://www.python.org/downloads/",
-                "script_url": "https://github.com/porech/samsung_ac_dplug/blob/main/scripts/provision.py",
+                "script_url": "https://github.com/porech/samsung_ac_dplug/raw/main/scripts/provision.py",
             },
         )
 
