@@ -63,7 +63,16 @@ class SamsungAcConfigFlow(ConfigFlow, domain=DOMAIN):
         """Informational: how to get the unit onto the home Wi-Fi."""
         if user_input is not None:
             return await self.async_step_manual()
-        return self.async_show_form(step_id="onboard", data_schema=vol.Schema({}), last_step=False)
+        # URLs are passed as placeholders: translation strings may not contain URLs.
+        return self.async_show_form(
+            step_id="onboard",
+            data_schema=vol.Schema({}),
+            last_step=False,
+            description_placeholders={
+                "python_url": "https://www.python.org/downloads/",
+                "script_url": "https://github.com/porech/samsung_ac_dplug/blob/main/scripts/provision.py",
+            },
+        )
 
     async def async_step_manual(self, user_input=None) -> ConfigFlowResult:
         if user_input is not None:
