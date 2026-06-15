@@ -77,12 +77,27 @@ automation:
           days: [mon, tue, wed, thu, fri]
 ```
 
-## Install (HACS)
+## Install
 
-1. HACS → Integrations → ⋮ → *Custom repositories* → add
+### HACS (recommended)
+
+Until it lands in the HACS default store, add it as a custom repository:
+
+1. HACS → ⋮ → *Custom repositories* → add
    `https://github.com/porech/samsung_ac_dplug` (category *Integration*).
 2. Install **Samsung AC (DPLUG / 2878)** and restart Home Assistant.
 3. *Settings → Devices & Services → Add Integration → Samsung AC (DPLUG)*.
+
+### Manual
+
+If you'd rather not use HACS:
+
+1. Download the latest release (or clone the repo).
+2. Copy the `custom_components/samsung_ac_dplug` folder into your Home Assistant
+   `config/custom_components/` directory (create `custom_components` if it doesn't
+   exist). The result should be `config/custom_components/samsung_ac_dplug/`.
+3. Restart Home Assistant.
+4. *Settings → Devices & Services → Add Integration → Samsung AC (DPLUG)*.
 
 ## Setup
 
