@@ -20,6 +20,7 @@ from .const import (
     ATTR_ERROR,
     ATTR_FILTER_MAX,
     ATTR_FILTER_TIME,
+    ATTR_HUMIDITY,
     ATTR_OUTDOOR_TEMP,
     ATTR_TEMPNOW,
     ATTR_USED_TIME,
@@ -87,6 +88,15 @@ SENSORS: tuple[AcSensor, ...] = (
         device_class=SensorDeviceClass.TEMPERATURE,
         native_unit_of_measurement=UnitOfTemperature.CELSIUS,
         state_class=SensorStateClass.MEASUREMENT,
+    ),
+    AcSensor(
+        key="humidity",
+        translation_key="humidity",
+        attr=ATTR_HUMIDITY,
+        device_class=SensorDeviceClass.HUMIDITY,
+        native_unit_of_measurement="%",
+        state_class=SensorStateClass.MEASUREMENT,
+        convert=_to_int,
     ),
     AcSensor(
         key="used_time",

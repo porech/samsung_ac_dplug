@@ -29,7 +29,7 @@ from .const import (
     MAX_TEMP,
     MIN_TEMP,
     PRESET_TO_DEVICE,
-    SWING_TO_DEVICE,
+    SWING_ALL_TO_DEVICE,
 )
 from .entity import SamsungAcEntity
 
@@ -84,6 +84,12 @@ class SamsungAcClimate(SamsungAcEntity, ClimateEntity):
         modes = ["off", "vertical"]
         if opts and opts.lr_swing:
             modes += ["horizontal", "both"]
+        # Some units report a fixed directional vane position outside the base
+        # set; surface it only while it is actually in use so the selector stays
+        # uncluttered on units that don't use these positions.
+        current = DEVICE_TO_SWING.get(self._state.get(ATTR_DIRECTION))
+        if current is not None and current not in modes:
+            modes.append(current)
         return modes
 
     @property
@@ -170,7 +176,7 @@ class SamsungAcClimate(SamsungAcEntity, ClimateEntity):
         await self.coordinator.async_set(ATTR_WINDLEVEL, FAN_TO_DEVICE[fan_mode])
 
     async def async_set_swing_mode(self, swing_mode: str) -> None:
-        await self.coordinator.async_set(ATTR_DIRECTION, SWING_TO_DEVICE[swing_mode])
+        await self.coordinator.async_set(ATTR_DIRECTION, SWING_ALL_TO_DEVICE[swing_mode])
 
     async def async_set_preset_mode(self, preset_mode: str) -> None:
         await self.coordinator.async_set(ATTR_COMODE, PRESET_TO_DEVICE[preset_mode])

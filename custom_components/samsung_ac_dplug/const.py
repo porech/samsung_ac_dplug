@@ -48,6 +48,7 @@ ATTR_SETKWH = "AC_ADD_SETKWH"
 ATTR_OPERATION = "AC_FUN_OPERATION"
 ATTR_VOLUME = "AC_ADD_VOLUME"
 ATTR_PANEL = "AC_ADD_PANEL"
+ATTR_HUMIDITY = "AC_ADD_HUMIDI"
 
 # Value maps (HA <-> device)
 HVAC_TO_DEVICE = {
@@ -62,10 +63,25 @@ DEVICE_TO_HVAC = {v: k for k, v in HVAC_TO_DEVICE.items()}
 FAN_TO_DEVICE = {"auto": "Auto", "low": "Low", "medium": "Mid", "high": "High", "turbo": "Turbo"}
 DEVICE_TO_FAN = {v: k for k, v in FAN_TO_DEVICE.items()}
 
-# Full map; horizontal (SwingLR) is only offered when the OptionCode declares it
-# (the device accepts any value without reporting its real capabilities).
+# Base map; horizontal (SwingLR) is only offered when the OptionCode declares it
+# (the device accepts any value without reporting its real capabilities). This is
+# the set of swing modes actively offered in the selector.
 SWING_TO_DEVICE = {"off": "Fixed", "vertical": "SwingUD", "horizontal": "SwingLR", "both": "Rotation"}
-DEVICE_TO_SWING = {v: k for k, v in SWING_TO_DEVICE.items()}
+# Some units report fixed directional vane positions beyond the base swing set.
+# These are not offered up-front (to avoid cluttering the selector on units that
+# don't use them); they are surfaced only when the unit is actually in one.
+SWING_EXTRA_TO_DEVICE = {
+    "indirect": "Indirect",
+    "direct": "Direct",
+    "center": "Center",
+    "wide": "Wide",
+    "left": "Left",
+    "right": "Right",
+    "long": "Long",
+}
+# Combined map: every value the device may report is selectable/settable.
+SWING_ALL_TO_DEVICE = {**SWING_TO_DEVICE, **SWING_EXTRA_TO_DEVICE}
+DEVICE_TO_SWING = {v: k for k, v in SWING_ALL_TO_DEVICE.items()}
 
 # Preset (AC_FUN_COMODE). HA preset name (translation key) <-> device value.
 # Names follow the official app: Quiet, Fast Turbo, Comfort (SoftCool),

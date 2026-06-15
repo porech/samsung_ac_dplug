@@ -81,12 +81,28 @@
               "color_of_wind_florida": "Color of Wind: Florida",
               "color_of_wind_savanna": "Color of Wind: Savana"
             }
+          },
+          "swing_mode": {
+            "state": {
+              "off": "Off",
+              "vertical": "Verticale",
+              "horizontal": "Orizzontale",
+              "both": "Entrambi",
+              "indirect": "Indiretto",
+              "direct": "Diretto",
+              "center": "Centro",
+              "wide": "Ampio",
+              "left": "Sinistra",
+              "right": "Destra",
+              "long": "Lungo"
+            }
           }
         }
       }
     },
     "sensor": {
       "temperature": { "name": "Temperatura" },
+      "humidity": { "name": "Umidità" },
       "outdoor_temperature": { "name": "Temperatura esterna" },
       "used_time": { "name": "Tempo di funzionamento" },
       "filter_use_time": { "name": "Ore filtro" },
