@@ -10,23 +10,31 @@ Quick start (interactive):
   1. Install Python 3 if you don't have it (https://www.python.org/downloads/).
   2. Put the unit in AP mode: on the remote, hold `Timer` for 4 seconds. It
      creates a Wi-Fi network named `SMARTAIRCON` (password `1111122222`).
-  3. Connect this computer to the `SMARTAIRCON` network.
+  3. Connect the computer to the `SMARTAIRCON` network.
   4. Run:  python3 provision.py
      and enter your home Wi-Fi name and password when asked.
   5. When it prints "Done", the unit leaves AP mode and joins your Wi-Fi.
-     Reconnect this computer to your normal network.
+     Reconnect the computer to your normal network.
 
 Advanced (non-interactive): see `python3 provision.py --help`.
 """
 import argparse
 import getpass
 import os
+import re
 import socket
 import ssl
 import sys
 import tempfile
 import time
 from xml.sax.saxutils import quoteattr
+
+_DUID_RE = re.compile(r'DUID="([0-9A-Fa-f]{12})"')
+
+
+def _format_mac(duid: str) -> str:
+    d = duid.lower()
+    return ":".join(d[i : i + 2] for i in range(0, 12, 2))
 
 # The unit's address and port while it is broadcasting the SMARTAIRCON network.
 AP_HOST = "192.168.1.254"
@@ -201,17 +209,56 @@ def make_ssl_context():
     return ctx
 
 
-def provision(ssid, password, auth_mode, encrypt_type, host, timeout=30):
+def read_device_mac(host, ctx, timeout=6.0):
+    """Best-effort: read the module's DUID (its Wi-Fi MAC) before provisioning,
+    so a DHCP reservation can be prepared in advance. Returns the MAC
+    ("aa:bb:cc:dd:ee:ff") or None if the unit doesn't report it."""
+    try:
+        sock = ctx.wrap_socket(
+            socket.create_connection((host, PORT), timeout=10), server_hostname=host
+        )
+    except OSError:
+        return None
+    sock.settimeout(2)
+    buf = ""
+    asked = False
+    deadline = time.time() + timeout
+    try:
+        while time.time() < deadline:
+            try:
+                data = sock.recv(4096).decode("utf-8", "replace")
+            except socket.timeout:
+                data = ""
+            if data:
+                buf += data
+                m = _DUID_RE.search(buf)
+                if m:
+                    return _format_mac(m.group(1))
+            # Once greeted, ask the unit to identify itself (ignored on some units).
+            if not asked and ("InvalidateAccount" in buf or "DPLUG" in buf or not data):
+                try:
+                    sock.sendall(b'<Request Type="DeviceList"></Request>\r\n')
+                except OSError:
+                    break
+                asked = True
+            elif not data and asked:
+                break
+    finally:
+        sock.close()
+    m = _DUID_RE.search(buf)
+    return _format_mac(m.group(1)) if m else None
+
+
+def provision(ssid, password, auth_mode, encrypt_type, host, ctx, timeout=30):
     """Send the Wi-Fi credentials to a unit in AP mode. Returns True on success."""
     message = build_message(ssid, password, auth_mode, encrypt_type)
-    ctx = make_ssl_context()
     try:
         sock = ctx.wrap_socket(
             socket.create_connection((host, PORT), timeout=10), server_hostname=host
         )
     except OSError as err:
         print("\nCould not reach the air conditioner at %s:%d." % (host, PORT))
-        print("Make sure the unit is in AP mode and this computer is connected to")
+        print("Make sure the unit is in AP mode and the computer is connected to")
         print("its SMARTAIRCON network. (%s)" % err)
         return False
 
@@ -238,14 +285,14 @@ def provision(ssid, password, auth_mode, encrypt_type, host, timeout=30):
 
     if "Okay" in buf:
         print('\nDone! The unit accepted the settings and is joining "%s".' % ssid)
-        print("It will now leave the SMARTAIRCON network — reconnect this computer")
+        print("It will now leave the SMARTAIRCON network — reconnect the computer")
         print("to your normal Wi-Fi.")
         return True
     if "Fail" in buf:
         print("\nThe unit rejected the settings. Double-check the network name,")
         print("password and security type, then try again.")
         return False
-    print("\nNo response from the unit. Is it in AP mode, and is this computer")
+    print("\nNo response from the unit. Is it in AP mode, and is the computer")
     print("connected to the SMARTAIRCON network?")
     return False
 
@@ -277,6 +324,18 @@ def main():
     )
     args = parser.parse_args()
 
+    ctx = make_ssl_context()
+
+    # Show the unit's MAC first (if it reports it) so a DHCP reservation can be
+    # prepared before the unit joins the network.
+    mac = read_device_mac(args.host, ctx)
+    if mac:
+        print("Air conditioner found — its Wi-Fi MAC address is: %s" % mac.upper())
+        print(
+            "Tip: if you'd like it to keep a fixed IP, you can add a DHCP reservation\n"
+            "for this MAC on your router now, before it joins your network.\n"
+        )
+
     ssid = args.ssid if args.ssid is not None else input("Wi-Fi network name (SSID): ").strip()
     if not ssid:
         print("No network name given; aborting.")
@@ -288,7 +347,7 @@ def main():
     else:
         password = getpass.getpass("Wi-Fi password: ")
 
-    ok = provision(ssid, password, args.auth, args.encrypt, args.host)
+    ok = provision(ssid, password, args.auth, args.encrypt, args.host, ctx)
     sys.exit(0 if ok else 1)
 
 
