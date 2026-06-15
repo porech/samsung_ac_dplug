@@ -15,5 +15,5 @@
   "iot_class": "local_push",
   "issue_tracker": "https://github.com/porech/samsung_ac_dplug/issues",
   "requirements": ["pysamsung-dplug==0.9.1"],
-  "version": "0.9.1"
+  "version": "0.9.2"
 }

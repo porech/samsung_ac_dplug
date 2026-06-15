@@ -11,8 +11,10 @@ rules:
       platform, not standalone integration-level services.
   appropriate-polling: done
   brands:
-    status: todo
-    comment: Brand assets not yet submitted to the home-assistant/brands repository.
+    status: done
+    comment: |
+      Brand images shipped locally in brand/ (HA 2026.3+) and submitted to
+      home-assistant/brands (custom_integrations/samsung_ac_dplug).
   common-modules: done
   config-flow: done
   config-flow-test-coverage: done
