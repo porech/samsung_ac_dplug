@@ -5,7 +5,7 @@ from homeassistant.helpers.device_registry import DeviceInfo
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 from samsung_dplug import OptionCode
 
-from .const import ATTR_COOL_CAP, DOMAIN, MANUFACTURER
+from .const import ATTR_COOL_CAP, DOMAIN, MANUFACTURER, duid_to_mac
 from .coordinator import SamsungAcCoordinator
 
 
@@ -38,11 +38,5 @@ class SamsungAcEntity(CoordinatorEntity[SamsungAcCoordinator]):
             name=self.coordinator.entry.title,
             manufacturer=MANUFACTURER,
             model=model,
-            connections={("mac", _mac_from_duid(self._duid))},
+            connections={("mac", duid_to_mac(self._duid))},
         )
-
-
-def _mac_from_duid(duid: str) -> str:
-    """DUID is the MAC without separators -> format as aa:bb:cc:dd:ee:ff."""
-    d = duid[:12].lower()
-    return ":".join(d[i : i + 2] for i in range(0, 12, 2))

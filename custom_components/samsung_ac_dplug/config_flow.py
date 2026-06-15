@@ -29,6 +29,7 @@ from .const import (
     DEFAULT_LIVE_UPDATES,
     DEFAULT_SCAN_INTERVAL,
     DOMAIN,
+    duid_to_mac,
 )
 
 
@@ -46,6 +47,7 @@ class SamsungAcConfigFlow(ConfigFlow, domain=DOMAIN):
         self._host: str | None = None
         self._token: str | None = None
         self._duid: str | None = None
+        self._token_discovered: bool = False
         self._ssl = None
 
     async def _ssl_ctx(self):
@@ -78,21 +80,39 @@ class SamsungAcConfigFlow(ConfigFlow, domain=DOMAIN):
             try:
                 if manual:
                     self._token = manual
+                    self._token_discovered = False
                 else:
                     client = SamsungAcClient(self._host, ssl_context=await self._ssl_ctx())
                     self._token = await client.async_get_token(power_on_timeout=40)
+                    self._token_discovered = True
                 self._duid = await self._discover()
             except AuthError:
                 errors["base"] = "auth"
             except (SamsungAcError, asyncio.TimeoutError):
                 errors["base"] = "no_token"
             else:
+                # Offer to save a freshly discovered token before finishing, so the
+                # user can reuse it next time instead of repeating the power-on dance.
+                if self._token_discovered:
+                    return await self.async_step_save_token()
                 return await self._create()
         return self.async_show_form(
             step_id="token",
             data_schema=vol.Schema({vol.Optional(CONF_TOKEN): str}),
             errors=errors,
             description_placeholders={"host": self._host or ""},
+            last_step=True,
+        )
+
+    async def async_step_save_token(self, user_input=None) -> ConfigFlowResult:
+        """Show the freshly discovered token so the user can save it for next time."""
+        if user_input is not None:
+            return await self._create()
+        self._set_confirm_only()
+        return self.async_show_form(
+            step_id="save_token",
+            data_schema=vol.Schema({}),
+            description_placeholders={"token": self._token or ""},
             last_step=True,
         )
 
@@ -138,7 +158,7 @@ class SamsungAcConfigFlow(ConfigFlow, domain=DOMAIN):
         if not await async_probe(self._host, await self._ssl_ctx()):
             return self.async_abort(reason="not_samsung_ac")
         self._duid = duid
-        self.context["title_placeholders"] = {"name": f"Samsung AC {self._host}"}
+        self.context["title_placeholders"] = {"name": f"Samsung AC {duid_to_mac(duid).upper()}"}
         return await self.async_step_discovery_confirm()
 
     async def async_step_discovery_confirm(self, user_input=None) -> ConfigFlowResult:
@@ -159,7 +179,10 @@ class SamsungAcConfigFlow(ConfigFlow, domain=DOMAIN):
         await self.async_set_unique_id(self._duid)
         self._abort_if_unique_id_configured(updates={CONF_HOST: self._host})
         return self.async_create_entry(
-            title=f"Samsung AC {self._host}",
+            # Title is the device's stable identity, not its (mutable) IP. The
+            # DUID *is* the module's MAC, so show it as one. The host lives in
+            # data[] and is kept fresh by the DHCP discovery step.
+            title=f"Samsung AC {duid_to_mac(self._duid).upper()}",
             data={CONF_HOST: self._host, CONF_TOKEN: self._token, CONF_DUID: self._duid},
         )
 
