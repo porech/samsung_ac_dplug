@@ -1,0 +1,46 @@
+{
+  "entity": {
+    "sensor": {
+      "temperature": { "default": "mdi:thermometer" },
+      "humidity": { "default": "mdi:water-percent" },
+      "outdoor_temperature": { "default": "mdi:home-thermometer-outline" },
+      "used_time": { "default": "mdi:timer-outline" },
+      "filter_use_time": { "default": "mdi:air-filter" },
+      "filter_life": { "default": "mdi:air-filter" },
+      "error": { "default": "mdi:alert-circle-outline" },
+      "device_clock": { "default": "mdi:clock-outline" },
+      "schedules": { "default": "mdi:calendar-clock" }
+    },
+    "switch": {
+      "purify": { "default": "mdi:air-purifier" },
+      "auto_clean": { "default": "mdi:broom" },
+      "light": { "default": "mdi:led-on" },
+      "sterilize": { "default": "mdi:bacteria-outline" },
+      "smart_on": { "default": "mdi:motion-sensor" },
+      "weather": { "default": "mdi:weather-partly-cloudy" }
+    },
+    "number": {
+      "sleep_timer": { "default": "mdi:power-sleep" },
+      "on_timer": { "default": "mdi:timer-play-outline" },
+      "off_timer": { "default": "mdi:timer-off-outline" },
+      "energy_target": { "default": "mdi:flash-outline" }
+    },
+    "select": {
+      "occupancy": { "default": "mdi:account-group-outline" },
+      "beep_volume": { "default": "mdi:volume-high" },
+      "panel": { "default": "mdi:window-shutter" },
+      "filter_clean_interval": { "default": "mdi:air-filter" }
+    }
+  },
+  "services": {
+    "get_schedules": { "service": "mdi:calendar-search" },
+    "set_schedule": { "service": "mdi:calendar-plus" },
+    "delete_schedule": { "service": "mdi:calendar-remove" },
+    "get_power_usage": { "service": "mdi:chart-line" },
+    "set_power_logging": { "service": "mdi:database-cog-outline" },
+    "reset_power_logging": { "service": "mdi:database-remove-outline" },
+    "set_nickname": { "service": "mdi:rename-outline" },
+    "get_region_code": { "service": "mdi:earth" },
+    "set_region_code": { "service": "mdi:earth-arrow-right" }
+  }
+}

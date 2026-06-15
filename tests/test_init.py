@@ -31,6 +31,17 @@ async def test_setup_live_starts_stream(hass):
     stream.stop.assert_awaited_once()
 
 
+async def test_entities_unavailable_when_stream_disconnects(hass):
+    entry, stream = await setup_live(hass)
+    climate_id = hass.states.async_entity_ids("climate")[0]
+    assert hass.states.get(climate_id).state != "unavailable"
+
+    stream.connected = False
+    entry.runtime_data.handle_availability(False)
+    await hass.async_block_till_done()
+    assert hass.states.get(climate_id).state == "unavailable"
+
+
 async def test_expected_entities_created(hass):
     await setup_polling(hass)
     # humidity sensor (state has AC_ADD_HUMIDI) and the schedules sensor exist.

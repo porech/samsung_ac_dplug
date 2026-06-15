@@ -1,2 +1,2 @@
 pytest-homeassistant-custom-component
-pysamsung-dplug==0.8.0
+pysamsung-dplug==0.9.0

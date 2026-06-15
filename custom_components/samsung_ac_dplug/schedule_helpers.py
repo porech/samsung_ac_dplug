@@ -25,6 +25,7 @@ from .const import (
     ATTR_SCHEDULE_POWER,
     ATTR_SCHEDULE_REPEAT,
     ATTR_SCHEDULE_TIME,
+    DOMAIN,
     REPEAT_DAILY,
     REPEAT_ONCE,
     REPEAT_WEEKLY,
@@ -62,7 +63,9 @@ def schedule_from_call(data) -> Schedule:
     repeat = _REPEAT_TO_LIB[data[ATTR_SCHEDULE_REPEAT]]
     days = data.get(ATTR_SCHEDULE_DAYS) or []
     if repeat in (ONCE, EVERYWEEK) and not days:
-        raise ServiceValidationError("Select at least one day for 'once' and 'weekly' schedules.")
+        raise ServiceValidationError(
+            translation_domain=DOMAIN, translation_key="schedule_needs_day"
+        )
     when = data[ATTR_SCHEDULE_TIME]
     power = "On" if data[ATTR_SCHEDULE_POWER] == "on" else "Off"
     return Schedule(

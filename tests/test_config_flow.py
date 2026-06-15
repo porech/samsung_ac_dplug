@@ -131,6 +131,36 @@ async def test_duplicate_unit_aborts(hass):
     assert result["reason"] == "already_configured"
 
 
+async def test_reconfigure_updates_host(hass):
+    entry = MockConfigEntry(
+        domain=DOMAIN, unique_id=DUID, data={"host": "192.168.1.99", "token": "tok", "duid": DUID}
+    )
+    entry.add_to_hass(hass)
+    p_ssl, p_client = _patches()
+    with p_ssl, p_client as mock_client:
+        mock_client.return_value.async_discover_duid = AsyncMock(return_value=DUID)
+        result = await entry.start_reconfigure_flow(hass)
+        assert result["step_id"] == "reconfigure"
+        result = await hass.config_entries.flow.async_configure(result["flow_id"], {"host": HOST})
+    assert result["type"] == FlowResultType.ABORT
+    assert result["reason"] == "reconfigure_successful"
+    assert entry.data["host"] == HOST
+
+
+async def test_reconfigure_rejects_wrong_device(hass):
+    entry = MockConfigEntry(
+        domain=DOMAIN, unique_id=DUID, data={"host": HOST, "token": "tok", "duid": DUID}
+    )
+    entry.add_to_hass(hass)
+    p_ssl, p_client = _patches()
+    with p_ssl, p_client as mock_client:
+        mock_client.return_value.async_discover_duid = AsyncMock(return_value="AABBCCDDEEFF")
+        result = await entry.start_reconfigure_flow(hass)
+        result = await hass.config_entries.flow.async_configure(result["flow_id"], {"host": "192.168.1.77"})
+    assert result["type"] == FlowResultType.ABORT
+    assert result["reason"] == "wrong_device"
+
+
 async def test_options_flow(hass):
     entry = MockConfigEntry(domain=DOMAIN, unique_id=DUID, data={"host": HOST}, options={})
     entry.add_to_hass(hass)

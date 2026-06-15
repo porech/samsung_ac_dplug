@@ -162,6 +162,34 @@ class SamsungAcConfigFlow(ConfigFlow, domain=DOMAIN):
             description_placeholders={"host": self._host or ""},
         )
 
+    # ---- reconfigure --------------------------------------------------
+    async def async_step_reconfigure(self, user_input=None) -> ConfigFlowResult:
+        """Let the user point an existing unit at a new IP address."""
+        entry = self._get_reconfigure_entry()
+        self._token = entry.data[CONF_TOKEN]
+        self._duid = entry.data.get(CONF_DUID)
+        errors: dict[str, str] = {}
+        if user_input is not None:
+            self._host = user_input[CONF_HOST].strip()
+            try:
+                duid = await self._discover()  # validates host + token
+            except AuthError:
+                errors["base"] = "auth"
+            except (SamsungAcError, asyncio.TimeoutError):
+                errors["base"] = "cannot_connect"
+            else:
+                await self.async_set_unique_id(duid)
+                self._abort_if_unique_id_mismatch(reason="wrong_device")
+                return self.async_update_reload_and_abort(
+                    entry, data_updates={CONF_HOST: self._host}
+                )
+        schema = vol.Schema(
+            {vol.Required(CONF_HOST, default=entry.data[CONF_HOST]): str}
+        )
+        return self.async_show_form(
+            step_id="reconfigure", data_schema=schema, errors=errors
+        )
+
     # ---- discovery ----------------------------------------------------
     async def async_step_dhcp(self, discovery_info: DhcpServiceInfo) -> ConfigFlowResult:
         self._host = discovery_info.ip

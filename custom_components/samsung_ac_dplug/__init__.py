@@ -37,6 +37,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: SamsungAcConfigEntry) ->
         )
         coordinator = SamsungAcCoordinator(hass, entry, stream=stream, interval=interval)
         stream.set_on_update(coordinator.handle_push)
+        stream.set_on_availability(coordinator.handle_availability)
         await stream.start()
         if stream.auth_failed:
             await stream.stop()

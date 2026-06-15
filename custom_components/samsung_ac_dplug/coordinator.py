@@ -71,6 +71,16 @@ class SamsungAcCoordinator(DataUpdateCoordinator[dict]):
         """Called by the stream when new state arrives."""
         self.async_set_updated_data(state)
 
+    @callback
+    def handle_availability(self, connected: bool) -> None:
+        """Called by the stream when the live connection goes up or down."""
+        host = self.entry.data.get("host")
+        if connected:
+            _LOGGER.info("Reconnected to Samsung AC at %s", host)
+        else:
+            _LOGGER.warning("Lost connection to Samsung AC at %s; entities are unavailable", host)
+        self.async_update_listeners()
+
     @property
     def device_clock(self):
         """The unit's internal clock (UTC datetime) from the last auth, or None."""

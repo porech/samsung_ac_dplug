@@ -19,6 +19,15 @@ class SamsungAcEntity(CoordinatorEntity[SamsungAcCoordinator]):
         self._duid = coordinator.entry.data["duid"]
 
     @property
+    def available(self) -> bool:
+        # In live (push) mode also require the stream to be connected, so entities
+        # go unavailable when the link drops; polling relies on last_update_success.
+        if not super().available:
+            return False
+        stream = self.coordinator.stream
+        return stream.connected if stream is not None else True
+
+    @property
     def _state(self) -> dict:
         return self.coordinator.data or {}
 

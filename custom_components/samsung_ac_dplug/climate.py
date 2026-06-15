@@ -27,7 +27,11 @@ def _service(func):
         try:
             return await func(self, *args, **kwargs)
         except SamsungAcError as err:
-            raise HomeAssistantError(f"Samsung AC command failed: {err}") from err
+            raise HomeAssistantError(
+                translation_domain=DOMAIN,
+                translation_key="command_failed",
+                translation_placeholders={"error": str(err)},
+            ) from err
 
     return wrapper
 
@@ -62,6 +66,7 @@ from .const import (
     ATTR_SCHEDULE_ID,
     ATTR_START,
     ATTR_UNIT,
+    DOMAIN,
     SERVICE_GET_POWER_USAGE,
     SERVICE_GET_REGION_CODE,
     SERVICE_RESET_POWER_LOGGING,

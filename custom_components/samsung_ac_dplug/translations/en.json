@@ -41,6 +41,13 @@
       "discovery_confirm": {
         "title": "Samsung air conditioner found",
         "description": "A Samsung air conditioner was discovered at {host}. Set it up now? In the next step you will acquire a token (power-on), unless you already know it."
+      },
+      "reconfigure": {
+        "title": "Change IP address",
+        "description": "Enter the new IP address for this air conditioner. The existing token is reused.",
+        "data": {
+          "host": "IP address"
+        }
       }
     },
     "error": {
@@ -52,7 +59,9 @@
       "already_configured": "This air conditioner is already configured.",
       "not_samsung_ac": "This device does not speak the Samsung DPLUG protocol.",
       "reauth_successful": "Re-authentication was successful.",
-      "onboard_finished": "Once the air conditioner is on your Wi-Fi, add it from Settings → Devices & Services — it should be discovered automatically, or choose “It's already on my Wi-Fi” to enter its IP."
+      "onboard_finished": "Once the air conditioner is on your Wi-Fi, add it from Settings → Devices & Services — it should be discovered automatically, or choose “It's already on my Wi-Fi” to enter its IP.",
+      "wrong_device": "The unit at that address is a different air conditioner.",
+      "reconfigure_successful": "The IP address was updated."
     }
   },
   "options": {
@@ -336,6 +345,14 @@
         "hour": "Per hour",
         "day": "Per day"
       }
+    }
+  },
+  "exceptions": {
+    "command_failed": {
+      "message": "Samsung AC command failed: {error}"
+    },
+    "schedule_needs_day": {
+      "message": "Select at least one day for 'Once' and 'Weekly' schedules."
     }
   }
 }

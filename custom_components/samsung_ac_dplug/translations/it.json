@@ -41,6 +41,13 @@
       "discovery_confirm": {
         "title": "Condizionatore Samsung trovato",
         "description": "Trovato un condizionatore Samsung a {host}. Vuoi configurarlo ora? Nel passo successivo dovrai acquisire il token (accensione), se non lo conosci già."
+      },
+      "reconfigure": {
+        "title": "Cambia indirizzo IP",
+        "description": "Inserisci il nuovo indirizzo IP di questo condizionatore. Il token esistente viene riutilizzato.",
+        "data": {
+          "host": "Indirizzo IP"
+        }
       }
     },
     "error": {
@@ -52,7 +59,9 @@
       "already_configured": "Questo condizionatore è già configurato.",
       "not_samsung_ac": "Questo dispositivo non parla il protocollo Samsung DPLUG.",
       "reauth_successful": "Ri-autenticazione completata.",
-      "onboard_finished": "Una volta che il condizionatore è sul Wi-Fi, aggiungilo da Impostazioni → Dispositivi e servizi: dovrebbe essere rilevato automaticamente, oppure scegli «È già sul mio Wi-Fi» per inserire l'IP."
+      "onboard_finished": "Una volta che il condizionatore è sul Wi-Fi, aggiungilo da Impostazioni → Dispositivi e servizi: dovrebbe essere rilevato automaticamente, oppure scegli «È già sul mio Wi-Fi» per inserire l'IP.",
+      "wrong_device": "All'indirizzo indicato c'è un condizionatore diverso.",
+      "reconfigure_successful": "L'indirizzo IP è stato aggiornato."
     }
   },
   "options": {
@@ -336,6 +345,14 @@
         "hour": "Per ora",
         "day": "Per giorno"
       }
+    }
+  },
+  "exceptions": {
+    "command_failed": {
+      "message": "Comando al condizionatore Samsung non riuscito: {error}"
+    },
+    "schedule_needs_day": {
+      "message": "Seleziona almeno un giorno per le programmazioni 'Una volta' e 'Settimanale'."
     }
   }
 }

@@ -96,7 +96,7 @@ async def test_service_wraps_device_error(hass):
         )
     except HomeAssistantError as err:
         raised = True
-        assert "Samsung AC command failed" in str(err)
+        assert err.translation_key == "command_failed"
     assert raised
 
 
