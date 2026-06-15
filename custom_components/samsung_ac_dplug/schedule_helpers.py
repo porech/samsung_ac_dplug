@@ -8,6 +8,7 @@ multi-step scenarios) use Home Assistant automations instead.
 from __future__ import annotations
 
 import voluptuous as vol
+from homeassistant.exceptions import ServiceValidationError
 from homeassistant.helpers import config_validation as cv
 from samsung_dplug import (
     EVERYDAY_TYPE,
@@ -55,13 +56,13 @@ DELETE_SCHEDULE_SCHEMA = {vol.Required(ATTR_SCHEDULE_ID): cv.string}
 def schedule_from_call(data) -> Schedule:
     """Build a library Schedule from validated set_schedule service data.
 
-    Raises vol.Invalid when 'once'/'weekly' is requested without any day, since
-    those repeat types need at least one day on the wire.
+    Raises ServiceValidationError when 'once'/'weekly' is requested without any
+    day, since those repeat types need at least one day on the wire.
     """
     repeat = _REPEAT_TO_LIB[data[ATTR_SCHEDULE_REPEAT]]
     days = data.get(ATTR_SCHEDULE_DAYS) or []
     if repeat in (ONCE, EVERYWEEK) and not days:
-        raise vol.Invalid("Select at least one day for 'once' and 'weekly' schedules.")
+        raise ServiceValidationError("Select at least one day for 'once' and 'weekly' schedules.")
     when = data[ATTR_SCHEDULE_TIME]
     power = "On" if data[ATTR_SCHEDULE_POWER] == "on" else "Off"
     return Schedule(
