@@ -96,10 +96,43 @@
     },
     "switch": {
       "purify": { "name": "Purify (SPi)" },
-      "auto_clean": { "name": "Auto-pulizia" }
+      "auto_clean": { "name": "Auto-pulizia" },
+      "light": { "name": "Luce display" },
+      "sterilize": { "name": "Sterilizzazione" },
+      "smart_on": { "name": "Accensione smart" },
+      "weather": { "name": "Meteo" }
     },
     "number": {
-      "sleep_timer": { "name": "Timer sleep" }
+      "sleep_timer": { "name": "Timer sleep" },
+      "on_timer": { "name": "Timer accensione" },
+      "off_timer": { "name": "Timer spegnimento" },
+      "energy_target": { "name": "Obiettivo energia" }
+    },
+    "select": {
+      "occupancy": {
+        "name": "Occupazione",
+        "state": {
+          "single": "Singolo",
+          "couple": "Coppia",
+          "family": "Famiglia"
+        }
+      },
+      "beep_volume": {
+        "name": "Volume bip",
+        "state": {
+          "mute": "Muto",
+          "33": "33%",
+          "66": "66%",
+          "100": "100%"
+        }
+      },
+      "panel": {
+        "name": "Pannello frontale",
+        "state": {
+          "open": "Aperto",
+          "close": "Chiuso"
+        }
+      }
     }
   }
 }

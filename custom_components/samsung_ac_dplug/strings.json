@@ -96,10 +96,43 @@
     },
     "switch": {
       "purify": { "name": "Purify (SPi)" },
-      "auto_clean": { "name": "Auto clean" }
+      "auto_clean": { "name": "Auto clean" },
+      "light": { "name": "Display light" },
+      "sterilize": { "name": "Sterilize" },
+      "smart_on": { "name": "Smart on" },
+      "weather": { "name": "Weather" }
     },
     "number": {
-      "sleep_timer": { "name": "Sleep timer" }
+      "sleep_timer": { "name": "Sleep timer" },
+      "on_timer": { "name": "On timer" },
+      "off_timer": { "name": "Off timer" },
+      "energy_target": { "name": "Energy target" }
+    },
+    "select": {
+      "occupancy": {
+        "name": "Occupancy",
+        "state": {
+          "single": "Single",
+          "couple": "Couple",
+          "family": "Family"
+        }
+      },
+      "beep_volume": {
+        "name": "Beep volume",
+        "state": {
+          "mute": "Mute",
+          "33": "33%",
+          "66": "66%",
+          "100": "100%"
+        }
+      },
+      "panel": {
+        "name": "Front panel",
+        "state": {
+          "open": "Open",
+          "close": "Close"
+        }
+      }
     }
   }
 }

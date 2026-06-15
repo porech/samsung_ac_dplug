@@ -10,7 +10,14 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from samsung_dplug import OptionCode
 
-from .const import ATTR_AUTOCLEAN, ATTR_SPI
+from .const import (
+    ATTR_AUTOCLEAN,
+    ATTR_LIGHT,
+    ATTR_SMARTON,
+    ATTR_SPI,
+    ATTR_STERILIZE,
+    ATTR_WEATHER,
+)
 from .entity import SamsungAcEntity
 
 
@@ -23,6 +30,10 @@ class AcSwitch(SwitchEntityDescription):
 SWITCHES: tuple[AcSwitch, ...] = (
     AcSwitch(key="purify", translation_key="purify", attr=ATTR_SPI, icon="mdi:air-purifier", cap=lambda o: o.spi),
     AcSwitch(key="auto_clean", translation_key="auto_clean", attr=ATTR_AUTOCLEAN, icon="mdi:auto-fix"),
+    AcSwitch(key="light", translation_key="light", attr=ATTR_LIGHT, icon="mdi:lightbulb"),
+    AcSwitch(key="sterilize", translation_key="sterilize", attr=ATTR_STERILIZE, icon="mdi:water-percent"),
+    AcSwitch(key="smart_on", translation_key="smart_on", attr=ATTR_SMARTON, icon="mdi:motion-sensor"),
+    AcSwitch(key="weather", translation_key="weather", attr=ATTR_WEATHER, icon="mdi:weather-partly-cloudy"),
 )
 
 

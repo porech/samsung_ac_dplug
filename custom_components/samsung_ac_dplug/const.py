@@ -38,6 +38,16 @@ ATTR_FILTER_MAX = "AC_ADD2_FILTERTIME"
 ATTR_CLEAR_FILTER = "AC_ADD_CLEAR_FILTER_ALARM"
 ATTR_COOL_CAP = "AC_COOL_CAPABILITY"
 ATTR_WARM_CAP = "AC_WARM_CAPABILITY"
+ATTR_LIGHT = "AC_ADD_LIGHT"
+ATTR_STERILIZE = "AC_ADD_STERILIZE"
+ATTR_SMARTON = "AC_ADD_SMARTON"
+ATTR_WEATHER = "AC_ADD_WEATHER"
+ATTR_ONTIMER = "AC_FUN_ONTIMER"
+ATTR_OFFTIMER = "AC_FUN_OFFTIMER"
+ATTR_SETKWH = "AC_ADD_SETKWH"
+ATTR_OPERATION = "AC_FUN_OPERATION"
+ATTR_VOLUME = "AC_ADD_VOLUME"
+ATTR_PANEL = "AC_ADD_PANEL"
 
 # Value maps (HA <-> device)
 HVAC_TO_DEVICE = {
@@ -72,6 +82,11 @@ PRESET_TO_DEVICE = {
     "color_of_wind_savanna": "WindMode3",
 }
 DEVICE_TO_PRESET = {v: k for k, v in PRESET_TO_DEVICE.items()}
+
+# Select value maps (HA option key <-> device value)
+OPERATION_TO_DEVICE = {"single": "Solo", "couple": "Couple", "family": "Family"}
+VOLUME_TO_DEVICE = {"mute": "Mute", "33": "n33", "66": "n66", "100": "n100"}
+PANEL_TO_DEVICE = {"open": "Open", "close": "Close"}
 
 MIN_TEMP = 16
 MAX_TEMP = 30
