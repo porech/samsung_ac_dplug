@@ -13,8 +13,9 @@ rules:
   brands:
     status: done
     comment: |
-      Brand images shipped locally in brand/ (HA 2026.3+) and submitted to
-      home-assistant/brands (custom_integrations/samsung_ac_dplug).
+      Brand images shipped locally in brand/ — the supported method for custom
+      integrations since HA 2026.3 (home-assistant/brands no longer accepts
+      brand PRs for custom integrations).
   common-modules: done
   config-flow: done
   config-flow-test-coverage: done
