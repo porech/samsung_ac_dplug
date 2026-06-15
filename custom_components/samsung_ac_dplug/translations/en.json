@@ -90,6 +90,7 @@
       "outdoor_temperature": { "name": "Outdoor temperature" },
       "used_time": { "name": "Operating time" },
       "filter_use_time": { "name": "Filter use time" },
+      "filter_life": { "name": "Filter life" },
       "error": { "name": "Error code" }
     },
     "switch": {
@@ -98,6 +99,9 @@
     },
     "number": {
       "sleep_timer": { "name": "Sleep timer" }
+    },
+    "button": {
+      "reset_filter": { "name": "Reset filter indicator" }
     }
   }
 }

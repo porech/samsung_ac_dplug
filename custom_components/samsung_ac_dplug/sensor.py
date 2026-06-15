@@ -3,6 +3,7 @@ from __future__ import annotations
 
 from collections.abc import Callable
 from dataclasses import dataclass
+from typing import Any
 
 from homeassistant.components.sensor import (
     SensorDeviceClass,
@@ -17,6 +18,7 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from .const import (
     ATTR_ERROR,
+    ATTR_FILTER_MAX,
     ATTR_FILTER_TIME,
     ATTR_OUTDOOR_TEMP,
     ATTR_TEMPNOW,
@@ -41,10 +43,29 @@ def _error(v):
     return v
 
 
+def _filter_life(state: dict) -> int | None:
+    """Remaining filter life as a percentage.
+
+    used = hours since last clean (AC_ADD2_FILTER_USE_TIME),
+    total = cleaning interval / total hours (AC_ADD2_FILTERTIME).
+    """
+    used = _to_int(state.get(ATTR_FILTER_TIME))
+    total = _to_int(state.get(ATTR_FILTER_MAX))
+    if used is None or total is None or total <= 0:
+        return None
+    return round(max(0, min(100, (1 - used / total) * 100)))
+
+
 @dataclass(frozen=True, kw_only=True)
 class AcSensor(SensorEntityDescription):
     attr: str
     convert: Callable = _to_int
+    # When set, the value is computed from the full coordinator state instead of
+    # a single attribute (used for derived sensors like filter life %).
+    value_from_state: Callable[[dict], Any] | None = None
+    # Extra attributes that must also be present in state for the sensor to be
+    # created (in addition to `attr`).
+    requires: tuple[str, ...] = ()
 
 
 SENSORS: tuple[AcSensor, ...] = (
@@ -84,6 +105,16 @@ SENSORS: tuple[AcSensor, ...] = (
         entity_category=EntityCategory.DIAGNOSTIC,
     ),
     AcSensor(
+        key="filter_life",
+        translation_key="filter_life",
+        attr=ATTR_FILTER_TIME,
+        requires=(ATTR_FILTER_MAX,),
+        value_from_state=_filter_life,
+        native_unit_of_measurement="%",
+        state_class=SensorStateClass.MEASUREMENT,
+        entity_category=EntityCategory.DIAGNOSTIC,
+    ),
+    AcSensor(
         key="error",
         translation_key="error",
         attr=ATTR_ERROR,
@@ -99,8 +130,12 @@ PARALLEL_UPDATES = 0
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_entities: AddEntitiesCallback) -> None:
     coordinator = entry.runtime_data
     state = coordinator.data or {}
+
+    def supported(desc: AcSensor) -> bool:
+        return desc.attr in state and all(req in state for req in desc.requires)
+
     async_add_entities(
-        SamsungAcSensor(coordinator, desc) for desc in SENSORS if desc.attr in state
+        SamsungAcSensor(coordinator, desc) for desc in SENSORS if supported(desc)
     )
 
 
@@ -114,4 +149,6 @@ class SamsungAcSensor(SamsungAcEntity, SensorEntity):
 
     @property
     def native_value(self):
+        if self.entity_description.value_from_state is not None:
+            return self.entity_description.value_from_state(self._state)
         return self.entity_description.convert(self._state.get(self.entity_description.attr))
