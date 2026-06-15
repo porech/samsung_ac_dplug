@@ -52,8 +52,10 @@ The config flow walks you through everything:
 
 1. **Get the unit on Wi-Fi** (once, physically): hold **`Settings` 4 s** on the remote
    to start WPS (hidden function — the display just blinks), then press WPS on your
-   router. *(No WPS router? Use the `provision.py` helper from the library repo while
-   connected to the unit’s `SMARTAIRCON` network.)*
+   router. *(No WPS button on your router? Use the self-contained
+   [`scripts/provision.py`](scripts/provision.py) helper — only needs Python 3 — from a
+   computer connected to the unit’s `SMARTAIRCON` network; run `python3 provision.py`
+   and enter your Wi-Fi name and password when asked.)*
 2. **Discovery**: once on the network the unit is auto-detected (DHCP); or enter its IP
    manually.
 3. **Token**: turn the unit OFF (if on), submit, then turn it ON within ~30 s. The token
