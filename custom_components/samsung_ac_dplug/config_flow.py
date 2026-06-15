@@ -126,7 +126,7 @@ class SamsungAcConfigFlow(ConfigFlow, domain=DOMAIN):
         return self.async_show_form(
             step_id="save_token",
             data_schema=vol.Schema({}),
-            description_placeholders={"token": self._token or ""},
+            description_placeholders={"host": self._host or "", "token": self._token or ""},
             last_step=True,
         )
 
