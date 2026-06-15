@@ -49,7 +49,7 @@ set_schedule:
             - sat
             - sun
     enabled:
-      required: true
+      required: false
       default: true
       selector:
         boolean:

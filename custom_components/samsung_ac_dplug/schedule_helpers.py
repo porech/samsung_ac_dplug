@@ -36,8 +36,8 @@ _WEEKDAYS = vol.All(cv.ensure_list, [vol.In(list(_WEEKDAY_TO_PY))])
 _REPEAT_TO_LIB = {REPEAT_ONCE: ONCE, REPEAT_DAILY: EVERYDAY_TYPE, REPEAT_WEEKLY: EVERYWEEK}
 _LIB_TO_REPEAT = {v: k for k, v in _REPEAT_TO_LIB.items()}
 
-# `repeat` and `enabled` are Required (with defaults) so the HA UI shows them as
-# always-active controls rather than fields gated behind an opt-in checkbox.
+# `repeat` is Required (with a default) so the HA UI shows the frequency radio
+# group as always-active rather than gated behind an opt-in checkbox.
 SET_SCHEDULE_SCHEMA = {
     vol.Required(ATTR_SCHEDULE_TIME): cv.time,
     vol.Required(ATTR_SCHEDULE_POWER): vol.In(["on", "off"]),
@@ -45,7 +45,7 @@ SET_SCHEDULE_SCHEMA = {
         [REPEAT_ONCE, REPEAT_DAILY, REPEAT_WEEKLY]
     ),
     vol.Optional(ATTR_SCHEDULE_DAYS): _WEEKDAYS,
-    vol.Required(ATTR_SCHEDULE_ENABLED, default=True): cv.boolean,
+    vol.Optional(ATTR_SCHEDULE_ENABLED, default=True): cv.boolean,
     vol.Optional(ATTR_SCHEDULE_ID): cv.string,
 }
 
