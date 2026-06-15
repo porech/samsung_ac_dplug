@@ -1,0 +1,358 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "三星冷氣機 (DPLUG / 2878)",
+        "description": "您想要如何設定冷氣機？",
+        "menu_options": {
+          "onboard": "將新裝置連線到 Wi-Fi（操作說明）",
+          "manual": "已經在我的 Wi-Fi 上（輸入 IP）"
+        }
+      },
+      "onboard": {
+        "title": "將裝置連線到您的 Wi-Fi",
+        "description": "舊款三星裝置無法透過網路協定加入 Wi-Fi —— 需要手動操作一次。\n\n**方案 A —— WPS（最簡單，建議）**\n1. 在遙控器上，**長按 `Settings` 4 秒**（隱藏功能：顯示器只會閃爍一下）以啟動 WPS。\n2. 在 2 分鐘內，**按下路由器上的 WPS 按鈕**。\n3. 當模組上的 Wi-Fi 指示燈恆亮時，表示已連線成功。\n\n**方案 B —— 從電腦操作（如果路由器沒有 WPS 按鈕）**\n1. 如果尚未安裝 **Python 3** 請先安裝（{python_url}），然後**下載輔助腳本**（單一檔案，無需額外安裝）：{script_url}\n2. 在遙控器上，**長按 `Timer` 4 秒**讓裝置進入 AP 模式；會出現一個名為 **`SMARTAIRCON`** 的 Wi-Fi 網路。\n3. **將電腦連線到 `SMARTAIRCON` 網路**（密碼 **`1111122222`**）。\n4. **執行腳本** —— `python3 provision.py` —— 在出現提示時，輸入您家中 Wi-Fi 的名稱和密碼。\n5. 當顯示 **Done** 時，裝置即加入您的 Wi-Fi；請將電腦重新連回您的一般網路。\n\n裝置連上 Wi-Fi 後，**關閉此視窗**並開啟 **設定 → 裝置與服務**：它應該會在那裡自動出現（探索）。如果沒有，請重新開始新增並選擇 **已經在我的 Wi-Fi 上** 來輸入它的 IP。\n\n_給進階使用者：`python3 provision.py --help` 列出了在沒有互動式提示的情況下執行它的選項。_"
+      },
+      "manual": {
+        "title": "連線到冷氣機",
+        "description": "輸入裝置的 IP 位址。權杖將在下一步處理。",
+        "data": {
+          "host": "IP 位址"
+        }
+      },
+      "token": {
+        "title": "取得存取權杖",
+        "description": "位於 {host} 的裝置只在開機時發放權杖（一種實體存取驗證步驟）。\n\n1. 如果冷氣機已開啟，請用遙控器**關閉冷氣機**。\n2. 點選下方的 **送出**（欄位留空）。\n3. 在約 30 秒內，用遙控器**開啟冷氣機**。\n\n權杖將被自動擷取並儲存。\n\n**或者**，如果您已經有此裝置的權杖，請在下方輸入並點選送出。",
+        "data": {
+          "token": "權杖（選填）"
+        }
+      },
+      "save_token": {
+        "title": "已取得權杖",
+        "description": "完成 —— 位於 {host} 的裝置的權杖已取得並儲存至此整合中。\n\n💡 **提示：** 請儲存此裝置的權杖，以免將來需要重新取得（在新增裝置時可以直接貼上）：\n\n```\n{token}\n```\n\n點選 **送出** 完成。"
+      },
+      "reauth_confirm": {
+        "title": "重新驗證三星冷氣機",
+        "description": "位於 {host} 的裝置的權杖遭拒（在模組重設後可能會改變）。請取得一個新權杖：關閉裝置，送出（留空），然後在約 30 秒內開啟。或者在下方輸入已知的權杖。",
+        "data": {
+          "token": "權杖（選填）"
+        }
+      },
+      "discovery_confirm": {
+        "title": "已找到三星冷氣機",
+        "description": "在 {host} 探索到一台三星冷氣機。現在設定嗎？在下一步中，您將取得權杖（開機），除非您已經知道它。"
+      },
+      "reconfigure": {
+        "title": "變更 IP 位址",
+        "description": "輸入此冷氣機的新 IP 位址。將沿用現有的權杖。",
+        "data": {
+          "host": "IP 位址"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "無法連線。請檢查 IP 位址以及裝置是否已接入網路。",
+      "auth": "權杖遭拒。將其留空以取得新權杖。",
+      "no_token": "未收到權杖。請確認裝置先關閉，然後在時間窗內開啟。請重試。"
+    },
+    "abort": {
+      "already_configured": "此冷氣機已設定。",
+      "not_samsung_ac": "此裝置不支援 Samsung DPLUG 協定。",
+      "reauth_successful": "重新驗證成功。",
+      "onboard_finished": "冷氣機連上 Wi-Fi 後，從 設定 → 裝置與服務 新增 —— 它應該會被自動探索，或者選擇「已經在我的 Wi-Fi 上」來輸入它的 IP。",
+      "wrong_device": "該位址上的裝置是另一台冷氣機。",
+      "reconfigure_successful": "IP 位址已更新。"
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "三星冷氣機選項",
+        "data": {
+          "live_updates": "即時更新（持續連線）",
+          "scan_interval": "重新整理間隔（秒）"
+        },
+        "data_description": {
+          "live_updates": "保持一個持續連線以取得即時推播更新。如果關閉，整合將透過輪詢運作且不使用持續連線（更穩健）。",
+          "scan_interval": "即時更新關閉時的輪詢間隔；即時更新開啟時的後援/保持連線輪詢。"
+        }
+      }
+    }
+  },
+  "entity": {
+    "climate": {
+      "samsung_ac": {
+        "state_attributes": {
+          "preset_mode": {
+            "state": {
+              "none": "關閉",
+              "quiet": "靜音",
+              "fast_turbo": "快速強勁",
+              "comfort": "舒適",
+              "dlight_cool": "d'light Cool",
+              "smart_saver": "智慧節能",
+              "color_of_wind_alps": "Color of Wind: Alps",
+              "color_of_wind_florida": "Color of Wind: Florida",
+              "color_of_wind_savanna": "Color of Wind: Savanna"
+            }
+          },
+          "swing_mode": {
+            "state": {
+              "off": "關閉",
+              "vertical": "垂直",
+              "horizontal": "水平",
+              "both": "雙向",
+              "indirect": "間接",
+              "direct": "直接",
+              "center": "置中",
+              "wide": "寬幅",
+              "left": "左",
+              "right": "右",
+              "long": "遠距"
+            }
+          }
+        }
+      }
+    },
+    "sensor": {
+      "temperature": {
+        "name": "溫度"
+      },
+      "humidity": {
+        "name": "濕度"
+      },
+      "outdoor_temperature": {
+        "name": "室外溫度"
+      },
+      "used_time": {
+        "name": "運轉時間"
+      },
+      "filter_use_time": {
+        "name": "濾網使用時間"
+      },
+      "filter_life": {
+        "name": "濾網壽命"
+      },
+      "error": {
+        "name": "錯誤代碼"
+      },
+      "device_clock": {
+        "name": "裝置時鐘"
+      },
+      "schedules": {
+        "name": "排程"
+      }
+    },
+    "switch": {
+      "purify": {
+        "name": "淨化 (SPi)"
+      },
+      "auto_clean": {
+        "name": "自動清潔"
+      },
+      "light": {
+        "name": "顯示器燈光"
+      },
+      "sterilize": {
+        "name": "殺菌"
+      },
+      "smart_on": {
+        "name": "智慧開機"
+      },
+      "weather": {
+        "name": "天氣"
+      }
+    },
+    "number": {
+      "sleep_timer": {
+        "name": "睡眠計時器"
+      },
+      "on_timer": {
+        "name": "開機計時器"
+      },
+      "off_timer": {
+        "name": "關機計時器"
+      },
+      "energy_target": {
+        "name": "耗能目標"
+      }
+    },
+    "select": {
+      "occupancy": {
+        "name": "入住人數",
+        "state": {
+          "single": "單人",
+          "couple": "雙人",
+          "family": "家庭"
+        }
+      },
+      "beep_volume": {
+        "name": "提示音音量",
+        "state": {
+          "mute": "靜音",
+          "33": "33%",
+          "66": "66%",
+          "100": "100%"
+        }
+      },
+      "panel": {
+        "name": "前面板",
+        "state": {
+          "open": "開啟",
+          "close": "關閉"
+        }
+      },
+      "filter_clean_interval": {
+        "name": "濾網清潔間隔",
+        "state": {
+          "180": "180 h",
+          "300": "300 h",
+          "500": "500 h",
+          "700": "700 h"
+        }
+      }
+    }
+  },
+  "services": {
+    "get_schedules": {
+      "name": "讀取排程",
+      "description": "列出儲存在裝置內建排程器中的排程。此功能控制冷氣機的內建排程器，即使 Home Assistant 離線時它也會運作，並且只在設定時間開啟或關閉裝置。對於更複雜的情境（溫度、模式、風量……），請使用 Home Assistant 自動化。"
+    },
+    "set_schedule": {
+      "name": "設定排程",
+      "description": "建立或編輯一個開/關排程。此功能控制冷氣機的內建排程器，即使 Home Assistant 離線時它也會運作，並且只在設定時間開啟或關閉裝置。對於更複雜的情境（溫度、模式、風量……），請使用 Home Assistant 自動化。",
+      "fields": {
+        "time": {
+          "name": "時間",
+          "description": "排程觸發的當地時間。"
+        },
+        "power": {
+          "name": "電源",
+          "description": "裝置是開啟還是關閉。"
+        },
+        "repeat": {
+          "name": "頻率",
+          "description": "執行頻率：一次、每天，或每週在所選日期執行。"
+        },
+        "days": {
+          "name": "日期",
+          "description": "在哪些日期執行 —— 「一次」和「每週」需要此項，「每天」則忽略。"
+        },
+        "enabled": {
+          "name": "已啟用",
+          "description": "排程是否處於啟用狀態。"
+        },
+        "schedule_id": {
+          "name": "排程 ID",
+          "description": "要編輯的現有排程的 ID；留空則建立新排程。"
+        }
+      }
+    },
+    "delete_schedule": {
+      "name": "刪除排程",
+      "description": "從裝置的內建排程器中刪除一個排程。此功能控制冷氣機的內建排程器，即使 Home Assistant 離線時它也會運作，並且只在設定時間開啟或關閉裝置。對於更複雜的情境（溫度、模式、風量……），請使用 Home Assistant 自動化。",
+      "fields": {
+        "schedule_id": {
+          "name": "排程 ID",
+          "description": "要刪除的排程的 ID（參見「排程」感測器或 get_schedules）。"
+        }
+      }
+    },
+    "get_power_usage": {
+      "name": "讀取耗電量",
+      "description": "擷取冷氣機在某個時間範圍內記錄的耗電量歷史。",
+      "fields": {
+        "start": {
+          "name": "開始",
+          "description": "範圍的開始（當地時間）。"
+        },
+        "end": {
+          "name": "結束",
+          "description": "範圍的結束（預設為現在）。"
+        },
+        "unit": {
+          "name": "彙總方式",
+          "description": "依小時或依天彙總用量。"
+        }
+      }
+    },
+    "set_power_logging": {
+      "name": "設定耗電記錄",
+      "description": "開啟或關閉裝置的耗電量記錄。",
+      "fields": {
+        "enable": {
+          "name": "啟用",
+          "description": "耗電量記錄是否開啟。"
+        }
+      }
+    },
+    "reset_power_logging": {
+      "name": "重設耗電記錄",
+      "description": "清除裝置上記錄的耗電量歷史。"
+    },
+    "set_nickname": {
+      "name": "設定暱稱",
+      "description": "設定儲存在裝置上的暱稱。",
+      "fields": {
+        "nickname": {
+          "name": "暱稱",
+          "description": "新的暱稱。"
+        }
+      }
+    },
+    "get_region_code": {
+      "name": "讀取地區代碼",
+      "description": "讀取儲存在裝置上的地區代碼。"
+    },
+    "set_region_code": {
+      "name": "設定地區代碼",
+      "description": "設定儲存在裝置上的地區代碼。",
+      "fields": {
+        "code": {
+          "name": "代碼",
+          "description": "地區代碼。"
+        }
+      }
+    }
+  },
+  "selector": {
+    "schedule_power": {
+      "options": {
+        "on": "開啟",
+        "off": "關閉"
+      }
+    },
+    "schedule_repeat": {
+      "options": {
+        "once": "一次",
+        "daily": "每天",
+        "weekly": "每週（所選日期）"
+      }
+    },
+    "schedule_days": {
+      "options": {
+        "mon": "星期一",
+        "tue": "星期二",
+        "wed": "星期三",
+        "thu": "星期四",
+        "fri": "星期五",
+        "sat": "星期六",
+        "sun": "星期日"
+      }
+    },
+    "power_unit": {
+      "options": {
+        "hour": "依小時",
+        "day": "依天"
+      }
+    }
+  },
+  "exceptions": {
+    "command_failed": {
+      "message": "三星冷氣機命令失敗：{error}"
+    },
+    "schedule_needs_day": {
+      "message": "請為「一次」和「每週」排程選擇至少一天。"
+    }
+  }
+}

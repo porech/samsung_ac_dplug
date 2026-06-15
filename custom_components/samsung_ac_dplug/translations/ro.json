@@ -1,0 +1,358 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Aer condiționat Samsung (DPLUG / 2878)",
+        "description": "Cum dorești să configurezi aparatul de aer condiționat?",
+        "menu_options": {
+          "onboard": "Conectează o unitate nouă la Wi-Fi (instrucțiuni)",
+          "manual": "Este deja în rețeaua mea Wi-Fi (introdu IP-ul)"
+        }
+      },
+      "onboard": {
+        "title": "Conectează unitatea la rețeaua ta Wi-Fi",
+        "description": "Aparatele Samsung vechi nu se conectează la Wi-Fi prin protocolul de rețea — trebuie făcut o singură dată, fizic.\n\n**Opțiunea A — WPS (cea mai simplă, recomandată)**\n1. Pe telecomandă, **ține apăsat `Settings` timp de 4 secunde** (funcție ascunsă: afișajul doar clipește) pentru a porni WPS.\n2. În maximum 2 minute, **apasă butonul WPS de pe router**.\n3. Când LED-ul Wi-Fi al modulului rămâne aprins fix, înseamnă că s-a conectat.\n\n**Opțiunea B — de pe un computer (dacă routerul nu are buton WPS)**\n1. Instalează **Python 3** dacă nu îl ai ({python_url}), apoi **descarcă scriptul ajutător** (un singur fișier, fără nimic altceva de instalat): {script_url}\n2. Pe telecomandă, **ține apăsat `Timer` timp de 4 secunde** pentru a pune unitatea în modul AP; va apărea o rețea Wi-Fi numită **`SMARTAIRCON`**.\n3. **Conectează computerul la rețeaua `SMARTAIRCON`** (parola **`1111122222`**).\n4. **Rulează scriptul** — `python3 provision.py` — și, când ți se cere, introdu numele și parola rețelei tale Wi-Fi de acasă.\n5. Când afișează **Done**, unitatea se conectează la rețeaua ta Wi-Fi; reconectează computerul la rețeaua ta obișnuită.\n\nDupă ce unitatea este în rețeaua ta Wi-Fi, **închide această fereastră** și deschide **Setări → Dispozitive și servicii**: ar trebui să fie oferită acolo automat (descoperire). Dacă nu apare, reia adăugarea și alege **Este deja în rețeaua mea Wi-Fi** pentru a-i introduce IP-ul.\n\n_Pentru utilizatori avansați: `python3 provision.py --help` listează opțiunile pentru a-l rula fără solicitările interactive._"
+      },
+      "manual": {
+        "title": "Conectează-te la aparatul de aer condiționat",
+        "description": "Introdu adresa IP a unității. Tokenul se gestionează la pasul următor.",
+        "data": {
+          "host": "Adresă IP"
+        }
+      },
+      "token": {
+        "title": "Obține tokenul de acces",
+        "description": "Unitatea de la {host} emite un token doar la pornire (un pas fizic de dovedire a accesului).\n\n1. **Oprește aparatul de aer condiționat** cu telecomanda, dacă este pornit.\n2. Apasă **Trimite** mai jos (lasă câmpul gol).\n3. În aproximativ 30 de secunde, **pornește aparatul de aer condiționat** cu telecomanda.\n\nTokenul va fi capturat și salvat automat.\n\n**Ca alternativă**, dacă ai deja tokenul acestei unități, introdu-l mai jos și apasă Trimite.",
+        "data": {
+          "token": "Token (opțional)"
+        }
+      },
+      "save_token": {
+        "title": "Token obținut",
+        "description": "Gata — tokenul unității de la {host} a fost obținut și salvat în această integrare.\n\n💡 **Sfat:** salvează tokenul acestui dispozitiv ca să nu fie nevoie să-l obții din nou în viitor (îl poți lipi direct când adaugi unitatea):\n\n```\n{token}\n```\n\nApasă **Trimite** pentru a finaliza."
+      },
+      "reauth_confirm": {
+        "title": "Reautentifică aparatul de aer condiționat Samsung",
+        "description": "Tokenul unității de la {host} a fost respins (se poate schimba după o resetare a modulului). Obține unul nou: oprește unitatea, trimite (lasă gol), apoi pornește-o în aproximativ 30 s. Sau introdu mai jos un token cunoscut.",
+        "data": {
+          "token": "Token (opțional)"
+        }
+      },
+      "discovery_confirm": {
+        "title": "A fost găsit un aparat de aer condiționat Samsung",
+        "description": "A fost descoperit un aparat de aer condiționat Samsung la {host}. Îl configurezi acum? La pasul următor vei obține un token (la pornire), dacă nu îl cunoști deja."
+      },
+      "reconfigure": {
+        "title": "Schimbă adresa IP",
+        "description": "Introdu noua adresă IP a acestui aparat de aer condiționat. Tokenul existent este reutilizat.",
+        "data": {
+          "host": "Adresă IP"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Nu se poate conecta. Verifică adresa IP și dacă unitatea este în rețea.",
+      "auth": "Tokenul a fost respins. Lasă-l gol pentru a obține unul nou.",
+      "no_token": "Nu s-a primit niciun token. Asigură-te că unitatea era oprită, apoi pornită în intervalul de timp. Încearcă din nou."
+    },
+    "abort": {
+      "already_configured": "Acest aparat de aer condiționat este deja configurat.",
+      "not_samsung_ac": "Acest dispozitiv nu vorbește protocolul Samsung DPLUG.",
+      "reauth_successful": "Reautentificarea a reușit.",
+      "onboard_finished": "După ce aparatul de aer condiționat este în rețeaua ta Wi-Fi, adaugă-l din Setări → Dispozitive și servicii — ar trebui să fie descoperit automat, sau alege „Este deja în rețeaua mea Wi-Fi” pentru a-i introduce IP-ul.",
+      "wrong_device": "Unitatea de la acea adresă este un alt aparat de aer condiționat.",
+      "reconfigure_successful": "Adresa IP a fost actualizată."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Opțiuni Samsung AC",
+        "data": {
+          "live_updates": "Actualizări în timp real (conexiune persistentă)",
+          "scan_interval": "Interval de reîmprospătare (secunde)"
+        },
+        "data_description": {
+          "live_updates": "Menține o conexiune persistentă pentru actualizări push instantanee. Dacă este dezactivat, integrarea face interogare (polling) și nu folosește nicio conexiune persistentă (mai rezistentă).",
+          "scan_interval": "Intervalul de interogare când actualizările în timp real sunt dezactivate; interogare de rezervă/keepalive când sunt activate."
+        }
+      }
+    }
+  },
+  "entity": {
+    "climate": {
+      "samsung_ac": {
+        "state_attributes": {
+          "preset_mode": {
+            "state": {
+              "none": "Oprit",
+              "quiet": "Silențios",
+              "fast_turbo": "Turbo rapid",
+              "comfort": "Comfort",
+              "dlight_cool": "d'light Cool",
+              "smart_saver": "Smart Saver",
+              "color_of_wind_alps": "Color of Wind: Alps",
+              "color_of_wind_florida": "Color of Wind: Florida",
+              "color_of_wind_savanna": "Color of Wind: Savanna"
+            }
+          },
+          "swing_mode": {
+            "state": {
+              "off": "Oprit",
+              "vertical": "Vertical",
+              "horizontal": "Orizontal",
+              "both": "Ambele",
+              "indirect": "Indirect",
+              "direct": "Direct",
+              "center": "Centru",
+              "wide": "Larg",
+              "left": "Stânga",
+              "right": "Dreapta",
+              "long": "Lung"
+            }
+          }
+        }
+      }
+    },
+    "sensor": {
+      "temperature": {
+        "name": "Temperatură"
+      },
+      "humidity": {
+        "name": "Umiditate"
+      },
+      "outdoor_temperature": {
+        "name": "Temperatură exterioară"
+      },
+      "used_time": {
+        "name": "Timp de funcționare"
+      },
+      "filter_use_time": {
+        "name": "Timp de utilizare a filtrului"
+      },
+      "filter_life": {
+        "name": "Durata de viață a filtrului"
+      },
+      "error": {
+        "name": "Cod de eroare"
+      },
+      "device_clock": {
+        "name": "Ceasul dispozitivului"
+      },
+      "schedules": {
+        "name": "Programări"
+      }
+    },
+    "switch": {
+      "purify": {
+        "name": "Purify (SPi)"
+      },
+      "auto_clean": {
+        "name": "Curățare automată"
+      },
+      "light": {
+        "name": "Lumină afișaj"
+      },
+      "sterilize": {
+        "name": "Sterilizare"
+      },
+      "smart_on": {
+        "name": "Pornire inteligentă"
+      },
+      "weather": {
+        "name": "Vreme"
+      }
+    },
+    "number": {
+      "sleep_timer": {
+        "name": "Cronometru de adormire"
+      },
+      "on_timer": {
+        "name": "Cronometru de pornire"
+      },
+      "off_timer": {
+        "name": "Cronometru de oprire"
+      },
+      "energy_target": {
+        "name": "Obiectiv de energie"
+      }
+    },
+    "select": {
+      "occupancy": {
+        "name": "Ocupare",
+        "state": {
+          "single": "Individual",
+          "couple": "Cuplu",
+          "family": "Familie"
+        }
+      },
+      "beep_volume": {
+        "name": "Volum bip",
+        "state": {
+          "mute": "Mut",
+          "33": "33%",
+          "66": "66%",
+          "100": "100%"
+        }
+      },
+      "panel": {
+        "name": "Panou frontal",
+        "state": {
+          "open": "Deschis",
+          "close": "Închis"
+        }
+      },
+      "filter_clean_interval": {
+        "name": "Interval de curățare a filtrului",
+        "state": {
+          "180": "180 h",
+          "300": "300 h",
+          "500": "500 h",
+          "700": "700 h"
+        }
+      }
+    }
+  },
+  "services": {
+    "get_schedules": {
+      "name": "Obține programările",
+      "description": "Listează programările salvate în programatorul integrat al unității. Aceasta controlează programatorul integrat al aparatului de aer condiționat, care funcționează chiar și când Home Assistant este offline și doar pornește sau oprește unitatea la o oră stabilită. Pentru scenarii mai complexe (temperatură, mod, ventilator…) folosește automatizările Home Assistant."
+    },
+    "set_schedule": {
+      "name": "Setează o programare",
+      "description": "Creează sau editează o programare de pornire/oprire. Aceasta controlează programatorul integrat al aparatului de aer condiționat, care funcționează chiar și când Home Assistant este offline și doar pornește sau oprește unitatea la o oră stabilită. Pentru scenarii mai complexe (temperatură, mod, ventilator…) folosește automatizările Home Assistant.",
+      "fields": {
+        "time": {
+          "name": "Oră",
+          "description": "Ora locală a zilei când se declanșează programarea."
+        },
+        "power": {
+          "name": "Pornire",
+          "description": "Dacă unitatea pornește sau se oprește."
+        },
+        "repeat": {
+          "name": "Frecvență",
+          "description": "Cât de des se execută: o dată, în fiecare zi sau săptămânal în zilele selectate."
+        },
+        "days": {
+          "name": "Zile",
+          "description": "În ce zile să se execute — obligatoriu pentru „O dată” și „Săptămânal”, ignorat pentru „În fiecare zi”."
+        },
+        "enabled": {
+          "name": "Activată",
+          "description": "Dacă programarea este activă."
+        },
+        "schedule_id": {
+          "name": "ID programare",
+          "description": "ID-ul unei programări existente de editat; lasă gol pentru a crea una nouă."
+        }
+      }
+    },
+    "delete_schedule": {
+      "name": "Șterge o programare",
+      "description": "Șterge o programare din programatorul integrat al unității. Aceasta controlează programatorul integrat al aparatului de aer condiționat, care funcționează chiar și când Home Assistant este offline și doar pornește sau oprește unitatea la o oră stabilită. Pentru scenarii mai complexe (temperatură, mod, ventilator…) folosește automatizările Home Assistant.",
+      "fields": {
+        "schedule_id": {
+          "name": "ID programare",
+          "description": "ID-ul programării de șters (vezi senzorul Programări sau get_schedules)."
+        }
+      }
+    },
+    "get_power_usage": {
+      "name": "Obține consumul de energie",
+      "description": "Recuperează istoricul consumului de energie înregistrat de aparatul de aer condiționat într-un interval de timp.",
+      "fields": {
+        "start": {
+          "name": "Început",
+          "description": "Începutul intervalului (ora locală)."
+        },
+        "end": {
+          "name": "Sfârșit",
+          "description": "Sfârșitul intervalului (implicit: acum)."
+        },
+        "unit": {
+          "name": "Agregare",
+          "description": "Agregă consumul pe oră sau pe zi."
+        }
+      }
+    },
+    "set_power_logging": {
+      "name": "Setează înregistrarea consumului",
+      "description": "Activează sau dezactivează înregistrarea consumului de energie al unității.",
+      "fields": {
+        "enable": {
+          "name": "Activează",
+          "description": "Dacă înregistrarea consumului de energie este activă."
+        }
+      }
+    },
+    "reset_power_logging": {
+      "name": "Resetează înregistrarea consumului",
+      "description": "Șterge istoricul consumului de energie înregistrat pe unitate."
+    },
+    "set_nickname": {
+      "name": "Setează porecla",
+      "description": "Setează porecla salvată pe unitate.",
+      "fields": {
+        "nickname": {
+          "name": "Poreclă",
+          "description": "Noua poreclă."
+        }
+      }
+    },
+    "get_region_code": {
+      "name": "Obține codul de regiune",
+      "description": "Citește codul de regiune salvat pe unitate."
+    },
+    "set_region_code": {
+      "name": "Setează codul de regiune",
+      "description": "Setează codul de regiune salvat pe unitate.",
+      "fields": {
+        "code": {
+          "name": "Cod",
+          "description": "Codul de regiune."
+        }
+      }
+    }
+  },
+  "selector": {
+    "schedule_power": {
+      "options": {
+        "on": "Pornit",
+        "off": "Oprit"
+      }
+    },
+    "schedule_repeat": {
+      "options": {
+        "once": "O dată",
+        "daily": "În fiecare zi",
+        "weekly": "Săptămânal (zile selectate)"
+      }
+    },
+    "schedule_days": {
+      "options": {
+        "mon": "Luni",
+        "tue": "Marți",
+        "wed": "Miercuri",
+        "thu": "Joi",
+        "fri": "Vineri",
+        "sat": "Sâmbătă",
+        "sun": "Duminică"
+      }
+    },
+    "power_unit": {
+      "options": {
+        "hour": "Pe oră",
+        "day": "Pe zi"
+      }
+    }
+  },
+  "exceptions": {
+    "command_failed": {
+      "message": "Comanda către aparatul de aer condiționat Samsung a eșuat: {error}"
+    },
+    "schedule_needs_day": {
+      "message": "Selectează cel puțin o zi pentru programările „O dată” și „Săptămânal”."
+    }
+  }
+}

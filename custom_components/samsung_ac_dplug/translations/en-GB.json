@@ -1,0 +1,358 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Samsung Air Conditioner (DPLUG / 2878)",
+        "description": "How would you like to set up your air conditioner?",
+        "menu_options": {
+          "onboard": "Connect a new unit to Wi-Fi (instructions)",
+          "manual": "It is already on my Wi-Fi (enter IP)"
+        }
+      },
+      "onboard": {
+        "title": "Connect the unit to your Wi-Fi",
+        "description": "Old Samsung units are not joined to Wi-Fi over the network protocol — do it once, physically.\n\n**Option A — WPS (easiest, recommended)**\n1. On the remote, **hold `Settings` for 4 seconds** (hidden function: the display only blinks) to start WPS.\n2. Within 2 minutes, **press the WPS button on your router**.\n3. When the Wi-Fi LED on the module stays solid, it has joined.\n\n**Option B — from a computer (if your router has no WPS button)**\n1. Install **Python 3** if you don't have it ({python_url}), then **download the helper script** (a single file, no extra installs needed): {script_url}\n2. On the remote, **hold `Timer` for 4 seconds** to put the unit in AP mode; a Wi-Fi network named **`SMARTAIRCON`** will appear.\n3. **Connect the computer to the `SMARTAIRCON` network** (password **`1111122222`**).\n4. **Run the script** — `python3 provision.py` — and, when prompted, enter your home Wi-Fi name and password.\n5. When it prints **Done**, the unit joins your Wi-Fi; reconnect the computer to your normal network.\n\nOnce the unit is on your Wi-Fi, **close this window** and open **Settings → Devices & Services**: it should be offered there automatically (discovery). If it isn't, start adding it again and choose **It's already on my Wi-Fi** to enter its IP.\n\n_For advanced users: `python3 provision.py --help` lists the options to run it without the interactive prompts._"
+      },
+      "manual": {
+        "title": "Connect to the air conditioner",
+        "description": "Enter the unit’s IP address. The token is handled on the next step.",
+        "data": {
+          "host": "IP address"
+        }
+      },
+      "token": {
+        "title": "Acquire the access token",
+        "description": "The unit at {host} only issues a token at power-on (a physical proof-of-access step).\n\n1. **Turn the air conditioner OFF** with the remote, if it is on.\n2. Press **Submit** below (leave the field empty).\n3. Within ~30 seconds, **turn the air conditioner ON** with the remote.\n\nThe token will be captured automatically and stored.\n\n**Alternatively**, if you already have this unit's token, enter it below and press Submit.",
+        "data": {
+          "token": "Token (optional)"
+        }
+      },
+      "save_token": {
+        "title": "Token acquired",
+        "description": "Done — the token for the unit at {host} was acquired and saved in this integration.\n\n💡 **Tip:** save this device's token so you don't have to acquire it again in the future (you can paste it directly when adding the unit):\n\n```\n{token}\n```\n\nPress **Submit** to finish."
+      },
+      "reauth_confirm": {
+        "title": "Re-authenticate Samsung air conditioner",
+        "description": "The token for the unit at {host} was rejected (it can change after a module reset). Acquire a new one: turn the unit OFF, submit (leave empty), then turn it ON within ~30s. Or enter a known token below.",
+        "data": {
+          "token": "Token (optional)"
+        }
+      },
+      "discovery_confirm": {
+        "title": "Samsung air conditioner found",
+        "description": "A Samsung air conditioner was discovered at {host}. Set it up now? In the next step you will acquire a token (power-on), unless you already know it."
+      },
+      "reconfigure": {
+        "title": "Change IP address",
+        "description": "Enter the new IP address for this air conditioner. The existing token is reused.",
+        "data": {
+          "host": "IP address"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Cannot connect. Check the IP address and that the unit is on the network.",
+      "auth": "The token was rejected. Leave it empty to acquire a new one.",
+      "no_token": "No token received. Make sure the unit was OFF, then turned ON within the window. Try again."
+    },
+    "abort": {
+      "already_configured": "This air conditioner is already configured.",
+      "not_samsung_ac": "This device does not speak the Samsung DPLUG protocol.",
+      "reauth_successful": "Re-authentication was successful.",
+      "onboard_finished": "Once the air conditioner is on your Wi-Fi, add it from Settings → Devices & Services — it should be discovered automatically, or choose “It's already on my Wi-Fi” to enter its IP.",
+      "wrong_device": "The unit at that address is a different air conditioner.",
+      "reconfigure_successful": "The IP address was updated."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Samsung AC options",
+        "data": {
+          "live_updates": "Live updates (persistent connection)",
+          "scan_interval": "Refresh interval (seconds)"
+        },
+        "data_description": {
+          "live_updates": "Keep one persistent connection for instant push updates. If off, the integration polls and uses no persistent connection (more resilient).",
+          "scan_interval": "Polling interval when live updates are off; fallback/keepalive poll when they are on."
+        }
+      }
+    }
+  },
+  "entity": {
+    "climate": {
+      "samsung_ac": {
+        "state_attributes": {
+          "preset_mode": {
+            "state": {
+              "none": "Off",
+              "quiet": "Quiet",
+              "fast_turbo": "Fast Turbo",
+              "comfort": "Comfort",
+              "dlight_cool": "d'light Cool",
+              "smart_saver": "Smart Saver",
+              "color_of_wind_alps": "Color of Wind: Alps",
+              "color_of_wind_florida": "Color of Wind: Florida",
+              "color_of_wind_savanna": "Color of Wind: Savanna"
+            }
+          },
+          "swing_mode": {
+            "state": {
+              "off": "Off",
+              "vertical": "Vertical",
+              "horizontal": "Horizontal",
+              "both": "Both",
+              "indirect": "Indirect",
+              "direct": "Direct",
+              "center": "Centre",
+              "wide": "Wide",
+              "left": "Left",
+              "right": "Right",
+              "long": "Long"
+            }
+          }
+        }
+      }
+    },
+    "sensor": {
+      "temperature": {
+        "name": "Temperature"
+      },
+      "humidity": {
+        "name": "Humidity"
+      },
+      "outdoor_temperature": {
+        "name": "Outdoor temperature"
+      },
+      "used_time": {
+        "name": "Operating time"
+      },
+      "filter_use_time": {
+        "name": "Filter use time"
+      },
+      "filter_life": {
+        "name": "Filter life"
+      },
+      "error": {
+        "name": "Error code"
+      },
+      "device_clock": {
+        "name": "Device clock"
+      },
+      "schedules": {
+        "name": "Schedules"
+      }
+    },
+    "switch": {
+      "purify": {
+        "name": "Purify (SPi)"
+      },
+      "auto_clean": {
+        "name": "Auto clean"
+      },
+      "light": {
+        "name": "Display light"
+      },
+      "sterilize": {
+        "name": "Sterilise"
+      },
+      "smart_on": {
+        "name": "Smart on"
+      },
+      "weather": {
+        "name": "Weather"
+      }
+    },
+    "number": {
+      "sleep_timer": {
+        "name": "Sleep timer"
+      },
+      "on_timer": {
+        "name": "On timer"
+      },
+      "off_timer": {
+        "name": "Off timer"
+      },
+      "energy_target": {
+        "name": "Energy target"
+      }
+    },
+    "select": {
+      "occupancy": {
+        "name": "Occupancy",
+        "state": {
+          "single": "Single",
+          "couple": "Couple",
+          "family": "Family"
+        }
+      },
+      "beep_volume": {
+        "name": "Beep volume",
+        "state": {
+          "mute": "Mute",
+          "33": "33%",
+          "66": "66%",
+          "100": "100%"
+        }
+      },
+      "panel": {
+        "name": "Front panel",
+        "state": {
+          "open": "Open",
+          "close": "Close"
+        }
+      },
+      "filter_clean_interval": {
+        "name": "Filter cleaning interval",
+        "state": {
+          "180": "180 h",
+          "300": "300 h",
+          "500": "500 h",
+          "700": "700 h"
+        }
+      }
+    }
+  },
+  "services": {
+    "get_schedules": {
+      "name": "Get schedules",
+      "description": "List the schedules stored on the unit's built-in scheduler. This controls the air conditioner's built-in scheduler, which runs even when Home Assistant is offline and only switches the unit on or off at a set time. For more complex scenarios (temperature, mode, fan…) use Home Assistant automations."
+    },
+    "set_schedule": {
+      "name": "Set schedule",
+      "description": "Create or edit an on/off schedule. This controls the air conditioner's built-in scheduler, which runs even when Home Assistant is offline and only switches the unit on or off at a set time. For more complex scenarios (temperature, mode, fan…) use Home Assistant automations.",
+      "fields": {
+        "time": {
+          "name": "Time",
+          "description": "Local time of day when the schedule fires."
+        },
+        "power": {
+          "name": "Power",
+          "description": "Whether the unit turns on or off."
+        },
+        "repeat": {
+          "name": "Frequency",
+          "description": "How often it runs: once, every day, or weekly on the selected days."
+        },
+        "days": {
+          "name": "Days",
+          "description": "Which days to run on — required for 'Once' and 'Weekly', ignored for 'Every day'."
+        },
+        "enabled": {
+          "name": "Enabled",
+          "description": "Whether the schedule is active."
+        },
+        "schedule_id": {
+          "name": "Schedule ID",
+          "description": "ID of an existing schedule to edit; leave empty to create a new one."
+        }
+      }
+    },
+    "delete_schedule": {
+      "name": "Delete schedule",
+      "description": "Delete a schedule from the unit's built-in scheduler. This controls the air conditioner's built-in scheduler, which runs even when Home Assistant is offline and only switches the unit on or off at a set time. For more complex scenarios (temperature, mode, fan…) use Home Assistant automations.",
+      "fields": {
+        "schedule_id": {
+          "name": "Schedule ID",
+          "description": "ID of the schedule to delete (see the Schedules sensor or get_schedules)."
+        }
+      }
+    },
+    "get_power_usage": {
+      "name": "Get power usage",
+      "description": "Retrieve the air conditioner's recorded power-usage history over a time range.",
+      "fields": {
+        "start": {
+          "name": "Start",
+          "description": "Start of the range (local time)."
+        },
+        "end": {
+          "name": "End",
+          "description": "End of the range (defaults to now)."
+        },
+        "unit": {
+          "name": "Aggregation",
+          "description": "Aggregate the usage per hour or per day."
+        }
+      }
+    },
+    "set_power_logging": {
+      "name": "Set power logging",
+      "description": "Turn the unit's power-usage logging on or off.",
+      "fields": {
+        "enable": {
+          "name": "Enable",
+          "description": "Whether power-usage logging is on."
+        }
+      }
+    },
+    "reset_power_logging": {
+      "name": "Reset power logging",
+      "description": "Clear the power-usage history recorded on the unit."
+    },
+    "set_nickname": {
+      "name": "Set nickname",
+      "description": "Set the nickname stored on the unit.",
+      "fields": {
+        "nickname": {
+          "name": "Nickname",
+          "description": "The new nickname."
+        }
+      }
+    },
+    "get_region_code": {
+      "name": "Get region code",
+      "description": "Read the region code stored on the unit."
+    },
+    "set_region_code": {
+      "name": "Set region code",
+      "description": "Set the region code stored on the unit.",
+      "fields": {
+        "code": {
+          "name": "Code",
+          "description": "The region code."
+        }
+      }
+    }
+  },
+  "selector": {
+    "schedule_power": {
+      "options": {
+        "on": "On",
+        "off": "Off"
+      }
+    },
+    "schedule_repeat": {
+      "options": {
+        "once": "Once",
+        "daily": "Every day",
+        "weekly": "Weekly (selected days)"
+      }
+    },
+    "schedule_days": {
+      "options": {
+        "mon": "Monday",
+        "tue": "Tuesday",
+        "wed": "Wednesday",
+        "thu": "Thursday",
+        "fri": "Friday",
+        "sat": "Saturday",
+        "sun": "Sunday"
+      }
+    },
+    "power_unit": {
+      "options": {
+        "hour": "Per hour",
+        "day": "Per day"
+      }
+    }
+  },
+  "exceptions": {
+    "command_failed": {
+      "message": "Samsung AC command failed: {error}"
+    },
+    "schedule_needs_day": {
+      "message": "Select at least one day for 'Once' and 'Weekly' schedules."
+    }
+  }
+}

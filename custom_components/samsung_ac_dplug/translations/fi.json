@@ -1,0 +1,358 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Samsung-ilmastointilaite (DPLUG / 2878)",
+        "description": "Miten haluat määrittää ilmastointilaitteesi?",
+        "menu_options": {
+          "onboard": "Yhdistä uusi laite Wi-Fi-verkkoon (ohjeet)",
+          "manual": "Se on jo Wi-Fi-verkossani (syötä IP)"
+        }
+      },
+      "onboard": {
+        "title": "Yhdistä laite Wi-Fi-verkkoosi",
+        "description": "Vanhat Samsung-laitteet eivät liity Wi-Fi-verkkoon verkkoprotokollan kautta — se on tehtävä kerran, fyysisesti.\n\n**Vaihtoehto A — WPS (helpoin, suositeltu)**\n1. Pidä kaukosäätimessä **`Settings`-painiketta painettuna 4 sekuntia** (piilotettu toiminto: näyttö vain vilkkuu) käynnistääksesi WPS:n.\n2. Paina 2 minuutin kuluessa **reitittimen WPS-painiketta**.\n3. Kun moduulin Wi-Fi-merkkivalo palaa tasaisesti, yhteys on muodostettu.\n\n**Vaihtoehto B — tietokoneelta (jos reitittimessäsi ei ole WPS-painiketta)**\n1. Asenna **Python 3**, jos sitä ei ole ({python_url}), ja **lataa apuskripti** (yksi tiedosto, ei lisäasennuksia tarvita): {script_url}\n2. Pidä kaukosäätimessä **`Timer`-painiketta painettuna 4 sekuntia** asettaaksesi laitteen AP-tilaan; näkyviin tulee Wi-Fi-verkko nimeltä **`SMARTAIRCON`**.\n3. **Yhdistä tietokone `SMARTAIRCON`-verkkoon** (salasana **`1111122222`**).\n4. **Suorita skripti** — `python3 provision.py` — ja syötä pyydettäessä kotisi Wi-Fi-verkon nimi ja salasana.\n5. Kun näkyviin tulee **Done**, laite liittyy Wi-Fi-verkkoosi; yhdistä tietokone takaisin tavalliseen verkkoosi.\n\nKun laite on Wi-Fi-verkossasi, **sulje tämä ikkuna** ja avaa **Asetukset → Laitteet ja palvelut**: sen pitäisi näkyä siellä automaattisesti (löytäminen). Jos ei, aloita lisääminen uudelleen ja valitse **Se on jo Wi-Fi-verkossani** syöttääksesi sen IP-osoitteen.\n\n_Edistyneille käyttäjille: `python3 provision.py --help` luettelee vaihtoehdot sen suorittamiseen ilman vuorovaikutteisia kehotteita._"
+      },
+      "manual": {
+        "title": "Yhdistä ilmastointilaitteeseen",
+        "description": "Syötä laitteen IP-osoite. Token käsitellään seuraavassa vaiheessa.",
+        "data": {
+          "host": "IP-osoite"
+        }
+      },
+      "token": {
+        "title": "Hae käyttötoken",
+        "description": "Laite osoitteessa {host} antaa tokenin vain käynnistyksen yhteydessä (fyysinen pääsyn vahvistusvaihe).\n\n1. **Sammuta ilmastointilaite** kaukosäätimellä, jos se on päällä.\n2. Paina alla **Lähetä** (jätä kenttä tyhjäksi).\n3. **Käynnistä ilmastointilaite** kaukosäätimellä ~30 sekunnin kuluessa.\n\nToken tallennetaan automaattisesti.\n\n**Vaihtoehtoisesti**, jos sinulla on jo tämän laitteen token, syötä se alle ja paina Lähetä.",
+        "data": {
+          "token": "Token (valinnainen)"
+        }
+      },
+      "save_token": {
+        "title": "Token haettu",
+        "description": "Valmis — laitteen {host} token haettiin ja tallennettiin tähän integraatioon.\n\n💡 **Vinkki:** tallenna tämän laitteen token, jotta sinun ei tarvitse hakea sitä uudelleen tulevaisuudessa (voit liittää sen suoraan laitetta lisätessäsi):\n\n```\n{token}\n```\n\nPaina **Lähetä** lopettaaksesi."
+      },
+      "reauth_confirm": {
+        "title": "Tunnista Samsung-ilmastointilaite uudelleen",
+        "description": "Laitteen {host} token hylättiin (se voi muuttua moduulin nollauksen jälkeen). Hae uusi: sammuta laite, lähetä (jätä tyhjäksi), käynnistä se sitten ~30 s kuluessa. Tai syötä tunnettu token alle.",
+        "data": {
+          "token": "Token (valinnainen)"
+        }
+      },
+      "discovery_confirm": {
+        "title": "Samsung-ilmastointilaite löytyi",
+        "description": "Samsung-ilmastointilaite löytyi osoitteesta {host}. Määritetäänkö se nyt? Seuraavassa vaiheessa haet tokenin (käynnistys), ellet jo tunne sitä."
+      },
+      "reconfigure": {
+        "title": "Vaihda IP-osoite",
+        "description": "Syötä tämän ilmastointilaitteen uusi IP-osoite. Olemassa oleva token käytetään uudelleen.",
+        "data": {
+          "host": "IP-osoite"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Yhteyttä ei voi muodostaa. Tarkista IP-osoite ja että laite on verkossa.",
+      "auth": "Token hylättiin. Jätä se tyhjäksi hakeaksesi uuden.",
+      "no_token": "Tokenia ei vastaanotettu. Varmista, että laite oli sammutettuna ja käynnistettiin sitten aikaikkunan sisällä. Yritä uudelleen."
+    },
+    "abort": {
+      "already_configured": "Tämä ilmastointilaite on jo määritetty.",
+      "not_samsung_ac": "Tämä laite ei puhu Samsung DPLUG -protokollaa.",
+      "reauth_successful": "Uudelleentunnistus onnistui.",
+      "onboard_finished": "Kun ilmastointilaite on Wi-Fi-verkossasi, lisää se kohdasta Asetukset → Laitteet ja palvelut — sen pitäisi löytyä automaattisesti, tai valitse ”Se on jo Wi-Fi-verkossani” syöttääksesi sen IP-osoitteen.",
+      "wrong_device": "Annetussa osoitteessa on eri ilmastointilaite.",
+      "reconfigure_successful": "IP-osoite päivitettiin."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Samsung AC -asetukset",
+        "data": {
+          "live_updates": "Reaaliaikaiset päivitykset (pysyvä yhteys)",
+          "scan_interval": "Päivitysväli (sekuntia)"
+        },
+        "data_description": {
+          "live_updates": "Pitää yllä yhden pysyvän yhteyden välittömiä push-päivityksiä varten. Jos pois päältä, integraatio kysyy tilan (polling) eikä käytä pysyvää yhteyttä (sietokykyisempi).",
+          "scan_interval": "Kyselyväli, kun reaaliaikaiset päivitykset ovat pois päältä; vara-/keepalive-kysely, kun ne ovat päällä."
+        }
+      }
+    }
+  },
+  "entity": {
+    "climate": {
+      "samsung_ac": {
+        "state_attributes": {
+          "preset_mode": {
+            "state": {
+              "none": "Pois",
+              "quiet": "Hiljainen",
+              "fast_turbo": "Fast Turbo",
+              "comfort": "Mukavuus",
+              "dlight_cool": "d'light Cool",
+              "smart_saver": "Smart Saver",
+              "color_of_wind_alps": "Color of Wind: Alps",
+              "color_of_wind_florida": "Color of Wind: Florida",
+              "color_of_wind_savanna": "Color of Wind: Savanna"
+            }
+          },
+          "swing_mode": {
+            "state": {
+              "off": "Pois",
+              "vertical": "Pystysuora",
+              "horizontal": "Vaakasuora",
+              "both": "Molemmat",
+              "indirect": "Epäsuora",
+              "direct": "Suora",
+              "center": "Keskelle",
+              "wide": "Leveä",
+              "left": "Vasemmalle",
+              "right": "Oikealle",
+              "long": "Pitkä"
+            }
+          }
+        }
+      }
+    },
+    "sensor": {
+      "temperature": {
+        "name": "Lämpötila"
+      },
+      "humidity": {
+        "name": "Kosteus"
+      },
+      "outdoor_temperature": {
+        "name": "Ulkolämpötila"
+      },
+      "used_time": {
+        "name": "Käyttöaika"
+      },
+      "filter_use_time": {
+        "name": "Suodattimen käyttöaika"
+      },
+      "filter_life": {
+        "name": "Suodattimen käyttöikä"
+      },
+      "error": {
+        "name": "Virhekoodi"
+      },
+      "device_clock": {
+        "name": "Laitteen kello"
+      },
+      "schedules": {
+        "name": "Ajastukset"
+      }
+    },
+    "switch": {
+      "purify": {
+        "name": "Purify (SPi)"
+      },
+      "auto_clean": {
+        "name": "Automaattipuhdistus"
+      },
+      "light": {
+        "name": "Näytön valo"
+      },
+      "sterilize": {
+        "name": "Sterilointi"
+      },
+      "smart_on": {
+        "name": "Älykäs käynnistys"
+      },
+      "weather": {
+        "name": "Sää"
+      }
+    },
+    "number": {
+      "sleep_timer": {
+        "name": "Uniajastin"
+      },
+      "on_timer": {
+        "name": "Käynnistysajastin"
+      },
+      "off_timer": {
+        "name": "Sammutusajastin"
+      },
+      "energy_target": {
+        "name": "Energiatavoite"
+      }
+    },
+    "select": {
+      "occupancy": {
+        "name": "Käyttäjämäärä",
+        "state": {
+          "single": "Yksin",
+          "couple": "Pariskunta",
+          "family": "Perhe"
+        }
+      },
+      "beep_volume": {
+        "name": "Äänimerkin voimakkuus",
+        "state": {
+          "mute": "Mykistys",
+          "33": "33%",
+          "66": "66%",
+          "100": "100%"
+        }
+      },
+      "panel": {
+        "name": "Etupaneeli",
+        "state": {
+          "open": "Avaa",
+          "close": "Sulje"
+        }
+      },
+      "filter_clean_interval": {
+        "name": "Suodattimen puhdistusväli",
+        "state": {
+          "180": "180 h",
+          "300": "300 h",
+          "500": "500 h",
+          "700": "700 h"
+        }
+      }
+    }
+  },
+  "services": {
+    "get_schedules": {
+      "name": "Hae ajastukset",
+      "description": "Luettelee laitteen sisäänrakennettuun ajastimeen tallennetut ajastukset. Tämä ohjaa ilmastointilaitteen sisäänrakennettua ajastinta, joka toimii silloinkin, kun Home Assistant on offline-tilassa, ja vain käynnistää tai sammuttaa laitteen asetettuna aikana. Monimutkaisempiin tilanteisiin (lämpötila, tila, puhallin…) käytä Home Assistantin automaatioita."
+    },
+    "set_schedule": {
+      "name": "Aseta ajastus",
+      "description": "Luo tai muokkaa käynnistys-/sammutusajastusta. Tämä ohjaa ilmastointilaitteen sisäänrakennettua ajastinta, joka toimii silloinkin, kun Home Assistant on offline-tilassa, ja vain käynnistää tai sammuttaa laitteen asetettuna aikana. Monimutkaisempiin tilanteisiin (lämpötila, tila, puhallin…) käytä Home Assistantin automaatioita.",
+      "fields": {
+        "time": {
+          "name": "Aika",
+          "description": "Paikallinen vuorokaudenaika, jolloin ajastus laukeaa."
+        },
+        "power": {
+          "name": "Virta",
+          "description": "Käynnistyykö vai sammuuko laite."
+        },
+        "repeat": {
+          "name": "Toistuvuus",
+          "description": "Kuinka usein se suoritetaan: kerran, joka päivä tai viikoittain valittuina päivinä."
+        },
+        "days": {
+          "name": "Päivät",
+          "description": "Minä päivinä se suoritetaan — vaaditaan ”Kerran”- ja ”Viikoittain”-asetuksille, jätetään huomiotta ”Joka päivä” -asetuksella."
+        },
+        "enabled": {
+          "name": "Käytössä",
+          "description": "Onko ajastus aktiivinen."
+        },
+        "schedule_id": {
+          "name": "Ajastuksen tunnus",
+          "description": "Muokattavan olemassa olevan ajastuksen tunnus; jätä tyhjäksi luodaksesi uuden."
+        }
+      }
+    },
+    "delete_schedule": {
+      "name": "Poista ajastus",
+      "description": "Poistaa ajastuksen laitteen sisäänrakennetusta ajastimesta. Tämä ohjaa ilmastointilaitteen sisäänrakennettua ajastinta, joka toimii silloinkin, kun Home Assistant on offline-tilassa, ja vain käynnistää tai sammuttaa laitteen asetettuna aikana. Monimutkaisempiin tilanteisiin (lämpötila, tila, puhallin…) käytä Home Assistantin automaatioita.",
+      "fields": {
+        "schedule_id": {
+          "name": "Ajastuksen tunnus",
+          "description": "Poistettavan ajastuksen tunnus (katso Ajastukset-anturi tai get_schedules)."
+        }
+      }
+    },
+    "get_power_usage": {
+      "name": "Hae virrankulutus",
+      "description": "Hakee ilmastointilaitteen tallentaman virrankulutushistorian tietyltä aikaväliltä.",
+      "fields": {
+        "start": {
+          "name": "Alku",
+          "description": "Aikavälin alku (paikallinen aika)."
+        },
+        "end": {
+          "name": "Loppu",
+          "description": "Aikavälin loppu (oletuksena: nyt)."
+        },
+        "unit": {
+          "name": "Yhdistäminen",
+          "description": "Yhdistä kulutus tunnin tai päivän tarkkuudella."
+        }
+      }
+    },
+    "set_power_logging": {
+      "name": "Aseta virrankulutuksen kirjaus",
+      "description": "Kytkee laitteen virrankulutuksen kirjauksen päälle tai pois.",
+      "fields": {
+        "enable": {
+          "name": "Ota käyttöön",
+          "description": "Onko virrankulutuksen kirjaus päällä."
+        }
+      }
+    },
+    "reset_power_logging": {
+      "name": "Nollaa virrankulutuksen kirjaus",
+      "description": "Tyhjentää laitteeseen tallennetun virrankulutushistorian."
+    },
+    "set_nickname": {
+      "name": "Aseta lempinimi",
+      "description": "Asettaa laitteeseen tallennetun lempinimen.",
+      "fields": {
+        "nickname": {
+          "name": "Lempinimi",
+          "description": "Uusi lempinimi."
+        }
+      }
+    },
+    "get_region_code": {
+      "name": "Hae aluekoodi",
+      "description": "Lukee laitteeseen tallennetun aluekoodin."
+    },
+    "set_region_code": {
+      "name": "Aseta aluekoodi",
+      "description": "Asettaa laitteeseen tallennetun aluekoodin.",
+      "fields": {
+        "code": {
+          "name": "Koodi",
+          "description": "Aluekoodi."
+        }
+      }
+    }
+  },
+  "selector": {
+    "schedule_power": {
+      "options": {
+        "on": "Päällä",
+        "off": "Pois"
+      }
+    },
+    "schedule_repeat": {
+      "options": {
+        "once": "Kerran",
+        "daily": "Joka päivä",
+        "weekly": "Viikoittain (valitut päivät)"
+      }
+    },
+    "schedule_days": {
+      "options": {
+        "mon": "Maanantai",
+        "tue": "Tiistai",
+        "wed": "Keskiviikko",
+        "thu": "Torstai",
+        "fri": "Perjantai",
+        "sat": "Lauantai",
+        "sun": "Sunnuntai"
+      }
+    },
+    "power_unit": {
+      "options": {
+        "hour": "Tunnissa",
+        "day": "Päivässä"
+      }
+    }
+  },
+  "exceptions": {
+    "command_failed": {
+      "message": "Samsung AC -komento epäonnistui: {error}"
+    },
+    "schedule_needs_day": {
+      "message": "Valitse vähintään yksi päivä ”Kerran”- ja ”Viikoittain”-ajastuksille."
+    }
+  }
+}

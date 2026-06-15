@@ -1,0 +1,358 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Samsung-Klimaanlag (DPLUG / 2878)",
+        "description": "Wie wettsch du dini Klimaanlag iiprichte?",
+        "menu_options": {
+          "onboard": "Es nöis Grät mitem Wi-Fi verbinde (Aaleitig)",
+          "manual": "Es isch scho i mim Wi-Fi (IP iigäh)"
+        }
+      },
+      "onboard": {
+        "title": "Verbind s Grät mit dim Wi-Fi",
+        "description": "Alti Samsung-Gräter wärde nöd übers Netzwärkprotokoll mitem Wi-Fi verbunde — das muess mer eimal physisch mache.\n\n**Option A — WPS (am eifachschte, empfohle)**\n1. Halt uf de Färnbediänig **`Settings` 4 Sekunde gedrückt** (versteckti Funktion: s Display blinkt nu) zum WPS starte.\n2. **Drück innerhalb vo 2 Minute de WPS-Chnopf a dim Router**.\n3. Wänn d Wi-Fi-LED am Modul fescht lüchtet, isch d Verbindig gmacht.\n\n**Option B — vomene Computer us (wänn din Router kä WPS-Chnopf het)**\n1. Installier **Python 3**, falls du s nonig häsch ({python_url}), und **lad dänn s Hilfsskript abe** (ei einzigi Datei, kei zuesätzliche Installatione nötig): {script_url}\n2. Halt uf de Färnbediänig **`Timer` 4 Sekunde gedrückt**, zum s Grät i de AP-Modus z setze; es erschiint es Wi-Fi-Netzwärk mitem Name **`SMARTAIRCON`**.\n3. **Verbind de Computer mitem Netzwärk `SMARTAIRCON`** (Passwort **`1111122222`**).\n4. **Füehr s Skript us** — `python3 provision.py` — und gib, wänn gfraged wird, de Name und s Passwort vo dim Heim-Wi-Fi ii.\n5. Wänn **Done** aazeigt wird, verbindet sich s Grät mit dim Wi-Fi; verbind de Computer wider mit dim normale Netzwärk.\n\nSobald s Grät i dim Wi-Fi isch, **mach das Fänschter zue** und öffne **Iistellige → Gräter & Dienscht**: es söll det automatisch aagebote wärde (Erkennig). Wänn nöd, fang s Hinzuefüege nomal a und wähl **Es isch scho i mim Wi-Fi**, zum d IP iizgäh.\n\n_Für fortgschritteni Benutzer: `python3 provision.py --help` lischtet d Optione uf, zum s ohni die interaktive Abfrage uszfüehre._"
+      },
+      "manual": {
+        "title": "Mit de Klimaanlag verbinde",
+        "description": "Gib d IP-Adrässe vom Grät ii. De Token wird im nächschte Schritt behandlet.",
+        "data": {
+          "host": "IP-Adrässe"
+        }
+      },
+      "token": {
+        "title": "Zuegriffstoken abruefe",
+        "description": "S Grät uf {host} git nu bim Iischalte en Token use (en physische Zuegriffsbewiis).\n\n1. **Schalt d Klimaanlag mit de Färnbediänig US**, wänn si aa isch.\n2. Drück da une uf **Sände** (lass s Fäld leer).\n3. Schalt d Klimaanlag innerhalb vo ~30 Sekunde **AA** mit de Färnbediänig.\n\nDe Token wird automatisch erfasst und gspeicheret.\n\n**Alternativ** gib, wänn du de Token vo dem Grät scho häsch, en da une ii und drück Sände.",
+        "data": {
+          "token": "Token (optional)"
+        }
+      },
+      "save_token": {
+        "title": "Token abgrüeft",
+        "description": "Fertig — de Token für s Grät uf {host} isch abgrüeft und i dere Integration gspeicheret worde.\n\n💡 **Tipp:** speichere de Token vo dem Grät, dass du en i de Zuekunft nöd nomal muesch abruefe (du chasch en direkt bim Hinzuefüege vom Grät iifüege):\n\n```\n{token}\n```\n\nDrück **Sände** zum abschlüsse."
+      },
+      "reauth_confirm": {
+        "title": "Samsung-Klimaanlag neu authentifiziere",
+        "description": "De Token für s Grät uf {host} isch abglehnt worde (er cha sich nach eme Modul-Reset ändere). Ruef en nöie ab: schalt s Grät US, sänd (lass leer) und schalt es dänn innerhalb vo ~30s AA. Oder gib da une en bekannte Token ii.",
+        "data": {
+          "token": "Token (optional)"
+        }
+      },
+      "discovery_confirm": {
+        "title": "Samsung-Klimaanlag gfunde",
+        "description": "Uf {host} isch e Samsung-Klimaanlag erkennt worde. Jetz iiprichte? Im nächschte Schritt rüefsch en Token ab (dur s Iischalte), usser du kennsch en scho."
+      },
+      "reconfigure": {
+        "title": "IP-Adrässe ändere",
+        "description": "Gib di nöi IP-Adrässe für die Klimaanlag ii. De bestehend Token wird wider verwändet.",
+        "data": {
+          "host": "IP-Adrässe"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Kei Verbindig möglich. Überprüef d IP-Adrässe und öb s Grät im Netzwärk isch.",
+      "auth": "De Token isch abglehnt worde. Lass en leer, zum en nöie abzruefe.",
+      "no_token": "Kä Token überchoo. Stell sicher, dass s Grät US gsi isch und dänn innerhalb vom Zitfänschter AA gschaltet worde isch. Probier s nomal."
+    },
+    "abort": {
+      "already_configured": "Die Klimaanlag isch scho konfiguriert.",
+      "not_samsung_ac": "Das Grät redt s Samsung-DPLUG-Protokoll nöd.",
+      "reauth_successful": "Di nöi Authentifizierig isch erfolgrich gsi.",
+      "onboard_finished": "Sobald d Klimaanlag i dim Wi-Fi isch, füeg si über Iistellige → Gräter & Dienscht hinzue — si söll automatisch erkennt wärde, oder wähl „Es isch scho i mim Wi-Fi“, zum d IP iizgäh.",
+      "wrong_device": "Uf dere Adrässe isch e anderi Klimaanlag.",
+      "reconfigure_successful": "D IP-Adrässe isch aktualisiert worde."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Samsung-AC-Optione",
+        "data": {
+          "live_updates": "Live-Updates (permanenti Verbindig)",
+          "scan_interval": "Aktualisierigsintervall (Sekunde)"
+        },
+        "data_description": {
+          "live_updates": "Haltet ei permanenti Verbindig offe für sofortigi Push-Updates. Wänn us, macht d Integration Polling und bruucht kei permanenti Verbindig (robuschter).",
+          "scan_interval": "Polling-Intervall, wänn Live-Updates us sind; Fallback-/Keepalive-Poll, wänn si aa sind."
+        }
+      }
+    }
+  },
+  "entity": {
+    "climate": {
+      "samsung_ac": {
+        "state_attributes": {
+          "preset_mode": {
+            "state": {
+              "none": "Us",
+              "quiet": "Liis",
+              "fast_turbo": "Schnäll-Turbo",
+              "comfort": "Komfort",
+              "dlight_cool": "d'light Cool",
+              "smart_saver": "Smart Saver",
+              "color_of_wind_alps": "Color of Wind: Alps",
+              "color_of_wind_florida": "Color of Wind: Florida",
+              "color_of_wind_savanna": "Color of Wind: Savanna"
+            }
+          },
+          "swing_mode": {
+            "state": {
+              "off": "Us",
+              "vertical": "Vertikal",
+              "horizontal": "Horizontal",
+              "both": "Beidi",
+              "indirect": "Indirekt",
+              "direct": "Direkt",
+              "center": "Mitti",
+              "wide": "Breit",
+              "left": "Lings",
+              "right": "Rächts",
+              "long": "Lang"
+            }
+          }
+        }
+      }
+    },
+    "sensor": {
+      "temperature": {
+        "name": "Temperatur"
+      },
+      "humidity": {
+        "name": "Luftfüechtigkeit"
+      },
+      "outdoor_temperature": {
+        "name": "Usse-Temperatur"
+      },
+      "used_time": {
+        "name": "Betriebszit"
+      },
+      "filter_use_time": {
+        "name": "Filter-Laufzit"
+      },
+      "filter_life": {
+        "name": "Filter-Läbensduer"
+      },
+      "error": {
+        "name": "Fählercode"
+      },
+      "device_clock": {
+        "name": "Grät-Uhr"
+      },
+      "schedules": {
+        "name": "Zitplän"
+      }
+    },
+    "switch": {
+      "purify": {
+        "name": "Purify (SPi)"
+      },
+      "auto_clean": {
+        "name": "Automatischi Reinigung"
+      },
+      "light": {
+        "name": "Display-Liecht"
+      },
+      "sterilize": {
+        "name": "Sterilisiere"
+      },
+      "smart_on": {
+        "name": "Smart-Iischalte"
+      },
+      "weather": {
+        "name": "Wätter"
+      }
+    },
+    "number": {
+      "sleep_timer": {
+        "name": "Schlaf-Timer"
+      },
+      "on_timer": {
+        "name": "Iischalt-Timer"
+      },
+      "off_timer": {
+        "name": "Usschalt-Timer"
+      },
+      "energy_target": {
+        "name": "Energiezil"
+      }
+    },
+    "select": {
+      "occupancy": {
+        "name": "Beleging",
+        "state": {
+          "single": "Einzelperson",
+          "couple": "Paar",
+          "family": "Familie"
+        }
+      },
+      "beep_volume": {
+        "name": "Signalton-Lutstärki",
+        "state": {
+          "mute": "Stumm",
+          "33": "33%",
+          "66": "66%",
+          "100": "100%"
+        }
+      },
+      "panel": {
+        "name": "Frontblende",
+        "state": {
+          "open": "Offe",
+          "close": "Zue"
+        }
+      },
+      "filter_clean_interval": {
+        "name": "Filter-Reinigungsintervall",
+        "state": {
+          "180": "180 h",
+          "300": "300 h",
+          "500": "500 h",
+          "700": "700 h"
+        }
+      }
+    }
+  },
+  "services": {
+    "get_schedules": {
+      "name": "Zitplän abruefe",
+      "description": "Lischtet d Zitplän uf, wo im iigebaute Planer vom Grät gspeicheret sind. Das stüüret de iigebaut Planer vo de Klimaanlag, wo au lauft, wänn Home Assistant offline isch, und s Grät nu zunere festgleite Zit ii- oder usschaltet. Für komplexeri Szenarie (Temperatur, Modus, Ventilator…) bruuch Home-Assistant-Automatisierige."
+    },
+    "set_schedule": {
+      "name": "Zitplan iistelle",
+      "description": "Erstellt oder bearbeitet en Ii-/Us-Zitplan. Das stüüret de iigebaut Planer vo de Klimaanlag, wo au lauft, wänn Home Assistant offline isch, und s Grät nu zunere festgleite Zit ii- oder usschaltet. Für komplexeri Szenarie (Temperatur, Modus, Ventilator…) bruuch Home-Assistant-Automatisierige.",
+      "fields": {
+        "time": {
+          "name": "Zit",
+          "description": "Lokali Zit am Tag, wänn de Zitplan uslöst."
+        },
+        "power": {
+          "name": "Ii/Us",
+          "description": "Öb s Grät ii- oder usschaltet."
+        },
+        "repeat": {
+          "name": "Hüfigkeit",
+          "description": "Wie oft er usgfüehrt wird: eimal, jede Tag oder wüchentlich a de uusgwählte Täg."
+        },
+        "days": {
+          "name": "Täg",
+          "description": "A wele Täg er usgfüehrt wird — nötig für „Eimal“ und „Wüchentlich“, wird bi „Jede Tag“ ignoriert."
+        },
+        "enabled": {
+          "name": "Aktiviert",
+          "description": "Öb de Zitplan aktiv isch."
+        },
+        "schedule_id": {
+          "name": "Zitplan-ID",
+          "description": "ID vomene bestehende Zitplan zum bearbeite; lass leer, zum en nöie z erstelle."
+        }
+      }
+    },
+    "delete_schedule": {
+      "name": "Zitplan lösche",
+      "description": "Löscht en Zitplan us em iigebaute Planer vom Grät. Das stüüret de iigebaut Planer vo de Klimaanlag, wo au lauft, wänn Home Assistant offline isch, und s Grät nu zunere festgleite Zit ii- oder usschaltet. Für komplexeri Szenarie (Temperatur, Modus, Ventilator…) bruuch Home-Assistant-Automatisierige.",
+      "fields": {
+        "schedule_id": {
+          "name": "Zitplan-ID",
+          "description": "ID vom Zitplan, wo glöscht wärde söll (lueg de Sensor „Zitplän“ oder get_schedules)."
+        }
+      }
+    },
+    "get_power_usage": {
+      "name": "Stromverbruuch abruefe",
+      "description": "Rüeft de ufzeichnet Stromverbruuchsverlauf vo de Klimaanlag über e Zitspanne ab.",
+      "fields": {
+        "start": {
+          "name": "Start",
+          "description": "Aafang vo de Spanne (lokali Zit)."
+        },
+        "end": {
+          "name": "Änd",
+          "description": "Änd vo de Spanne (Standard: jetz)."
+        },
+        "unit": {
+          "name": "Aggregation",
+          "description": "De Verbruuch pro Stund oder pro Tag aggregiere."
+        }
+      }
+    },
+    "set_power_logging": {
+      "name": "Verbruuchsufzeichnig iistelle",
+      "description": "Schaltet d Stromverbruuchsufzeichnig vom Grät aa oder us.",
+      "fields": {
+        "enable": {
+          "name": "Aktiviere",
+          "description": "Öb d Stromverbruuchsufzeichnig aa isch."
+        }
+      }
+    },
+    "reset_power_logging": {
+      "name": "Verbruuchsufzeichnig zruggsetze",
+      "description": "Löscht de am Grät ufzeichnet Stromverbruuchsverlauf."
+    },
+    "set_nickname": {
+      "name": "Spitzname iistelle",
+      "description": "Stellt de Spitzname ii, wo am Grät gspeicheret isch.",
+      "fields": {
+        "nickname": {
+          "name": "Spitzname",
+          "description": "De nöi Spitzname."
+        }
+      }
+    },
+    "get_region_code": {
+      "name": "Regionscode abruefe",
+      "description": "Liist de Regionscode, wo am Grät gspeicheret isch."
+    },
+    "set_region_code": {
+      "name": "Regionscode iistelle",
+      "description": "Stellt de Regionscode ii, wo am Grät gspeicheret isch.",
+      "fields": {
+        "code": {
+          "name": "Code",
+          "description": "De Regionscode."
+        }
+      }
+    }
+  },
+  "selector": {
+    "schedule_power": {
+      "options": {
+        "on": "Aa",
+        "off": "Us"
+      }
+    },
+    "schedule_repeat": {
+      "options": {
+        "once": "Eimal",
+        "daily": "Jede Tag",
+        "weekly": "Wüchentlich (uusgwählti Täg)"
+      }
+    },
+    "schedule_days": {
+      "options": {
+        "mon": "Mäntig",
+        "tue": "Ziischtig",
+        "wed": "Mittwuch",
+        "thu": "Dunschtig",
+        "fri": "Friitig",
+        "sat": "Samschtig",
+        "sun": "Sunntig"
+      }
+    },
+    "power_unit": {
+      "options": {
+        "hour": "Pro Stund",
+        "day": "Pro Tag"
+      }
+    }
+  },
+  "exceptions": {
+    "command_failed": {
+      "message": "Samsung-AC-Befäl fählgschlage: {error}"
+    },
+    "schedule_needs_day": {
+      "message": "Wähl mindeschtens ei Tag für d Zitplän „Eimal“ und „Wüchentlich“ us."
+    }
+  }
+}

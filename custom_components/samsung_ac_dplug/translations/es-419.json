@@ -1,0 +1,358 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Aire acondicionado Samsung (DPLUG / 2878)",
+        "description": "¿Cómo quieres configurar tu aire acondicionado?",
+        "menu_options": {
+          "onboard": "Conectar una nueva unidad al Wi-Fi (instrucciones)",
+          "manual": "Ya está en mi Wi-Fi (ingresar IP)"
+        }
+      },
+      "onboard": {
+        "title": "Conectar la unidad a tu Wi-Fi",
+        "description": "Las unidades Samsung antiguas no se conectan al Wi-Fi mediante el protocolo de red — hay que hacerlo una vez, físicamente.\n\n**Opción A — WPS (la más sencilla, recomendada)**\n1. En el control remoto, **mantén presionado `Settings` durante 4 segundos** (función oculta: la pantalla solo parpadea) para iniciar el WPS.\n2. En menos de 2 minutos, **presiona el botón WPS de tu router**.\n3. Cuando el LED de Wi-Fi del módulo quede fijo, la unidad se habrá conectado.\n\n**Opción B — desde una computadora (si tu router no tiene botón WPS)**\n1. Instala **Python 3** si no lo tienes ({python_url}), luego **descarga el script de ayuda** (un solo archivo, sin nada más que instalar): {script_url}\n2. En el control remoto, **mantén presionado `Timer` durante 4 segundos** para poner la unidad en modo AP; aparecerá una red Wi-Fi llamada **`SMARTAIRCON`**.\n3. **Conecta la computadora a la red `SMARTAIRCON`** (contraseña **`1111122222`**).\n4. **Ejecuta el script** — `python3 provision.py` — y, cuando se te pida, ingresa el nombre y la contraseña de tu Wi-Fi de casa.\n5. Cuando muestre **Done**, la unidad se une a tu Wi-Fi; vuelve a conectar la computadora a tu red habitual.\n\nUna vez que la unidad esté en tu Wi-Fi, **cierra esta ventana** y abre **Ajustes → Dispositivos y servicios**: debería ofrecerse allí automáticamente (detección). Si no aparece, vuelve a iniciar el proceso de agregado y elige **Ya está en mi Wi-Fi** para ingresar su IP.\n\n_Para usuarios avanzados: `python3 provision.py --help` muestra las opciones para ejecutarlo sin las preguntas interactivas._"
+      },
+      "manual": {
+        "title": "Conectar al aire acondicionado",
+        "description": "Ingresa la dirección IP de la unidad. El token se gestiona en el siguiente paso.",
+        "data": {
+          "host": "Dirección IP"
+        }
+      },
+      "token": {
+        "title": "Obtener el token de acceso",
+        "description": "La unidad en {host} solo emite un token al encenderse (una prueba de acceso físico).\n\n1. **Apaga el aire acondicionado** con el control remoto, si está encendido.\n2. Presiona **Enviar** abajo (deja el campo vacío).\n3. En unos ~30 segundos, **enciende el aire acondicionado** con el control remoto.\n\nEl token se capturará y se guardará automáticamente.\n\n**Como alternativa**, si ya tienes el token de esta unidad, ingrésalo abajo y presiona Enviar.",
+        "data": {
+          "token": "Token (opcional)"
+        }
+      },
+      "save_token": {
+        "title": "Token obtenido",
+        "description": "Listo — el token de la unidad en {host} se obtuvo y guardó en esta integración.\n\n💡 **Consejo:** guarda el token de este dispositivo para no tener que obtenerlo de nuevo en el futuro (podrás pegarlo directamente al agregar la unidad):\n\n```\n{token}\n```\n\nPresiona **Enviar** para finalizar."
+      },
+      "reauth_confirm": {
+        "title": "Reautenticar el aire acondicionado Samsung",
+        "description": "El token de la unidad en {host} fue rechazado (puede cambiar tras un reinicio del módulo). Obtén uno nuevo: apaga la unidad, envía (déjalo vacío) y luego enciéndela en unos ~30 s. O ingresa abajo un token conocido.",
+        "data": {
+          "token": "Token (opcional)"
+        }
+      },
+      "discovery_confirm": {
+        "title": "Aire acondicionado Samsung encontrado",
+        "description": "Se detectó un aire acondicionado Samsung en {host}. ¿Configurarlo ahora? En el siguiente paso obtendrás un token (al encender), salvo que ya lo conozcas."
+      },
+      "reconfigure": {
+        "title": "Cambiar la dirección IP",
+        "description": "Ingresa la nueva dirección IP de este aire acondicionado. Se reutiliza el token existente.",
+        "data": {
+          "host": "Dirección IP"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "No se puede conectar. Verifica la dirección IP y que la unidad esté en la red.",
+      "auth": "El token fue rechazado. Déjalo vacío para obtener uno nuevo.",
+      "no_token": "No se recibió ningún token. Asegúrate de que la unidad estuviera apagada y luego se encendió dentro del plazo. Inténtalo de nuevo."
+    },
+    "abort": {
+      "already_configured": "Este aire acondicionado ya está configurado.",
+      "not_samsung_ac": "Este dispositivo no habla el protocolo Samsung DPLUG.",
+      "reauth_successful": "La reautenticación se realizó correctamente.",
+      "onboard_finished": "Una vez que el aire acondicionado esté en tu Wi-Fi, agrégalo desde Ajustes → Dispositivos y servicios — debería detectarse automáticamente, o elige «Ya está en mi Wi-Fi» para ingresar su IP.",
+      "wrong_device": "La unidad en esa dirección es un aire acondicionado diferente.",
+      "reconfigure_successful": "La dirección IP se actualizó."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Opciones de Samsung AC",
+        "data": {
+          "live_updates": "Actualizaciones en vivo (conexión persistente)",
+          "scan_interval": "Intervalo de actualización (segundos)"
+        },
+        "data_description": {
+          "live_updates": "Mantiene una conexión persistente para actualizaciones push instantáneas. Si está desactivado, la integración consulta la unidad sin conexión persistente (más robusto).",
+          "scan_interval": "Intervalo de consulta cuando las actualizaciones en vivo están desactivadas; consulta de respaldo/keepalive cuando están activadas."
+        }
+      }
+    }
+  },
+  "entity": {
+    "climate": {
+      "samsung_ac": {
+        "state_attributes": {
+          "preset_mode": {
+            "state": {
+              "none": "Apagado",
+              "quiet": "Silencioso",
+              "fast_turbo": "Turbo rápido",
+              "comfort": "Confort",
+              "dlight_cool": "d'light Cool",
+              "smart_saver": "Smart Saver",
+              "color_of_wind_alps": "Color of Wind: Alps",
+              "color_of_wind_florida": "Color of Wind: Florida",
+              "color_of_wind_savanna": "Color of Wind: Savanna"
+            }
+          },
+          "swing_mode": {
+            "state": {
+              "off": "Apagado",
+              "vertical": "Vertical",
+              "horizontal": "Horizontal",
+              "both": "Ambos",
+              "indirect": "Indirecto",
+              "direct": "Directo",
+              "center": "Centro",
+              "wide": "Amplio",
+              "left": "Izquierda",
+              "right": "Derecha",
+              "long": "Largo"
+            }
+          }
+        }
+      }
+    },
+    "sensor": {
+      "temperature": {
+        "name": "Temperatura"
+      },
+      "humidity": {
+        "name": "Humedad"
+      },
+      "outdoor_temperature": {
+        "name": "Temperatura exterior"
+      },
+      "used_time": {
+        "name": "Tiempo de funcionamiento"
+      },
+      "filter_use_time": {
+        "name": "Tiempo de uso del filtro"
+      },
+      "filter_life": {
+        "name": "Vida del filtro"
+      },
+      "error": {
+        "name": "Código de error"
+      },
+      "device_clock": {
+        "name": "Reloj del dispositivo"
+      },
+      "schedules": {
+        "name": "Programaciones"
+      }
+    },
+    "switch": {
+      "purify": {
+        "name": "Purify (SPi)"
+      },
+      "auto_clean": {
+        "name": "Autolimpieza"
+      },
+      "light": {
+        "name": "Luz de la pantalla"
+      },
+      "sterilize": {
+        "name": "Esterilización"
+      },
+      "smart_on": {
+        "name": "Encendido inteligente"
+      },
+      "weather": {
+        "name": "Clima"
+      }
+    },
+    "number": {
+      "sleep_timer": {
+        "name": "Temporizador de descanso"
+      },
+      "on_timer": {
+        "name": "Temporizador de encendido"
+      },
+      "off_timer": {
+        "name": "Temporizador de apagado"
+      },
+      "energy_target": {
+        "name": "Objetivo de energía"
+      }
+    },
+    "select": {
+      "occupancy": {
+        "name": "Ocupación",
+        "state": {
+          "single": "Individual",
+          "couple": "Pareja",
+          "family": "Familia"
+        }
+      },
+      "beep_volume": {
+        "name": "Volumen del bip",
+        "state": {
+          "mute": "Silencio",
+          "33": "33%",
+          "66": "66%",
+          "100": "100%"
+        }
+      },
+      "panel": {
+        "name": "Panel frontal",
+        "state": {
+          "open": "Abierto",
+          "close": "Cerrado"
+        }
+      },
+      "filter_clean_interval": {
+        "name": "Intervalo de limpieza del filtro",
+        "state": {
+          "180": "180 h",
+          "300": "300 h",
+          "500": "500 h",
+          "700": "700 h"
+        }
+      }
+    }
+  },
+  "services": {
+    "get_schedules": {
+      "name": "Leer programaciones",
+      "description": "Enumera las programaciones guardadas en el programador integrado de la unidad. Esto controla el programador integrado del aire acondicionado, que funciona incluso cuando Home Assistant está desconectado y solo enciende o apaga la unidad a una hora establecida. Para escenarios más complejos (temperatura, modo, ventilador…) usa las automatizaciones de Home Assistant."
+    },
+    "set_schedule": {
+      "name": "Definir programación",
+      "description": "Crea o edita una programación de encendido/apagado. Esto controla el programador integrado del aire acondicionado, que funciona incluso cuando Home Assistant está desconectado y solo enciende o apaga la unidad a una hora establecida. Para escenarios más complejos (temperatura, modo, ventilador…) usa las automatizaciones de Home Assistant.",
+      "fields": {
+        "time": {
+          "name": "Hora",
+          "description": "Hora local del día en que se activa la programación."
+        },
+        "power": {
+          "name": "Encendido",
+          "description": "Si la unidad se enciende o se apaga."
+        },
+        "repeat": {
+          "name": "Frecuencia",
+          "description": "Con qué frecuencia se ejecuta: una vez, todos los días o cada semana en los días seleccionados."
+        },
+        "days": {
+          "name": "Días",
+          "description": "En qué días ejecutarla — obligatorio para «Una vez» y «Semanal», ignorado para «Todos los días»."
+        },
+        "enabled": {
+          "name": "Activada",
+          "description": "Si la programación está activa."
+        },
+        "schedule_id": {
+          "name": "ID de programación",
+          "description": "ID de una programación existente que editar; déjalo vacío para crear una nueva."
+        }
+      }
+    },
+    "delete_schedule": {
+      "name": "Eliminar programación",
+      "description": "Elimina una programación del programador integrado de la unidad. Esto controla el programador integrado del aire acondicionado, que funciona incluso cuando Home Assistant está desconectado y solo enciende o apaga la unidad a una hora establecida. Para escenarios más complejos (temperatura, modo, ventilador…) usa las automatizaciones de Home Assistant.",
+      "fields": {
+        "schedule_id": {
+          "name": "ID de programación",
+          "description": "ID de la programación que eliminar (consulta el sensor Programaciones o get_schedules)."
+        }
+      }
+    },
+    "get_power_usage": {
+      "name": "Leer el consumo",
+      "description": "Recupera el historial de consumo registrado por el aire acondicionado en un intervalo de tiempo.",
+      "fields": {
+        "start": {
+          "name": "Inicio",
+          "description": "Inicio del intervalo (hora local)."
+        },
+        "end": {
+          "name": "Fin",
+          "description": "Fin del intervalo (por defecto: ahora)."
+        },
+        "unit": {
+          "name": "Agregación",
+          "description": "Agregar el consumo por hora o por día."
+        }
+      }
+    },
+    "set_power_logging": {
+      "name": "Definir el registro de consumo",
+      "description": "Activa o desactiva el registro de consumo en la unidad.",
+      "fields": {
+        "enable": {
+          "name": "Activar",
+          "description": "Si el registro de consumo está activado."
+        }
+      }
+    },
+    "reset_power_logging": {
+      "name": "Restablecer el registro de consumo",
+      "description": "Borra el historial de consumo registrado en la unidad."
+    },
+    "set_nickname": {
+      "name": "Definir el apodo",
+      "description": "Define el apodo guardado en la unidad.",
+      "fields": {
+        "nickname": {
+          "name": "Apodo",
+          "description": "El nuevo apodo."
+        }
+      }
+    },
+    "get_region_code": {
+      "name": "Leer el código de región",
+      "description": "Lee el código de región guardado en la unidad."
+    },
+    "set_region_code": {
+      "name": "Definir el código de región",
+      "description": "Define el código de región guardado en la unidad.",
+      "fields": {
+        "code": {
+          "name": "Código",
+          "description": "El código de región."
+        }
+      }
+    }
+  },
+  "selector": {
+    "schedule_power": {
+      "options": {
+        "on": "Encendido",
+        "off": "Apagado"
+      }
+    },
+    "schedule_repeat": {
+      "options": {
+        "once": "Una vez",
+        "daily": "Todos los días",
+        "weekly": "Semanal (días seleccionados)"
+      }
+    },
+    "schedule_days": {
+      "options": {
+        "mon": "Lunes",
+        "tue": "Martes",
+        "wed": "Miércoles",
+        "thu": "Jueves",
+        "fri": "Viernes",
+        "sat": "Sábado",
+        "sun": "Domingo"
+      }
+    },
+    "power_unit": {
+      "options": {
+        "hour": "Por hora",
+        "day": "Por día"
+      }
+    }
+  },
+  "exceptions": {
+    "command_failed": {
+      "message": "El comando del aire acondicionado Samsung falló: {error}"
+    },
+    "schedule_needs_day": {
+      "message": "Selecciona al menos un día para las programaciones «Una vez» y «Semanal»."
+    }
+  }
+}

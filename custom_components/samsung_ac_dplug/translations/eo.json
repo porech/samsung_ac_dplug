@@ -1,0 +1,358 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Samsung-klimatizilo (DPLUG / 2878)",
+        "description": "Kiel vi volas agordi la klimatizilon?",
+        "menu_options": {
+          "onboard": "Konekti novan unuon al Wi-Fi (instrukcioj)",
+          "manual": "Ĝi jam estas en mia Wi-Fi (enigu IP)"
+        }
+      },
+      "onboard": {
+        "title": "Konektu la unuon al via Wi-Fi",
+        "description": "Malnovaj Samsung-aparatoj ne aliĝas al Wi-Fi per la reta protokolo — faru tion unufoje, fizike.\n\n**Opcio A — WPS (plej facila, rekomendita)**\n1. Sur la teleregilo, **tenu `Settings` premita dum 4 sekundoj** (kaŝita funkcio: la ekrano nur ekbrilas) por starti WPS.\n2. Ene de 2 minutoj, **premu la WPS-butonon de via enkursigilo**.\n3. Kiam la Wi-Fi-LED de la modulo restas konstante lumanta, ĝi aliĝis.\n\n**Opcio B — de komputilo (se via enkursigilo ne havas WPS-butonon)**\n1. Instalu **Python 3** se vi ne havas ĝin ({python_url}), poste **elŝutu la helpan skripton** (unu sola dosiero, sen io plia por instali): {script_url}\n2. Sur la teleregilo, **tenu `Timer` premita dum 4 sekundoj** por meti la unuon en AP-reĝimon; aperos Wi-Fi-reto nomata **`SMARTAIRCON`**.\n3. **Konektu la komputilon al la reto `SMARTAIRCON`** (pasvorto **`1111122222`**).\n4. **Rulu la skripton** — `python3 provision.py` — kaj, kiam petite, enigu la nomon kaj pasvorton de via hejma Wi-Fi.\n5. Kiam ĝi montras **Done**, la unuo aliĝas al via Wi-Fi; rekonektu la komputilon al via kutima reto.\n\nKiam la unuo estas en via Wi-Fi, **fermu ĉi tiun fenestron** kaj malfermu **Agordoj → Aparatoj kaj servoj**: ĝi devus esti proponata tie aŭtomate (malkovro). Se ne, rekomencu aldoni ĝin kaj elektu **Ĝi jam estas en mia Wi-Fi** por enigi ĝian IP.\n\n_Por spertaj uzantoj: `python3 provision.py --help` listigas la opciojn por ruli ĝin sen la interagaj demandoj._"
+      },
+      "manual": {
+        "title": "Konektu al la klimatizilo",
+        "description": "Enigu la IP-adreson de la unuo. La ĵetono estas traktata en la sekva paŝo.",
+        "data": {
+          "host": "IP-adreso"
+        }
+      },
+      "token": {
+        "title": "Akiru la alirĵetonon",
+        "description": "La unuo ĉe {host} eldonas ĵetonon nur ĉe ŝalto (fizika pruvo de aliro).\n\n1. **Malŝaltu la klimatizilon** per la teleregilo, se ĝi estas ŝaltita.\n2. Premu **Sendi** sube (lasu la kampon malplena).\n3. Ene de ~30 sekundoj, **ŝaltu la klimatizilon** per la teleregilo.\n\nLa ĵetono estos kaptita kaj konservita aŭtomate.\n\n**Alternative**, se vi jam havas la ĵetonon de ĉi tiu unuo, enigu ĝin sube kaj premu Sendi.",
+        "data": {
+          "token": "Ĵetono (nedeviga)"
+        }
+      },
+      "save_token": {
+        "title": "Ĵetono akirita",
+        "description": "Farite — la ĵetono de la unuo ĉe {host} estis akirita kaj konservita en ĉi tiu integriĝo.\n\n💡 **Konsileto:** konservu la ĵetonon de ĉi tiu aparato por ke vi ne devu reakiri ĝin estonte (vi povas alglui ĝin rekte aldonante la unuon):\n\n```\n{token}\n```\n\nPremu **Sendi** por fini."
+      },
+      "reauth_confirm": {
+        "title": "Reaŭtentigi la Samsung-klimatizilon",
+        "description": "La ĵetono de la unuo ĉe {host} estis malakceptita (ĝi povas ŝanĝiĝi post restarigo de la modulo). Akiru novan: malŝaltu la unuon, sendu (lasu malplena), poste ŝaltu ĝin ene de ~30 s. Aŭ enigu konatan ĵetonon sube.",
+        "data": {
+          "token": "Ĵetono (nedeviga)"
+        }
+      },
+      "discovery_confirm": {
+        "title": "Samsung-klimatizilo trovita",
+        "description": "Samsung-klimatizilo estis malkovrita ĉe {host}. Ĉu agordi ĝin nun? En la sekva paŝo vi akiros ĵetonon (ĉe ŝalto), krom se vi jam konas ĝin."
+      },
+      "reconfigure": {
+        "title": "Ŝanĝu la IP-adreson",
+        "description": "Enigu la novan IP-adreson de ĉi tiu klimatizilo. La ekzistanta ĵetono estas reuzata.",
+        "data": {
+          "host": "IP-adreso"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Ne eblas konekti. Kontrolu la IP-adreson kaj ke la unuo estas en la reto.",
+      "auth": "La ĵetono estis malakceptita. Lasu ĝin malplena por akiri novan.",
+      "no_token": "Neniu ĵetono ricevita. Certigu ke la unuo estis malŝaltita, poste ŝaltita ene de la fenestro. Provu denove."
+    },
+    "abort": {
+      "already_configured": "Ĉi tiu klimatizilo jam estas agordita.",
+      "not_samsung_ac": "Ĉi tiu aparato ne parolas la protokolon Samsung DPLUG.",
+      "reauth_successful": "La reaŭtentigo sukcesis.",
+      "onboard_finished": "Kiam la klimatizilo estas en via Wi-Fi, aldonu ĝin per Agordoj → Aparatoj kaj servoj — ĝi devus esti malkovrita aŭtomate, aŭ elektu «Ĝi jam estas en mia Wi-Fi» por enigi ĝian IP.",
+      "wrong_device": "La unuo ĉe tiu adreso estas alia klimatizilo.",
+      "reconfigure_successful": "La IP-adreso estis ĝisdatigita."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Agordoj de Samsung AC",
+        "data": {
+          "live_updates": "Realtempaj ĝisdatigoj (daŭra konekto)",
+          "scan_interval": "Refreŝiga intervalo (sekundoj)"
+        },
+        "data_description": {
+          "live_updates": "Tenu unu daŭran konekton por tujaj puŝaj ĝisdatigoj. Se malŝaltita, la integriĝo enketas kaj ne uzas daŭran konekton (pli rezista).",
+          "scan_interval": "Enketa intervalo kiam realtempaj ĝisdatigoj estas malŝaltitaj; restariga/keepalive enketo kiam ili estas ŝaltitaj."
+        }
+      }
+    }
+  },
+  "entity": {
+    "climate": {
+      "samsung_ac": {
+        "state_attributes": {
+          "preset_mode": {
+            "state": {
+              "none": "Malŝaltita",
+              "quiet": "Kvieta",
+              "fast_turbo": "Rapida Turbo",
+              "comfort": "Comfort",
+              "dlight_cool": "d'light Cool",
+              "smart_saver": "Smart Saver",
+              "color_of_wind_alps": "Color of Wind: Alps",
+              "color_of_wind_florida": "Color of Wind: Florida",
+              "color_of_wind_savanna": "Color of Wind: Savanna"
+            }
+          },
+          "swing_mode": {
+            "state": {
+              "off": "Malŝaltita",
+              "vertical": "Vertikala",
+              "horizontal": "Horizontala",
+              "both": "Ambaŭ",
+              "indirect": "Nerekta",
+              "direct": "Rekta",
+              "center": "Centro",
+              "wide": "Larĝa",
+              "left": "Maldekstra",
+              "right": "Dekstra",
+              "long": "Longa"
+            }
+          }
+        }
+      }
+    },
+    "sensor": {
+      "temperature": {
+        "name": "Temperaturo"
+      },
+      "humidity": {
+        "name": "Humideco"
+      },
+      "outdoor_temperature": {
+        "name": "Ekstera temperaturo"
+      },
+      "used_time": {
+        "name": "Funkciada tempo"
+      },
+      "filter_use_time": {
+        "name": "Uza tempo de filtrilo"
+      },
+      "filter_life": {
+        "name": "Vivodaŭro de filtrilo"
+      },
+      "error": {
+        "name": "Erarkodo"
+      },
+      "device_clock": {
+        "name": "Horloĝo de aparato"
+      },
+      "schedules": {
+        "name": "Horaroj"
+      }
+    },
+    "switch": {
+      "purify": {
+        "name": "Purify (SPi)"
+      },
+      "auto_clean": {
+        "name": "Aŭtomata purigo"
+      },
+      "light": {
+        "name": "Ekrana lumo"
+      },
+      "sterilize": {
+        "name": "Sterilizo"
+      },
+      "smart_on": {
+        "name": "Inteligenta ŝalto"
+      },
+      "weather": {
+        "name": "Vetero"
+      }
+    },
+    "number": {
+      "sleep_timer": {
+        "name": "Dorma horloĝo"
+      },
+      "on_timer": {
+        "name": "Ŝalta horloĝo"
+      },
+      "off_timer": {
+        "name": "Malŝalta horloĝo"
+      },
+      "energy_target": {
+        "name": "Energia celo"
+      }
+    },
+    "select": {
+      "occupancy": {
+        "name": "Okupado",
+        "state": {
+          "single": "Unuopa",
+          "couple": "Paro",
+          "family": "Familio"
+        }
+      },
+      "beep_volume": {
+        "name": "Pep-laŭteco",
+        "state": {
+          "mute": "Mute",
+          "33": "33%",
+          "66": "66%",
+          "100": "100%"
+        }
+      },
+      "panel": {
+        "name": "Antaŭa panelo",
+        "state": {
+          "open": "Malfermita",
+          "close": "Fermita"
+        }
+      },
+      "filter_clean_interval": {
+        "name": "Intervalo de filtrila purigo",
+        "state": {
+          "180": "180 h",
+          "300": "300 h",
+          "500": "500 h",
+          "700": "700 h"
+        }
+      }
+    }
+  },
+  "services": {
+    "get_schedules": {
+      "name": "Akiri horarojn",
+      "description": "Listigu la horarojn konservitajn en la integrita planilo de la unuo. Ĉi tio regas la integritan planilon de la klimatizilo, kiu funkcias eĉ kiam Home Assistant estas eksterreta kaj nur ŝaltas aŭ malŝaltas la unuon je fiksita horo. Por pli kompleksaj scenaroj (temperaturo, reĝimo, ventumilo…) uzu Home Assistant-aŭtomatigojn."
+    },
+    "set_schedule": {
+      "name": "Agordi horaron",
+      "description": "Kreu aŭ redaktu ŝalt-/malŝalt-horaron. Ĉi tio regas la integritan planilon de la klimatizilo, kiu funkcias eĉ kiam Home Assistant estas eksterreta kaj nur ŝaltas aŭ malŝaltas la unuon je fiksita horo. Por pli kompleksaj scenaroj (temperaturo, reĝimo, ventumilo…) uzu Home Assistant-aŭtomatigojn.",
+      "fields": {
+        "time": {
+          "name": "Horo",
+          "description": "Loka horo de la tago kiam la horaro ekfunkcias."
+        },
+        "power": {
+          "name": "Ŝalto",
+          "description": "Ĉu la unuo ŝaltiĝas aŭ malŝaltiĝas."
+        },
+        "repeat": {
+          "name": "Ofteco",
+          "description": "Kiom ofte ĝi ruliĝas: unufoje, ĉiutage, aŭ semajne en la elektitaj tagoj."
+        },
+        "days": {
+          "name": "Tagoj",
+          "description": "En kiuj tagoj ruliĝi — bezonata por «Unufoje» kaj «Semajne», ignorata por «Ĉiutage»."
+        },
+        "enabled": {
+          "name": "Ebligita",
+          "description": "Ĉu la horaro estas aktiva."
+        },
+        "schedule_id": {
+          "name": "Horar-ID",
+          "description": "ID de ekzistanta horaro por redakti; lasu malplena por krei novan."
+        }
+      }
+    },
+    "delete_schedule": {
+      "name": "Forigi horaron",
+      "description": "Forigu horaron el la integrita planilo de la unuo. Ĉi tio regas la integritan planilon de la klimatizilo, kiu funkcias eĉ kiam Home Assistant estas eksterreta kaj nur ŝaltas aŭ malŝaltas la unuon je fiksita horo. Por pli kompleksaj scenaroj (temperaturo, reĝimo, ventumilo…) uzu Home Assistant-aŭtomatigojn.",
+      "fields": {
+        "schedule_id": {
+          "name": "Horar-ID",
+          "description": "ID de la horaro por forigi (vidu la sensilon Horaroj aŭ get_schedules)."
+        }
+      }
+    },
+    "get_power_usage": {
+      "name": "Akiri energiuzon",
+      "description": "Reakiru la historion de energiuzo registritan de la klimatizilo dum tempintervalo.",
+      "fields": {
+        "start": {
+          "name": "Komenco",
+          "description": "Komenco de la intervalo (loka horo)."
+        },
+        "end": {
+          "name": "Fino",
+          "description": "Fino de la intervalo (defaŭlte: nun)."
+        },
+        "unit": {
+          "name": "Agregado",
+          "description": "Agregu la uzon hore aŭ tage."
+        }
+      }
+    },
+    "set_power_logging": {
+      "name": "Agordi energiuzan registradon",
+      "description": "Ŝaltu aŭ malŝaltu la registradon de energiuzo de la unuo.",
+      "fields": {
+        "enable": {
+          "name": "Ebligi",
+          "description": "Ĉu la registrado de energiuzo estas ŝaltita."
+        }
+      }
+    },
+    "reset_power_logging": {
+      "name": "Restarigi energiuzan registradon",
+      "description": "Forviŝu la historion de energiuzo registritan en la unuo."
+    },
+    "set_nickname": {
+      "name": "Agordi kromnomon",
+      "description": "Agordu la kromnomon konservitan en la unuo.",
+      "fields": {
+        "nickname": {
+          "name": "Kromnomo",
+          "description": "La nova kromnomo."
+        }
+      }
+    },
+    "get_region_code": {
+      "name": "Akiri regionkodon",
+      "description": "Legu la regionkodon konservitan en la unuo."
+    },
+    "set_region_code": {
+      "name": "Agordi regionkodon",
+      "description": "Agordu la regionkodon konservitan en la unuo.",
+      "fields": {
+        "code": {
+          "name": "Kodo",
+          "description": "La regionkodo."
+        }
+      }
+    }
+  },
+  "selector": {
+    "schedule_power": {
+      "options": {
+        "on": "Ŝaltita",
+        "off": "Malŝaltita"
+      }
+    },
+    "schedule_repeat": {
+      "options": {
+        "once": "Unufoje",
+        "daily": "Ĉiutage",
+        "weekly": "Semajne (elektitaj tagoj)"
+      }
+    },
+    "schedule_days": {
+      "options": {
+        "mon": "Lundo",
+        "tue": "Mardo",
+        "wed": "Merkredo",
+        "thu": "Ĵaŭdo",
+        "fri": "Vendredo",
+        "sat": "Sabato",
+        "sun": "Dimanĉo"
+      }
+    },
+    "power_unit": {
+      "options": {
+        "hour": "Hore",
+        "day": "Tage"
+      }
+    }
+  },
+  "exceptions": {
+    "command_failed": {
+      "message": "Komando al la Samsung-klimatizilo malsukcesis: {error}"
+    },
+    "schedule_needs_day": {
+      "message": "Elektu almenaŭ unu tagon por la horaroj «Unufoje» kaj «Semajne»."
+    }
+  }
+}

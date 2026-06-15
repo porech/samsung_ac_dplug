@@ -1,0 +1,358 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Samsung loftkæling (DPLUG / 2878)",
+        "description": "Hvernig viltu setja upp loftkælinguna þína?",
+        "menu_options": {
+          "onboard": "Tengja nýtt tæki við Wi-Fi (leiðbeiningar)",
+          "manual": "Það er nú þegar á Wi-Fi-inu mínu (sláðu inn IP)"
+        }
+      },
+      "onboard": {
+        "title": "Tengdu tækið við Wi-Fi-ið þitt",
+        "description": "Gömul Samsung-tæki tengjast ekki Wi-Fi um netsamskiptareglurnar — það verður að gera einu sinni, með handvirkum hætti.\n\n**Valkostur A — WPS (auðveldast, mælt með)**\n1. Á fjarstýringunni, **haltu `Settings` inni í 4 sekúndur** (falin aðgerð: skjárinn aðeins blikkar) til að ræsa WPS.\n2. Innan 2 mínútna, **ýttu á WPS-hnappinn á beininum þínum**.\n3. Þegar Wi-Fi-ljósið á einingunni logar stöðugt er hún tengd.\n\n**Valkostur B — frá tölvu (ef beininn þinn er ekki með WPS-hnapp)**\n1. Settu upp **Python 3** ef þú ert ekki með það ({python_url}), og **sæktu svo hjálparskriftuna** (ein skrá, ekkert aukalegt þarf að setja upp): {script_url}\n2. Á fjarstýringunni, **haltu `Timer` inni í 4 sekúndur** til að setja tækið í AP-ham; Wi-Fi-net sem heitir **`SMARTAIRCON`** birtist.\n3. **Tengdu tölvuna við netið `SMARTAIRCON`** (lykilorð **`1111122222`**).\n4. **Keyrðu skriftuna** — `python3 provision.py` — og sláðu inn nafn og lykilorð heima-Wi-Fi-sins þíns þegar beðið er um það.\n5. Þegar hún skrifar **Done** tengist tækið Wi-Fi-inu þínu; tengdu tölvuna aftur við venjulega netið þitt.\n\nÞegar tækið er á Wi-Fi-inu þínu, **lokaðu þessum glugga** og opnaðu **Stillingar → Tæki og þjónustur**: það ætti að bjóðast þar sjálfkrafa (uppgötvun). Ef ekki, byrjaðu að bæta því við aftur og veldu **Það er nú þegar á Wi-Fi-inu mínu** til að slá inn IP-tölu þess.\n\n_Fyrir lengra komna: `python3 provision.py --help` sýnir valkostina til að keyra hana án gagnvirku spurninganna._"
+      },
+      "manual": {
+        "title": "Tengjast loftkælingunni",
+        "description": "Sláðu inn IP-tölu tækisins. Tókinn er meðhöndlaður í næsta skrefi.",
+        "data": {
+          "host": "IP-tala"
+        }
+      },
+      "token": {
+        "title": "Sækja aðgangstóka",
+        "description": "Tækið á {host} gefur aðeins út tóka við ræsingu (líkamleg staðfesting á aðgangi).\n\n1. **Slökktu á loftkælingunni** með fjarstýringunni ef hún er á.\n2. Ýttu á **Senda** hér að neðan (skildu reitinn eftir auðan).\n3. Innan ~30 sekúndna, **kveiktu á loftkælingunni** með fjarstýringunni.\n\nTókinn er gripinn sjálfkrafa og vistaður.\n\n**Að öðrum kosti**, ef þú ert þegar með tóka þessa tækis, sláðu hann inn hér að neðan og ýttu á Senda.",
+        "data": {
+          "token": "Tóki (valfrjálst)"
+        }
+      },
+      "save_token": {
+        "title": "Tóki sóttur",
+        "description": "Lokið — tókinn fyrir tækið á {host} var sóttur og vistaður í þessari samþættingu.\n\n💡 **Ábending:** vistaðu tóka þessa tækis svo þú þurfir ekki að sækja hann aftur síðar (þú getur límt hann beint inn þegar þú bætir tækinu við):\n\n```\n{token}\n```\n\nÝttu á **Senda** til að ljúka."
+      },
+      "reauth_confirm": {
+        "title": "Auðkenna Samsung loftkælingu aftur",
+        "description": "Tóka tækisins á {host} var hafnað (hann getur breyst eftir endurstillingu einingarinnar). Sæktu nýjan: slökktu á tækinu, sendu (skildu eftir autt), og kveiktu svo á því innan ~30 sek. Eða sláðu inn þekktan tóka hér að neðan.",
+        "data": {
+          "token": "Tóki (valfrjálst)"
+        }
+      },
+      "discovery_confirm": {
+        "title": "Samsung loftkæling fannst",
+        "description": "Samsung loftkæling uppgötvaðist á {host}. Viltu setja hana upp núna? Í næsta skrefi sækir þú tóka (ræsing), nema þú þekkir hann nú þegar."
+      },
+      "reconfigure": {
+        "title": "Breyta IP-tölu",
+        "description": "Sláðu inn nýju IP-töluna fyrir þessa loftkælingu. Núverandi tóki er endurnýttur.",
+        "data": {
+          "host": "IP-tala"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Get ekki tengst. Athugaðu IP-töluna og að tækið sé á netinu.",
+      "auth": "Tókanum var hafnað. Skildu hann eftir auðan til að sækja nýjan.",
+      "no_token": "Enginn tóki barst. Gakktu úr skugga um að tækið hafi verið slökkt og síðan kveikt innan tímagluggans. Reyndu aftur."
+    },
+    "abort": {
+      "already_configured": "Þessi loftkæling er nú þegar uppsett.",
+      "not_samsung_ac": "Þetta tæki talar ekki Samsung DPLUG-samskiptareglurnar.",
+      "reauth_successful": "Endurauðkenning tókst.",
+      "onboard_finished": "Þegar loftkælingin er á Wi-Fi-inu þínu skaltu bæta henni við úr Stillingar → Tæki og þjónustur — hún ætti að uppgötvast sjálfkrafa, eða veldu „Það er nú þegar á Wi-Fi-inu mínu“ til að slá inn IP-tölu hennar.",
+      "wrong_device": "Tækið á þeirri tölu er önnur loftkæling.",
+      "reconfigure_successful": "IP-talan var uppfærð."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Samsung AC valkostir",
+        "data": {
+          "live_updates": "Rauntímauppfærslur (varanleg tenging)",
+          "scan_interval": "Endurnýjunarbil (sekúndur)"
+        },
+        "data_description": {
+          "live_updates": "Halda einni varanlegri tengingu fyrir tafarlausar ýti-uppfærslur. Ef slökkt, sækir samþættingin gögn reglulega og notar enga varanlega tengingu (þolnari).",
+          "scan_interval": "Sóknarbil þegar rauntímauppfærslur eru af; vara-/keepalive-sókn þegar kveikt er á þeim."
+        }
+      }
+    }
+  },
+  "entity": {
+    "climate": {
+      "samsung_ac": {
+        "state_attributes": {
+          "preset_mode": {
+            "state": {
+              "none": "Af",
+              "quiet": "Hljóðlátt",
+              "fast_turbo": "Hröð túrbó",
+              "comfort": "Þægindi",
+              "dlight_cool": "d'light Cool",
+              "smart_saver": "Smart Saver",
+              "color_of_wind_alps": "Color of Wind: Alps",
+              "color_of_wind_florida": "Color of Wind: Florida",
+              "color_of_wind_savanna": "Color of Wind: Savanna"
+            }
+          },
+          "swing_mode": {
+            "state": {
+              "off": "Af",
+              "vertical": "Lóðrétt",
+              "horizontal": "Lárétt",
+              "both": "Bæði",
+              "indirect": "Óbeint",
+              "direct": "Beint",
+              "center": "Miðja",
+              "wide": "Breitt",
+              "left": "Vinstri",
+              "right": "Hægri",
+              "long": "Langt"
+            }
+          }
+        }
+      }
+    },
+    "sensor": {
+      "temperature": {
+        "name": "Hitastig"
+      },
+      "humidity": {
+        "name": "Rakastig"
+      },
+      "outdoor_temperature": {
+        "name": "Útihiti"
+      },
+      "used_time": {
+        "name": "Notkunartími"
+      },
+      "filter_use_time": {
+        "name": "Notkunartími síu"
+      },
+      "filter_life": {
+        "name": "Líftími síu"
+      },
+      "error": {
+        "name": "Villukóði"
+      },
+      "device_clock": {
+        "name": "Klukka tækis"
+      },
+      "schedules": {
+        "name": "Áætlanir"
+      }
+    },
+    "switch": {
+      "purify": {
+        "name": "Purify (SPi)"
+      },
+      "auto_clean": {
+        "name": "Sjálfvirk hreinsun"
+      },
+      "light": {
+        "name": "Skjáljós"
+      },
+      "sterilize": {
+        "name": "Sótthreinsun"
+      },
+      "smart_on": {
+        "name": "Snjallkveiking"
+      },
+      "weather": {
+        "name": "Veður"
+      }
+    },
+    "number": {
+      "sleep_timer": {
+        "name": "Sváfntími"
+      },
+      "on_timer": {
+        "name": "Kveikitími"
+      },
+      "off_timer": {
+        "name": "Slökkvitími"
+      },
+      "energy_target": {
+        "name": "Orkumarkmið"
+      }
+    },
+    "select": {
+      "occupancy": {
+        "name": "Búseta",
+        "state": {
+          "single": "Einn",
+          "couple": "Par",
+          "family": "Fjölskylda"
+        }
+      },
+      "beep_volume": {
+        "name": "Hljóðstyrkur pípu",
+        "state": {
+          "mute": "Þagga",
+          "33": "33%",
+          "66": "66%",
+          "100": "100%"
+        }
+      },
+      "panel": {
+        "name": "Framhlið",
+        "state": {
+          "open": "Opna",
+          "close": "Loka"
+        }
+      },
+      "filter_clean_interval": {
+        "name": "Bil milli síuhreinsana",
+        "state": {
+          "180": "180 h",
+          "300": "300 h",
+          "500": "500 h",
+          "700": "700 h"
+        }
+      }
+    }
+  },
+  "services": {
+    "get_schedules": {
+      "name": "Sækja áætlanir",
+      "description": "Lista upp áætlanirnar sem geymdar eru í innbyggða tímaáætlara tækisins. Þetta stýrir innbyggða tímaáætlara loftkælingarinnar, sem keyrir jafnvel þegar Home Assistant er ótengt og kveikir eða slekkur aðeins á tækinu á tilteknum tíma. Fyrir flóknari aðstæður (hitastig, ham, viftu…) notaðu Home Assistant-sjálfvirkni."
+    },
+    "set_schedule": {
+      "name": "Stilla áætlun",
+      "description": "Búðu til eða breyttu kveikt/slökkt-áætlun. Þetta stýrir innbyggða tímaáætlara loftkælingarinnar, sem keyrir jafnvel þegar Home Assistant er ótengt og kveikir eða slekkur aðeins á tækinu á tilteknum tíma. Fyrir flóknari aðstæður (hitastig, ham, viftu…) notaðu Home Assistant-sjálfvirkni.",
+      "fields": {
+        "time": {
+          "name": "Tími",
+          "description": "Staðartími dagsins þegar áætlunin fer í gang."
+        },
+        "power": {
+          "name": "Kveikt/slökkt",
+          "description": "Hvort tækið kveikir á sér eða slekkur."
+        },
+        "repeat": {
+          "name": "Tíðni",
+          "description": "Hversu oft hún keyrir: einu sinni, á hverjum degi eða vikulega á völdum dögum."
+        },
+        "days": {
+          "name": "Dagar",
+          "description": "Á hvaða dögum á að keyra — krafist fyrir 'Einu sinni' og 'Vikulega', hunsað fyrir 'Á hverjum degi'."
+        },
+        "enabled": {
+          "name": "Virkt",
+          "description": "Hvort áætlunin er virk."
+        },
+        "schedule_id": {
+          "name": "Auðkenni áætlunar",
+          "description": "Auðkenni fyrirliggjandi áætlunar til að breyta; skildu eftir autt til að búa til nýja."
+        }
+      }
+    },
+    "delete_schedule": {
+      "name": "Eyða áætlun",
+      "description": "Eyddu áætlun úr innbyggða tímaáætlara tækisins. Þetta stýrir innbyggða tímaáætlara loftkælingarinnar, sem keyrir jafnvel þegar Home Assistant er ótengt og kveikir eða slekkur aðeins á tækinu á tilteknum tíma. Fyrir flóknari aðstæður (hitastig, ham, viftu…) notaðu Home Assistant-sjálfvirkni.",
+      "fields": {
+        "schedule_id": {
+          "name": "Auðkenni áætlunar",
+          "description": "Auðkenni áætlunarinnar sem á að eyða (sjá skynjarann Áætlanir eða get_schedules)."
+        }
+      }
+    },
+    "get_power_usage": {
+      "name": "Sækja orkunotkun",
+      "description": "Sæktu skráða orkunotkunarsögu loftkælingarinnar yfir tímabil.",
+      "fields": {
+        "start": {
+          "name": "Upphaf",
+          "description": "Upphaf tímabilsins (staðartími)."
+        },
+        "end": {
+          "name": "Lok",
+          "description": "Lok tímabilsins (sjálfgefið núna)."
+        },
+        "unit": {
+          "name": "Samanlagning",
+          "description": "Leggðu notkunina saman á klukkustund eða á dag."
+        }
+      }
+    },
+    "set_power_logging": {
+      "name": "Stilla orkuskráningu",
+      "description": "Kveiktu eða slökktu á orkunotkunarskráningu tækisins.",
+      "fields": {
+        "enable": {
+          "name": "Virkja",
+          "description": "Hvort orkunotkunarskráning er virk."
+        }
+      }
+    },
+    "reset_power_logging": {
+      "name": "Endurstilla orkuskráningu",
+      "description": "Hreinsaðu orkunotkunarsöguna sem skráð er á tækinu."
+    },
+    "set_nickname": {
+      "name": "Stilla gælunafn",
+      "description": "Stilltu gælunafnið sem geymt er á tækinu.",
+      "fields": {
+        "nickname": {
+          "name": "Gælunafn",
+          "description": "Nýja gælunafnið."
+        }
+      }
+    },
+    "get_region_code": {
+      "name": "Sækja svæðiskóða",
+      "description": "Lestu svæðiskóðann sem geymdur er á tækinu."
+    },
+    "set_region_code": {
+      "name": "Stilla svæðiskóða",
+      "description": "Stilltu svæðiskóðann sem geymdur er á tækinu.",
+      "fields": {
+        "code": {
+          "name": "Kóði",
+          "description": "Svæðiskóðinn."
+        }
+      }
+    }
+  },
+  "selector": {
+    "schedule_power": {
+      "options": {
+        "on": "Á",
+        "off": "Af"
+      }
+    },
+    "schedule_repeat": {
+      "options": {
+        "once": "Einu sinni",
+        "daily": "Á hverjum degi",
+        "weekly": "Vikulega (valdir dagar)"
+      }
+    },
+    "schedule_days": {
+      "options": {
+        "mon": "Mánudagur",
+        "tue": "Þriðjudagur",
+        "wed": "Miðvikudagur",
+        "thu": "Fimmtudagur",
+        "fri": "Föstudagur",
+        "sat": "Laugardagur",
+        "sun": "Sunnudagur"
+      }
+    },
+    "power_unit": {
+      "options": {
+        "hour": "Á klukkustund",
+        "day": "Á dag"
+      }
+    }
+  },
+  "exceptions": {
+    "command_failed": {
+      "message": "Samsung AC-skipun mistókst: {error}"
+    },
+    "schedule_needs_day": {
+      "message": "Veldu að minnsta kosti einn dag fyrir áætlanirnar 'Einu sinni' og 'Vikulega'."
+    }
+  }
+}

@@ -1,0 +1,358 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Samsung gaisa kondicionieris (DPLUG / 2878)",
+        "description": "Kā vēlaties iestatīt savu gaisa kondicionieri?",
+        "menu_options": {
+          "onboard": "Pievienot jaunu ierīci Wi-Fi tīklam (instrukcijas)",
+          "manual": "Tas jau ir manā Wi-Fi tīklā (ievadīt IP)"
+        }
+      },
+      "onboard": {
+        "title": "Pievienojiet ierīci savam Wi-Fi tīklam",
+        "description": "Vecās Samsung ierīces nepievienojas Wi-Fi tīklam, izmantojot tīkla protokolu — tas jāizdara vienreiz, fiziski.\n\n**A variants — WPS (vienkāršākais, ieteicamais)**\n1. Uz tālvadības pults **turiet `Settings` 4 sekundes** (slēptā funkcija: displejs tikai mirgo), lai sāktu WPS.\n2. 2 minūšu laikā **nospiediet WPS pogu uz maršrutētāja**.\n3. Kad moduļa Wi-Fi indikators deg nepārtraukti, savienojums ir izveidots.\n\n**B variants — no datora (ja maršrutētājam nav WPS pogas)**\n1. Instalējiet **Python 3**, ja tas nav uzstādīts ({python_url}), pēc tam **lejupielādējiet palīgskriptu** (viens fails, papildu instalācijas nav vajadzīgas): {script_url}\n2. Uz tālvadības pults **turiet `Timer` 4 sekundes**, lai pārslēgtu ierīci AP režīmā; parādīsies Wi-Fi tīkls ar nosaukumu **`SMARTAIRCON`**.\n3. **Pievienojiet datoru `SMARTAIRCON` tīklam** (parole **`1111122222`**).\n4. **Palaidiet skriptu** — `python3 provision.py` — un, kad tiek prasīts, ievadiet sava mājas Wi-Fi nosaukumu un paroli.\n5. Kad tiek parādīts **Done**, ierīce pievienojas jūsu Wi-Fi tīklam; atkārtoti savienojiet datoru ar parasto tīklu.\n\nTiklīdz ierīce ir jūsu Wi-Fi tīklā, **aizveriet šo logu** un atveriet **Iestatījumi → Ierīces un pakalpojumi**: tai vajadzētu tikt piedāvātai tur automātiski (atklāšana). Ja nē, sāciet pievienošanu vēlreiz un izvēlieties **Tas jau ir manā Wi-Fi tīklā**, lai ievadītu tās IP.\n\n_Pieredzējušiem lietotājiem: `python3 provision.py --help` uzskaita opcijas tā palaišanai bez interaktīvajiem jautājumiem._"
+      },
+      "manual": {
+        "title": "Savienoties ar gaisa kondicionieri",
+        "description": "Ievadiet ierīces IP adresi. Pilnvara tiek apstrādāta nākamajā solī.",
+        "data": {
+          "host": "IP adrese"
+        }
+      },
+      "token": {
+        "title": "Iegūt piekļuves pilnvaru",
+        "description": "Ierīce {host} izsniedz pilnvaru tikai ieslēgšanas brīdī (fizisks piekļuves apliecinājuma solis).\n\n1. **Izslēdziet gaisa kondicionieri** ar tālvadības pulti, ja tas ir ieslēgts.\n2. Nospiediet **Iesniegt** zemāk (atstājiet lauku tukšu).\n3. ~30 sekunžu laikā **ieslēdziet gaisa kondicionieri** ar tālvadības pulti.\n\nPilnvara tiks tverta un saglabāta automātiski.\n\n**Alternatīvi**, ja jums jau ir šīs ierīces pilnvara, ievadiet to zemāk un nospiediet Iesniegt.",
+        "data": {
+          "token": "Pilnvara (neobligāti)"
+        }
+      },
+      "save_token": {
+        "title": "Pilnvara iegūta",
+        "description": "Gatavs — ierīces {host} pilnvara tika iegūta un saglabāta šajā integrācijā.\n\n💡 **Padoms:** saglabājiet šīs ierīces pilnvaru, lai nākotnē jums to nebūtu jāiegūst no jauna (varat to ielīmēt tieši, pievienojot ierīci):\n\n```\n{token}\n```\n\nLai pabeigtu, nospiediet **Iesniegt**."
+      },
+      "reauth_confirm": {
+        "title": "Atkārtota Samsung gaisa kondicioniera autentifikācija",
+        "description": "Ierīces {host} pilnvara tika noraidīta (tā var mainīties pēc moduļa atiestatīšanas). Iegūstiet jaunu: izslēdziet ierīci, iesniedziet (atstājiet tukšu), pēc tam ~30 s laikā ieslēdziet to. Vai ievadiet zemāk zināmu pilnvaru.",
+        "data": {
+          "token": "Pilnvara (neobligāti)"
+        }
+      },
+      "discovery_confirm": {
+        "title": "Atrasts Samsung gaisa kondicionieris",
+        "description": "Adresē {host} tika atklāts Samsung gaisa kondicionieris. Vai iestatīt to tagad? Nākamajā solī jūs iegūsiet pilnvaru (ieslēdzot), ja vien to jau nezināt."
+      },
+      "reconfigure": {
+        "title": "Mainīt IP adresi",
+        "description": "Ievadiet šī gaisa kondicioniera jauno IP adresi. Esošā pilnvara tiek izmantota atkārtoti.",
+        "data": {
+          "host": "IP adrese"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Nevar izveidot savienojumu. Pārbaudiet IP adresi un to, vai ierīce ir tīklā.",
+      "auth": "Pilnvara tika noraidīta. Atstājiet to tukšu, lai iegūtu jaunu.",
+      "no_token": "Pilnvara netika saņemta. Pārliecinieties, ka ierīce bija izslēgta un pēc tam ieslēgta noteiktajā laika logā. Mēģiniet vēlreiz."
+    },
+    "abort": {
+      "already_configured": "Šis gaisa kondicionieris jau ir konfigurēts.",
+      "not_samsung_ac": "Šī ierīce nerunā Samsung DPLUG protokolā.",
+      "reauth_successful": "Atkārtota autentifikācija bija veiksmīga.",
+      "onboard_finished": "Tiklīdz gaisa kondicionieris ir jūsu Wi-Fi tīklā, pievienojiet to no Iestatījumi → Ierīces un pakalpojumi — tam vajadzētu tikt atklātam automātiski, vai izvēlieties “Tas jau ir manā Wi-Fi tīklā”, lai ievadītu tā IP.",
+      "wrong_device": "Norādītajā adresē ir cits gaisa kondicionieris.",
+      "reconfigure_successful": "IP adrese tika atjaunināta."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Samsung AC opcijas",
+        "data": {
+          "live_updates": "Tiešie atjauninājumi (pastāvīgs savienojums)",
+          "scan_interval": "Atsvaidzināšanas intervāls (sekundēs)"
+        },
+        "data_description": {
+          "live_updates": "Uztur vienu pastāvīgu savienojumu tūlītējiem push atjauninājumiem. Ja izslēgts, integrācija veic aptauju un neizmanto pastāvīgu savienojumu (noturīgāk).",
+          "scan_interval": "Aptaujas intervāls, kad tiešie atjauninājumi ir izslēgti; rezerves/keepalive aptauja, kad tie ir ieslēgti."
+        }
+      }
+    }
+  },
+  "entity": {
+    "climate": {
+      "samsung_ac": {
+        "state_attributes": {
+          "preset_mode": {
+            "state": {
+              "none": "Izslēgts",
+              "quiet": "Kluss",
+              "fast_turbo": "Fast Turbo",
+              "comfort": "Komforts",
+              "dlight_cool": "d'light Cool",
+              "smart_saver": "Smart Saver",
+              "color_of_wind_alps": "Color of Wind: Alps",
+              "color_of_wind_florida": "Color of Wind: Florida",
+              "color_of_wind_savanna": "Color of Wind: Savanna"
+            }
+          },
+          "swing_mode": {
+            "state": {
+              "off": "Izslēgts",
+              "vertical": "Vertikāli",
+              "horizontal": "Horizontāli",
+              "both": "Abi",
+              "indirect": "Netiešs",
+              "direct": "Tiešs",
+              "center": "Centrā",
+              "wide": "Plašs",
+              "left": "Pa kreisi",
+              "right": "Pa labi",
+              "long": "Garš"
+            }
+          }
+        }
+      }
+    },
+    "sensor": {
+      "temperature": {
+        "name": "Temperatūra"
+      },
+      "humidity": {
+        "name": "Mitrums"
+      },
+      "outdoor_temperature": {
+        "name": "Āra temperatūra"
+      },
+      "used_time": {
+        "name": "Darbības laiks"
+      },
+      "filter_use_time": {
+        "name": "Filtra lietošanas laiks"
+      },
+      "filter_life": {
+        "name": "Filtra kalpošanas laiks"
+      },
+      "error": {
+        "name": "Kļūdas kods"
+      },
+      "device_clock": {
+        "name": "Ierīces pulkstenis"
+      },
+      "schedules": {
+        "name": "Grafiki"
+      }
+    },
+    "switch": {
+      "purify": {
+        "name": "Purify (SPi)"
+      },
+      "auto_clean": {
+        "name": "Automātiskā tīrīšana"
+      },
+      "light": {
+        "name": "Displeja apgaismojums"
+      },
+      "sterilize": {
+        "name": "Sterilizācija"
+      },
+      "smart_on": {
+        "name": "Viedā ieslēgšana"
+      },
+      "weather": {
+        "name": "Laikapstākļi"
+      }
+    },
+    "number": {
+      "sleep_timer": {
+        "name": "Miega taimeris"
+      },
+      "on_timer": {
+        "name": "Ieslēgšanas taimeris"
+      },
+      "off_timer": {
+        "name": "Izslēgšanas taimeris"
+      },
+      "energy_target": {
+        "name": "Enerģijas mērķis"
+      }
+    },
+    "select": {
+      "occupancy": {
+        "name": "Aizņemtība",
+        "state": {
+          "single": "Viens",
+          "couple": "Pāris",
+          "family": "Ģimene"
+        }
+      },
+      "beep_volume": {
+        "name": "Skaņas signāla skaļums",
+        "state": {
+          "mute": "Klusums",
+          "33": "33%",
+          "66": "66%",
+          "100": "100%"
+        }
+      },
+      "panel": {
+        "name": "Priekšējais panelis",
+        "state": {
+          "open": "Atvērt",
+          "close": "Aizvērt"
+        }
+      },
+      "filter_clean_interval": {
+        "name": "Filtra tīrīšanas intervāls",
+        "state": {
+          "180": "180 h",
+          "300": "300 h",
+          "500": "500 h",
+          "700": "700 h"
+        }
+      }
+    }
+  },
+  "services": {
+    "get_schedules": {
+      "name": "Iegūt grafikus",
+      "description": "Uzskaita grafikus, kas saglabāti ierīces iebūvētajā plānotājā. Tas vada gaisa kondicioniera iebūvēto plānotāju, kas darbojas pat tad, kad Home Assistant ir bezsaistē, un tikai ieslēdz vai izslēdz ierīci noteiktā laikā. Sarežģītākiem scenārijiem (temperatūra, režīms, ventilators…) izmantojiet Home Assistant automatizācijas."
+    },
+    "set_schedule": {
+      "name": "Iestatīt grafiku",
+      "description": "Izveidot vai rediģēt ieslēgšanas/izslēgšanas grafiku. Tas vada gaisa kondicioniera iebūvēto plānotāju, kas darbojas pat tad, kad Home Assistant ir bezsaistē, un tikai ieslēdz vai izslēdz ierīci noteiktā laikā. Sarežģītākiem scenārijiem (temperatūra, režīms, ventilators…) izmantojiet Home Assistant automatizācijas.",
+      "fields": {
+        "time": {
+          "name": "Laiks",
+          "description": "Vietējais diennakts laiks, kad grafiks tiek aktivizēts."
+        },
+        "power": {
+          "name": "Barošana",
+          "description": "Vai ierīce ieslēdzas vai izslēdzas."
+        },
+        "repeat": {
+          "name": "Biežums",
+          "description": "Cik bieži tas darbojas: vienreiz, katru dienu vai katru nedēļu izvēlētajās dienās."
+        },
+        "days": {
+          "name": "Dienas",
+          "description": "Kurās dienās darboties — nepieciešams “Vienreiz” un “Iknedēļas” gadījumā, tiek ignorēts “Katru dienu” gadījumā."
+        },
+        "enabled": {
+          "name": "Iespējots",
+          "description": "Vai grafiks ir aktīvs."
+        },
+        "schedule_id": {
+          "name": "Grafika ID",
+          "description": "Rediģējamā esošā grafika ID; atstājiet tukšu, lai izveidotu jaunu."
+        }
+      }
+    },
+    "delete_schedule": {
+      "name": "Dzēst grafiku",
+      "description": "Dzēš grafiku no ierīces iebūvētā plānotāja. Tas vada gaisa kondicioniera iebūvēto plānotāju, kas darbojas pat tad, kad Home Assistant ir bezsaistē, un tikai ieslēdz vai izslēdz ierīci noteiktā laikā. Sarežģītākiem scenārijiem (temperatūra, režīms, ventilators…) izmantojiet Home Assistant automatizācijas.",
+      "fields": {
+        "schedule_id": {
+          "name": "Grafika ID",
+          "description": "Dzēšamā grafika ID (skatiet Grafiki sensoru vai get_schedules)."
+        }
+      }
+    },
+    "get_power_usage": {
+      "name": "Iegūt enerģijas patēriņu",
+      "description": "Iegūst gaisa kondicioniera reģistrēto enerģijas patēriņa vēsturi noteiktā laika diapazonā.",
+      "fields": {
+        "start": {
+          "name": "Sākums",
+          "description": "Diapazona sākums (vietējais laiks)."
+        },
+        "end": {
+          "name": "Beigas",
+          "description": "Diapazona beigas (pēc noklusējuma: tagad)."
+        },
+        "unit": {
+          "name": "Agregācija",
+          "description": "Apkopot patēriņu stundā vai dienā."
+        }
+      }
+    },
+    "set_power_logging": {
+      "name": "Iestatīt enerģijas reģistrēšanu",
+      "description": "Ieslēdz vai izslēdz ierīces enerģijas patēriņa reģistrēšanu.",
+      "fields": {
+        "enable": {
+          "name": "Iespējot",
+          "description": "Vai enerģijas patēriņa reģistrēšana ir ieslēgta."
+        }
+      }
+    },
+    "reset_power_logging": {
+      "name": "Atiestatīt enerģijas reģistrēšanu",
+      "description": "Notīra ierīcē reģistrēto enerģijas patēriņa vēsturi."
+    },
+    "set_nickname": {
+      "name": "Iestatīt segvārdu",
+      "description": "Iestata ierīcē saglabāto segvārdu.",
+      "fields": {
+        "nickname": {
+          "name": "Segvārds",
+          "description": "Jaunais segvārds."
+        }
+      }
+    },
+    "get_region_code": {
+      "name": "Iegūt reģiona kodu",
+      "description": "Nolasa ierīcē saglabāto reģiona kodu."
+    },
+    "set_region_code": {
+      "name": "Iestatīt reģiona kodu",
+      "description": "Iestata ierīcē saglabāto reģiona kodu.",
+      "fields": {
+        "code": {
+          "name": "Kods",
+          "description": "Reģiona kods."
+        }
+      }
+    }
+  },
+  "selector": {
+    "schedule_power": {
+      "options": {
+        "on": "Ieslēgts",
+        "off": "Izslēgts"
+      }
+    },
+    "schedule_repeat": {
+      "options": {
+        "once": "Vienreiz",
+        "daily": "Katru dienu",
+        "weekly": "Iknedēļas (izvēlētās dienas)"
+      }
+    },
+    "schedule_days": {
+      "options": {
+        "mon": "Pirmdiena",
+        "tue": "Otrdiena",
+        "wed": "Trešdiena",
+        "thu": "Ceturtdiena",
+        "fri": "Piektdiena",
+        "sat": "Sestdiena",
+        "sun": "Svētdiena"
+      }
+    },
+    "power_unit": {
+      "options": {
+        "hour": "Stundā",
+        "day": "Dienā"
+      }
+    }
+  },
+  "exceptions": {
+    "command_failed": {
+      "message": "Samsung AC komanda neizdevās: {error}"
+    },
+    "schedule_needs_day": {
+      "message": "Atlasiet vismaz vienu dienu “Vienreiz” un “Iknedēļas” grafikiem."
+    }
+  }
+}

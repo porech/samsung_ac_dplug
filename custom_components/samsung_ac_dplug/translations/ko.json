@@ -1,0 +1,358 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "삼성 에어컨 (DPLUG / 2878)",
+        "description": "에어컨을 어떻게 설정하시겠어요?",
+        "menu_options": {
+          "onboard": "새 장치를 Wi-Fi에 연결 (안내)",
+          "manual": "이미 내 Wi-Fi에 있음 (IP 입력)"
+        }
+      },
+      "onboard": {
+        "title": "장치를 Wi-Fi에 연결하기",
+        "description": "구형 삼성 장치는 네트워크 프로토콜로 Wi-Fi에 연결할 수 없습니다 —— 한 번은 직접 손으로 해야 합니다.\n\n**옵션 A —— WPS (가장 쉬움, 권장)**\n1. 리모컨에서 **`Settings`를 4초간 길게 누릅니다** (숨겨진 기능: 디스플레이는 깜빡이기만 합니다). 이렇게 하면 WPS가 시작됩니다.\n2. 2분 이내에 **공유기의 WPS 버튼을 누릅니다**.\n3. 모듈의 Wi-Fi LED가 켜진 상태로 유지되면 연결된 것입니다.\n\n**옵션 B —— 컴퓨터에서 (공유기에 WPS 버튼이 없는 경우)**\n1. **Python 3**가 없다면 설치하고 ({python_url}), 그다음 **보조 스크립트를 다운로드합니다** (추가 설치가 필요 없는 단일 파일): {script_url}\n2. 리모컨에서 **`Timer`를 4초간 길게 눌러** 장치를 AP 모드로 전환합니다. **`SMARTAIRCON`**이라는 이름의 Wi-Fi 네트워크가 나타납니다.\n3. **컴퓨터를 `SMARTAIRCON` 네트워크에 연결합니다** (비밀번호 **`1111122222`**).\n4. **스크립트를 실행합니다** —— `python3 provision.py` —— 메시지가 표시되면 집 Wi-Fi 이름과 비밀번호를 입력합니다.\n5. **Done**이 표시되면 장치가 Wi-Fi에 연결됩니다. 컴퓨터를 평소 사용하는 네트워크에 다시 연결하세요.\n\n장치가 Wi-Fi에 연결되면 **이 창을 닫고** **설정 → 기기 및 서비스**를 엽니다. 거기에 자동으로 제안되어야 합니다 (검색). 그렇지 않으면 추가를 다시 시작하고 **이미 내 Wi-Fi에 있음**을 선택하여 IP를 입력하세요.\n\n_고급 사용자용: `python3 provision.py --help`는 대화형 프롬프트 없이 실행하기 위한 옵션을 나열합니다._"
+      },
+      "manual": {
+        "title": "에어컨에 연결하기",
+        "description": "장치의 IP 주소를 입력하세요. 토큰은 다음 단계에서 처리됩니다.",
+        "data": {
+          "host": "IP 주소"
+        }
+      },
+      "token": {
+        "title": "액세스 토큰 획득",
+        "description": "{host}의 장치는 전원이 켜질 때만 토큰을 발급합니다 (물리적 접근 증명 단계).\n\n1. 에어컨이 켜져 있으면 리모컨으로 **에어컨을 끕니다**.\n2. 아래의 **제출**을 누릅니다 (필드는 비워 둡니다).\n3. 약 30초 이내에 리모컨으로 **에어컨을 켭니다**.\n\n토큰이 자동으로 캡처되어 저장됩니다.\n\n**또는**, 이미 이 장치의 토큰이 있다면 아래에 입력하고 제출을 누르세요.",
+        "data": {
+          "token": "토큰 (선택 사항)"
+        }
+      },
+      "save_token": {
+        "title": "토큰 획득 완료",
+        "description": "완료 —— {host}의 장치 토큰이 획득되어 이 통합에 저장되었습니다.\n\n💡 **팁:** 나중에 다시 획득하지 않아도 되도록 이 장치의 토큰을 저장해 두세요 (장치를 추가할 때 직접 붙여넣을 수 있습니다):\n\n```\n{token}\n```\n\n**제출**을 눌러 완료합니다."
+      },
+      "reauth_confirm": {
+        "title": "삼성 에어컨 재인증",
+        "description": "{host}의 장치 토큰이 거부되었습니다 (모듈 초기화 후 변경될 수 있습니다). 새 토큰을 획득하세요: 장치를 끄고, 제출한 다음 (비워 둠), 약 30초 이내에 켭니다. 또는 아는 토큰을 아래에 입력하세요.",
+        "data": {
+          "token": "토큰 (선택 사항)"
+        }
+      },
+      "discovery_confirm": {
+        "title": "삼성 에어컨을 찾았습니다",
+        "description": "{host}에서 삼성 에어컨이 검색되었습니다. 지금 설정할까요? 다음 단계에서는 이미 알고 있지 않은 한 토큰을 획득합니다 (전원 켜기)."
+      },
+      "reconfigure": {
+        "title": "IP 주소 변경",
+        "description": "이 에어컨의 새 IP 주소를 입력하세요. 기존 토큰이 재사용됩니다.",
+        "data": {
+          "host": "IP 주소"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "연결할 수 없습니다. IP 주소와 장치가 네트워크에 연결되어 있는지 확인하세요.",
+      "auth": "토큰이 거부되었습니다. 새 토큰을 획득하려면 비워 두세요.",
+      "no_token": "토큰을 받지 못했습니다. 장치를 껐다가 시간 내에 켰는지 확인하세요. 다시 시도하세요."
+    },
+    "abort": {
+      "already_configured": "이 에어컨은 이미 구성되어 있습니다.",
+      "not_samsung_ac": "이 장치는 Samsung DPLUG 프로토콜을 지원하지 않습니다.",
+      "reauth_successful": "재인증에 성공했습니다.",
+      "onboard_finished": "에어컨이 Wi-Fi에 연결되면 설정 → 기기 및 서비스에서 추가하세요 —— 자동으로 검색되거나, “이미 내 Wi-Fi에 있음”을 선택하여 IP를 입력하세요.",
+      "wrong_device": "해당 주소에 있는 장치는 다른 에어컨입니다.",
+      "reconfigure_successful": "IP 주소가 업데이트되었습니다."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "삼성 AC 옵션",
+        "data": {
+          "live_updates": "실시간 업데이트 (지속 연결)",
+          "scan_interval": "새로 고침 간격 (초)"
+        },
+        "data_description": {
+          "live_updates": "즉각적인 푸시 업데이트를 위해 하나의 지속 연결을 유지합니다. 꺼져 있으면 통합이 폴링을 사용하고 지속 연결을 사용하지 않습니다 (더 안정적).",
+          "scan_interval": "실시간 업데이트가 꺼져 있을 때의 폴링 간격. 켜져 있을 때는 폴백/연결 유지 폴링입니다."
+        }
+      }
+    }
+  },
+  "entity": {
+    "climate": {
+      "samsung_ac": {
+        "state_attributes": {
+          "preset_mode": {
+            "state": {
+              "none": "꺼짐",
+              "quiet": "정음",
+              "fast_turbo": "쾌속 터보",
+              "comfort": "쾌적",
+              "dlight_cool": "d'light Cool",
+              "smart_saver": "스마트 세이버",
+              "color_of_wind_alps": "Color of Wind: Alps",
+              "color_of_wind_florida": "Color of Wind: Florida",
+              "color_of_wind_savanna": "Color of Wind: Savanna"
+            }
+          },
+          "swing_mode": {
+            "state": {
+              "off": "꺼짐",
+              "vertical": "상하",
+              "horizontal": "좌우",
+              "both": "상하좌우",
+              "indirect": "간접",
+              "direct": "직접",
+              "center": "중앙",
+              "wide": "넓게",
+              "left": "왼쪽",
+              "right": "오른쪽",
+              "long": "멀리"
+            }
+          }
+        }
+      }
+    },
+    "sensor": {
+      "temperature": {
+        "name": "온도"
+      },
+      "humidity": {
+        "name": "습도"
+      },
+      "outdoor_temperature": {
+        "name": "실외 온도"
+      },
+      "used_time": {
+        "name": "작동 시간"
+      },
+      "filter_use_time": {
+        "name": "필터 사용 시간"
+      },
+      "filter_life": {
+        "name": "필터 수명"
+      },
+      "error": {
+        "name": "오류 코드"
+      },
+      "device_clock": {
+        "name": "장치 시계"
+      },
+      "schedules": {
+        "name": "예약"
+      }
+    },
+    "switch": {
+      "purify": {
+        "name": "공기 청정 (SPi)"
+      },
+      "auto_clean": {
+        "name": "자동 청소"
+      },
+      "light": {
+        "name": "디스플레이 조명"
+      },
+      "sterilize": {
+        "name": "살균"
+      },
+      "smart_on": {
+        "name": "스마트 켜기"
+      },
+      "weather": {
+        "name": "날씨"
+      }
+    },
+    "number": {
+      "sleep_timer": {
+        "name": "취침 타이머"
+      },
+      "on_timer": {
+        "name": "켜기 타이머"
+      },
+      "off_timer": {
+        "name": "끄기 타이머"
+      },
+      "energy_target": {
+        "name": "에너지 목표"
+      }
+    },
+    "select": {
+      "occupancy": {
+        "name": "재실 인원",
+        "state": {
+          "single": "1인",
+          "couple": "2인",
+          "family": "가족"
+        }
+      },
+      "beep_volume": {
+        "name": "알림음 볼륨",
+        "state": {
+          "mute": "음소거",
+          "33": "33%",
+          "66": "66%",
+          "100": "100%"
+        }
+      },
+      "panel": {
+        "name": "전면 패널",
+        "state": {
+          "open": "열림",
+          "close": "닫힘"
+        }
+      },
+      "filter_clean_interval": {
+        "name": "필터 청소 주기",
+        "state": {
+          "180": "180 h",
+          "300": "300 h",
+          "500": "500 h",
+          "700": "700 h"
+        }
+      }
+    }
+  },
+  "services": {
+    "get_schedules": {
+      "name": "예약 가져오기",
+      "description": "장치의 내장 스케줄러에 저장된 예약을 나열합니다. 이는 에어컨의 내장 스케줄러를 제어하며, Home Assistant가 오프라인일 때도 작동하고 설정된 시간에 장치를 켜거나 끄기만 합니다. 더 복잡한 시나리오(온도, 모드, 풍량 등)에는 Home Assistant 자동화를 사용하세요."
+    },
+    "set_schedule": {
+      "name": "예약 설정",
+      "description": "켜기/끄기 예약을 생성하거나 편집합니다. 이는 에어컨의 내장 스케줄러를 제어하며, Home Assistant가 오프라인일 때도 작동하고 설정된 시간에 장치를 켜거나 끄기만 합니다. 더 복잡한 시나리오(온도, 모드, 풍량 등)에는 Home Assistant 자동화를 사용하세요.",
+      "fields": {
+        "time": {
+          "name": "시간",
+          "description": "예약이 실행되는 현지 시간."
+        },
+        "power": {
+          "name": "전원",
+          "description": "장치를 켜는지 끄는지."
+        },
+        "repeat": {
+          "name": "빈도",
+          "description": "실행 빈도: 한 번, 매일, 또는 선택한 요일에 매주."
+        },
+        "days": {
+          "name": "요일",
+          "description": "실행할 요일 —— “한 번”과 “매주”에는 필수, “매일”에는 무시됩니다."
+        },
+        "enabled": {
+          "name": "활성화됨",
+          "description": "예약이 활성 상태인지 여부."
+        },
+        "schedule_id": {
+          "name": "예약 ID",
+          "description": "편집할 기존 예약의 ID. 새로 만들려면 비워 두세요."
+        }
+      }
+    },
+    "delete_schedule": {
+      "name": "예약 삭제",
+      "description": "장치의 내장 스케줄러에서 예약을 삭제합니다. 이는 에어컨의 내장 스케줄러를 제어하며, Home Assistant가 오프라인일 때도 작동하고 설정된 시간에 장치를 켜거나 끄기만 합니다. 더 복잡한 시나리오(온도, 모드, 풍량 등)에는 Home Assistant 자동화를 사용하세요.",
+      "fields": {
+        "schedule_id": {
+          "name": "예약 ID",
+          "description": "삭제할 예약의 ID (“예약” 센서 또는 get_schedules 참조)."
+        }
+      }
+    },
+    "get_power_usage": {
+      "name": "전력 사용량 가져오기",
+      "description": "지정한 기간 동안 에어컨이 기록한 전력 사용량 기록을 검색합니다.",
+      "fields": {
+        "start": {
+          "name": "시작",
+          "description": "기간의 시작 (현지 시간)."
+        },
+        "end": {
+          "name": "종료",
+          "description": "기간의 끝 (기본값은 현재)."
+        },
+        "unit": {
+          "name": "집계",
+          "description": "사용량을 시간별 또는 일별로 집계합니다."
+        }
+      }
+    },
+    "set_power_logging": {
+      "name": "전력 기록 설정",
+      "description": "장치의 전력 사용량 기록을 켜거나 끕니다.",
+      "fields": {
+        "enable": {
+          "name": "활성화",
+          "description": "전력 사용량 기록이 켜져 있는지 여부."
+        }
+      }
+    },
+    "reset_power_logging": {
+      "name": "전력 기록 초기화",
+      "description": "장치에 기록된 전력 사용량 기록을 지웁니다."
+    },
+    "set_nickname": {
+      "name": "별명 설정",
+      "description": "장치에 저장된 별명을 설정합니다.",
+      "fields": {
+        "nickname": {
+          "name": "별명",
+          "description": "새 별명."
+        }
+      }
+    },
+    "get_region_code": {
+      "name": "지역 코드 가져오기",
+      "description": "장치에 저장된 지역 코드를 읽습니다."
+    },
+    "set_region_code": {
+      "name": "지역 코드 설정",
+      "description": "장치에 저장되는 지역 코드를 설정합니다.",
+      "fields": {
+        "code": {
+          "name": "코드",
+          "description": "지역 코드."
+        }
+      }
+    }
+  },
+  "selector": {
+    "schedule_power": {
+      "options": {
+        "on": "켜기",
+        "off": "끄기"
+      }
+    },
+    "schedule_repeat": {
+      "options": {
+        "once": "한 번",
+        "daily": "매일",
+        "weekly": "매주 (선택한 요일)"
+      }
+    },
+    "schedule_days": {
+      "options": {
+        "mon": "월요일",
+        "tue": "화요일",
+        "wed": "수요일",
+        "thu": "목요일",
+        "fri": "금요일",
+        "sat": "토요일",
+        "sun": "일요일"
+      }
+    },
+    "power_unit": {
+      "options": {
+        "hour": "시간별",
+        "day": "일별"
+      }
+    }
+  },
+  "exceptions": {
+    "command_failed": {
+      "message": "삼성 AC 명령이 실패했습니다: {error}"
+    },
+    "schedule_needs_day": {
+      "message": "“한 번”과 “매주” 예약에는 최소 하나의 요일을 선택하세요."
+    }
+  }
+}

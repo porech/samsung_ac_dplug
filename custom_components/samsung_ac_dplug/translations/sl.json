@@ -1,0 +1,358 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Klimatska naprava Samsung (DPLUG / 2878)",
+        "description": "Kako želite nastaviti klimatsko napravo?",
+        "menu_options": {
+          "onboard": "Poveži novo enoto z Wi-Fi (navodila)",
+          "manual": "Je že v mojem omrežju Wi-Fi (vnesi IP)"
+        }
+      },
+      "onboard": {
+        "title": "Povežite enoto z omrežjem Wi-Fi",
+        "description": "Starejše enote Samsung se z Wi-Fi ne povežejo prek omrežnega protokola — to je treba storiti enkrat, fizično.\n\n**Možnost A — WPS (najpreprostejša, priporočena)**\n1. Na daljinskem upravljalniku **držite `Settings` 4 sekunde** (skrita funkcija: na zaslonu samo utripne), da zaženete WPS.\n2. V 2 minutah **pritisnite gumb WPS na usmerjevalniku**.\n3. Ko Wi-Fi LED na modulu sveti neprekinjeno, je enota povezana.\n\n**Možnost B — iz računalnika (če vaš usmerjevalnik nima gumba WPS)**\n1. Namestite **Python 3**, če ga nimate ({python_url}), nato **prenesite pomožno skripto** (ena sama datoteka, ničesar dodatnega ni treba namestiti): {script_url}\n2. Na daljinskem upravljalniku **držite `Timer` 4 sekunde**, da enoto preklopite v način AP; pojavilo se bo omrežje Wi-Fi z imenom **`SMARTAIRCON`**.\n3. **Povežite računalnik z omrežjem `SMARTAIRCON`** (geslo **`1111122222`**).\n4. **Zaženite skripto** — `python3 provision.py` — in ko boste pozvani, vnesite ime in geslo svojega domačega omrežja Wi-Fi.\n5. Ko izpiše **Done**, se enota poveže z vašim Wi-Fi; računalnik znova povežite z običajnim omrežjem.\n\nKo je enota v vašem omrežju Wi-Fi, **zaprite to okno** in odprite **Nastavitve → Naprave in storitve**: tam bi morala biti samodejno ponujena (odkrivanje). Če ni, znova začnite dodajanje in izberite **Je že v mojem omrežju Wi-Fi**, da vnesete njen naslov IP.\n\n_Za napredne uporabnike: `python3 provision.py --help` izpiše možnosti za zagon brez interaktivnih pozivov._"
+      },
+      "manual": {
+        "title": "Povezava s klimatsko napravo",
+        "description": "Vnesite naslov IP enote. Žeton se obravnava v naslednjem koraku.",
+        "data": {
+          "host": "Naslov IP"
+        }
+      },
+      "token": {
+        "title": "Pridobitev dostopnega žetona",
+        "description": "Enota na {host} izda žeton samo ob vklopu (fizično dokazilo o dostopu).\n\n1. **Izklopite klimatsko napravo** z daljinskim upravljalnikom, če je vklopljena.\n2. Spodaj pritisnite **Pošlji** (polje pustite prazno).\n3. V ~30 sekundah **vklopite klimatsko napravo** z daljinskim upravljalnikom.\n\nŽeton bo samodejno zajet in shranjen.\n\n**Druga možnost**: če žeton te enote že imate, ga vnesite spodaj in pritisnite Pošlji.",
+        "data": {
+          "token": "Žeton (neobvezno)"
+        }
+      },
+      "save_token": {
+        "title": "Žeton pridobljen",
+        "description": "Končano — žeton enote na {host} je bil pridobljen in shranjen v tej integraciji.\n\n💡 **Namig:** shranite žeton te naprave, da ga v prihodnje ne bo treba znova pridobivati (pri dodajanju enote ga lahko neposredno prilepite):\n\n```\n{token}\n```\n\nZa zaključek pritisnite **Pošlji**."
+      },
+      "reauth_confirm": {
+        "title": "Ponovno preverjanje pristnosti klimatske naprave Samsung",
+        "description": "Žeton enote na {host} je bil zavrnjen (po ponastavitvi modula se lahko spremeni). Pridobite novega: izklopite enoto, pošljite (pustite prazno), nato jo v ~30 s vklopite. Ali pa spodaj vnesite znan žeton.",
+        "data": {
+          "token": "Žeton (neobvezno)"
+        }
+      },
+      "discovery_confirm": {
+        "title": "Najdena klimatska naprava Samsung",
+        "description": "Na {host} je bila odkrita klimatska naprava Samsung. Jo želite nastaviti zdaj? V naslednjem koraku boste pridobili žeton (z vklopom), razen če ga že poznate."
+      },
+      "reconfigure": {
+        "title": "Spremeni naslov IP",
+        "description": "Vnesite nov naslov IP te klimatske naprave. Obstoječi žeton se znova uporabi.",
+        "data": {
+          "host": "Naslov IP"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Povezava ni mogoča. Preverite naslov IP in ali je enota v omrežju.",
+      "auth": "Žeton je bil zavrnjen. Pustite prazno za pridobitev novega.",
+      "no_token": "Žeton ni bil prejet. Prepričajte se, da je bila enota izklopljena in nato vklopljena znotraj okna. Poskusite znova."
+    },
+    "abort": {
+      "already_configured": "Ta klimatska naprava je že nastavljena.",
+      "not_samsung_ac": "Ta naprava ne uporablja protokola Samsung DPLUG.",
+      "reauth_successful": "Ponovno preverjanje pristnosti je bilo uspešno.",
+      "onboard_finished": "Ko je klimatska naprava v vašem omrežju Wi-Fi, jo dodajte prek Nastavitve → Naprave in storitve — odkrita bi morala biti samodejno, ali pa izberite „Je že v mojem omrežju Wi-Fi“, da vnesete njen naslov IP.",
+      "wrong_device": "Na navedenem naslovu je druga klimatska naprava.",
+      "reconfigure_successful": "Naslov IP je bil posodobljen."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Možnosti Samsung AC",
+        "data": {
+          "live_updates": "Posodobitve v živo (trajna povezava)",
+          "scan_interval": "Interval osveževanja (sekunde)"
+        },
+        "data_description": {
+          "live_updates": "Ohranja eno trajno povezavo za takojšnje potisne posodobitve. Če je izklopljeno, integracija poizveduje (polling) in ne uporablja trajne povezave (bolj odporno).",
+          "scan_interval": "Interval poizvedovanja, ko so posodobitve v živo izklopljene; rezervna/keepalive poizvedba, ko so vklopljene."
+        }
+      }
+    }
+  },
+  "entity": {
+    "climate": {
+      "samsung_ac": {
+        "state_attributes": {
+          "preset_mode": {
+            "state": {
+              "none": "Izklopljeno",
+              "quiet": "Tiho",
+              "fast_turbo": "Fast Turbo",
+              "comfort": "Udobje",
+              "dlight_cool": "d'light Cool",
+              "smart_saver": "Smart Saver",
+              "color_of_wind_alps": "Color of Wind: Alps",
+              "color_of_wind_florida": "Color of Wind: Florida",
+              "color_of_wind_savanna": "Color of Wind: Savanna"
+            }
+          },
+          "swing_mode": {
+            "state": {
+              "off": "Izklopljeno",
+              "vertical": "Navpično",
+              "horizontal": "Vodoravno",
+              "both": "Oboje",
+              "indirect": "Posredno",
+              "direct": "Neposredno",
+              "center": "Sredina",
+              "wide": "Široko",
+              "left": "Levo",
+              "right": "Desno",
+              "long": "Dolgo"
+            }
+          }
+        }
+      }
+    },
+    "sensor": {
+      "temperature": {
+        "name": "Temperatura"
+      },
+      "humidity": {
+        "name": "Vlažnost"
+      },
+      "outdoor_temperature": {
+        "name": "Zunanja temperatura"
+      },
+      "used_time": {
+        "name": "Čas delovanja"
+      },
+      "filter_use_time": {
+        "name": "Čas uporabe filtra"
+      },
+      "filter_life": {
+        "name": "Življenjska doba filtra"
+      },
+      "error": {
+        "name": "Koda napake"
+      },
+      "device_clock": {
+        "name": "Ura naprave"
+      },
+      "schedules": {
+        "name": "Urniki"
+      }
+    },
+    "switch": {
+      "purify": {
+        "name": "Purify (SPi)"
+      },
+      "auto_clean": {
+        "name": "Samodejno čiščenje"
+      },
+      "light": {
+        "name": "Osvetlitev zaslona"
+      },
+      "sterilize": {
+        "name": "Sterilizacija"
+      },
+      "smart_on": {
+        "name": "Pametni vklop"
+      },
+      "weather": {
+        "name": "Vreme"
+      }
+    },
+    "number": {
+      "sleep_timer": {
+        "name": "Časovnik spanja"
+      },
+      "on_timer": {
+        "name": "Časovnik vklopa"
+      },
+      "off_timer": {
+        "name": "Časovnik izklopa"
+      },
+      "energy_target": {
+        "name": "Cilj porabe energije"
+      }
+    },
+    "select": {
+      "occupancy": {
+        "name": "Zasedenost",
+        "state": {
+          "single": "Posameznik",
+          "couple": "Par",
+          "family": "Družina"
+        }
+      },
+      "beep_volume": {
+        "name": "Glasnost piska",
+        "state": {
+          "mute": "Utišano",
+          "33": "33%",
+          "66": "66%",
+          "100": "100%"
+        }
+      },
+      "panel": {
+        "name": "Sprednja plošča",
+        "state": {
+          "open": "Odpri",
+          "close": "Zapri"
+        }
+      },
+      "filter_clean_interval": {
+        "name": "Interval čiščenja filtra",
+        "state": {
+          "180": "180 h",
+          "300": "300 h",
+          "500": "500 h",
+          "700": "700 h"
+        }
+      }
+    }
+  },
+  "services": {
+    "get_schedules": {
+      "name": "Pridobi urnike",
+      "description": "Izpiše urnike, shranjene v vgrajenem razporejevalniku enote. Upravlja vgrajeni razporejevalnik klimatske naprave, ki deluje tudi, ko je Home Assistant brez povezave, in enoto ob nastavljenem času samo vklopi ali izklopi. Za zahtevnejše scenarije (temperatura, način, ventilator…) uporabite avtomatizacije Home Assistant."
+    },
+    "set_schedule": {
+      "name": "Nastavi urnik",
+      "description": "Ustvari ali uredi urnik vklopa/izklopa. Upravlja vgrajeni razporejevalnik klimatske naprave, ki deluje tudi, ko je Home Assistant brez povezave, in enoto ob nastavljenem času samo vklopi ali izklopi. Za zahtevnejše scenarije (temperatura, način, ventilator…) uporabite avtomatizacije Home Assistant.",
+      "fields": {
+        "time": {
+          "name": "Čas",
+          "description": "Lokalni čas dneva, ko se urnik sproži."
+        },
+        "power": {
+          "name": "Napajanje",
+          "description": "Ali se enota vklopi ali izklopi."
+        },
+        "repeat": {
+          "name": "Pogostost",
+          "description": "Kako pogosto se izvaja: enkrat, vsak dan ali tedensko na izbrane dni."
+        },
+        "days": {
+          "name": "Dnevi",
+          "description": "Ob katerih dneh naj se izvaja — zahtevano za „Enkrat“ in „Tedensko“, prezrto za „Vsak dan“."
+        },
+        "enabled": {
+          "name": "Omogočen",
+          "description": "Ali je urnik aktiven."
+        },
+        "schedule_id": {
+          "name": "ID urnika",
+          "description": "ID obstoječega urnika za urejanje; pustite prazno za ustvarjanje novega."
+        }
+      }
+    },
+    "delete_schedule": {
+      "name": "Izbriši urnik",
+      "description": "Izbriše urnik iz vgrajenega razporejevalnika enote. Upravlja vgrajeni razporejevalnik klimatske naprave, ki deluje tudi, ko je Home Assistant brez povezave, in enoto ob nastavljenem času samo vklopi ali izklopi. Za zahtevnejše scenarije (temperatura, način, ventilator…) uporabite avtomatizacije Home Assistant.",
+      "fields": {
+        "schedule_id": {
+          "name": "ID urnika",
+          "description": "ID urnika za izbris (glejte senzor Urniki ali get_schedules)."
+        }
+      }
+    },
+    "get_power_usage": {
+      "name": "Pridobi porabo energije",
+      "description": "Pridobi zgodovino zabeležene porabe energije klimatske naprave v izbranem časovnem obdobju.",
+      "fields": {
+        "start": {
+          "name": "Začetek",
+          "description": "Začetek obdobja (lokalni čas)."
+        },
+        "end": {
+          "name": "Konec",
+          "description": "Konec obdobja (privzeto: zdaj)."
+        },
+        "unit": {
+          "name": "Združevanje",
+          "description": "Združi porabo na uro ali na dan."
+        }
+      }
+    },
+    "set_power_logging": {
+      "name": "Nastavi beleženje porabe",
+      "description": "Vklopi ali izklopi beleženje porabe energije na enoti.",
+      "fields": {
+        "enable": {
+          "name": "Omogoči",
+          "description": "Ali je beleženje porabe energije vklopljeno."
+        }
+      }
+    },
+    "reset_power_logging": {
+      "name": "Ponastavi beleženje porabe",
+      "description": "Počisti zgodovino porabe energije, zabeleženo na enoti."
+    },
+    "set_nickname": {
+      "name": "Nastavi vzdevek",
+      "description": "Nastavi vzdevek, shranjen na enoti.",
+      "fields": {
+        "nickname": {
+          "name": "Vzdevek",
+          "description": "Nov vzdevek."
+        }
+      }
+    },
+    "get_region_code": {
+      "name": "Pridobi kodo regije",
+      "description": "Prebere kodo regije, shranjeno na enoti."
+    },
+    "set_region_code": {
+      "name": "Nastavi kodo regije",
+      "description": "Nastavi kodo regije, shranjeno na enoti.",
+      "fields": {
+        "code": {
+          "name": "Koda",
+          "description": "Koda regije."
+        }
+      }
+    }
+  },
+  "selector": {
+    "schedule_power": {
+      "options": {
+        "on": "Vklopljeno",
+        "off": "Izklopljeno"
+      }
+    },
+    "schedule_repeat": {
+      "options": {
+        "once": "Enkrat",
+        "daily": "Vsak dan",
+        "weekly": "Tedensko (izbrani dnevi)"
+      }
+    },
+    "schedule_days": {
+      "options": {
+        "mon": "Ponedeljek",
+        "tue": "Torek",
+        "wed": "Sreda",
+        "thu": "Četrtek",
+        "fri": "Petek",
+        "sat": "Sobota",
+        "sun": "Nedelja"
+      }
+    },
+    "power_unit": {
+      "options": {
+        "hour": "Na uro",
+        "day": "Na dan"
+      }
+    }
+  },
+  "exceptions": {
+    "command_failed": {
+      "message": "Ukaz klimatske naprave Samsung ni uspel: {error}"
+    },
+    "schedule_needs_day": {
+      "message": "Izberite vsaj en dan za urnika „Enkrat“ in „Tedensko“."
+    }
+  }
+}

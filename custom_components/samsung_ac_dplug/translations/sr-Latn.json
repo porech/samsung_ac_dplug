@@ -1,0 +1,358 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Samsung klima-uređaj (DPLUG / 2878)",
+        "description": "Kako želite da podesite klima-uređaj?",
+        "menu_options": {
+          "onboard": "Poveži novu jedinicu na Wi-Fi (uputstvo)",
+          "manual": "Već je na mom Wi-Fi-ju (unesi IP)"
+        }
+      },
+      "onboard": {
+        "title": "Poveži jedinicu na Wi-Fi",
+        "description": "Stari Samsung uređaji se ne povezuju na Wi-Fi putem mrežnog protokola — to treba uraditi jednom, fizički.\n\n**Opcija A — WPS (najjednostavnije, preporučeno)**\n1. Na daljinskom upravljaču **držite `Settings` 4 sekunde** (skrivena funkcija: ekran samo zatreperi) da pokrenete WPS.\n2. U roku od 2 minuta **pritisnite WPS dugme na ruteru**.\n3. Kada Wi-Fi LED na modulu ostane stalno upaljen, jedinica se povezala.\n\n**Opcija B — sa računara (ako ruter nema WPS dugme)**\n1. Instalirajte **Python 3** ako ga nemate ({python_url}), zatim **preuzmite pomoćnu skriptu** (jedan fajl, bez dodatnih instalacija): {script_url}\n2. Na daljinskom upravljaču **držite `Timer` 4 sekunde** da prebacite jedinicu u AP režim; pojaviće se Wi-Fi mreža pod nazivom **`SMARTAIRCON`**.\n3. **Povežite računar na mrežu `SMARTAIRCON`** (lozinka **`1111122222`**).\n4. **Pokrenite skriptu** — `python3 provision.py` — i kada se zatraži, unesite naziv i lozinku svoje kućne Wi-Fi mreže.\n5. Kada ispiše **Done**, jedinica se povezuje na vaš Wi-Fi; ponovo povežite računar na svoju uobičajenu mrežu.\n\nKada je jedinica na vašem Wi-Fi-ju, **zatvorite ovaj prozor** i otvorite **Podešavanja → Uređaji i usluge**: trebalo bi da bude ponuđena tamo automatski (otkrivanje). Ako nije, ponovo započnite dodavanje i izaberite **Već je na mom Wi-Fi-ju** da unesete njen IP.\n\n_Za napredne korisnike: `python3 provision.py --help` navodi opcije za pokretanje bez interaktivnih upita._"
+      },
+      "manual": {
+        "title": "Povezivanje sa klima-uređajem",
+        "description": "Unesite IP adresu jedinice. Token se obrađuje u sledećem koraku.",
+        "data": {
+          "host": "IP adresa"
+        }
+      },
+      "token": {
+        "title": "Dohvati pristupni token",
+        "description": "Jedinica na {host} izdaje token samo pri uključivanju (fizički dokaz pristupa).\n\n1. **Isključite klima-uređaj** daljinskim upravljačem, ako je uključen.\n2. Pritisnite **Pošalji** ispod (ostavite polje prazno).\n3. U roku od ~30 sekundi **uključite klima-uređaj** daljinskim upravljačem.\n\nToken će biti automatski uhvaćen i sačuvan.\n\n**Alternativno**, ako već imate token ove jedinice, unesite ga ispod i pritisnite Pošalji.",
+        "data": {
+          "token": "Token (opciono)"
+        }
+      },
+      "save_token": {
+        "title": "Token dohvaćen",
+        "description": "Gotovo — token jedinice na {host} je dohvaćen i sačuvan u ovoj integraciji.\n\n💡 **Savet:** sačuvajte token ovog uređaja da ne morate ponovo da ga dohvatate u budućnosti (možete da ga nalepite direktno pri dodavanju jedinice):\n\n```\n{token}\n```\n\nPritisnite **Pošalji** da završite."
+      },
+      "reauth_confirm": {
+        "title": "Ponovna autentikacija Samsung klima-uređaja",
+        "description": "Token jedinice na {host} je odbijen (može da se promeni nakon resetovanja modula). Dohvatite novi: isključite jedinicu, pošaljite (ostavite prazno), zatim je uključite u roku od ~30 s. Ili unesite poznati token ispod.",
+        "data": {
+          "token": "Token (opciono)"
+        }
+      },
+      "discovery_confirm": {
+        "title": "Pronađen Samsung klima-uređaj",
+        "description": "Samsung klima-uređaj je pronađen na {host}. Podesiti ga sada? U sledećem koraku ćete dohvatiti token (uključivanjem), osim ako ga već znate."
+      },
+      "reconfigure": {
+        "title": "Promeni IP adresu",
+        "description": "Unesite novu IP adresu ovog klima-uređaja. Postojeći token se ponovo koristi.",
+        "data": {
+          "host": "IP adresa"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Povezivanje nije moguće. Proverite IP adresu i da li je jedinica na mreži.",
+      "auth": "Token je odbijen. Ostavite ga praznim da dohvatite novi.",
+      "no_token": "Nije primljen token. Proverite da li je jedinica bila ISKLJUČENA, zatim UKLJUČENA u okviru vremenskog perioda. Pokušajte ponovo."
+    },
+    "abort": {
+      "already_configured": "Ovaj klima-uređaj je već konfigurisan.",
+      "not_samsung_ac": "Ovaj uređaj ne govori Samsung DPLUG protokol.",
+      "reauth_successful": "Ponovna autentikacija je uspela.",
+      "onboard_finished": "Kada je klima-uređaj na vašem Wi-Fi-ju, dodajte ga iz Podešavanja → Uređaji i usluge — trebalo bi da bude otkriven automatski, ili izaberite „Već je na mom Wi-Fi-ju” da unesete njegov IP.",
+      "wrong_device": "Na toj adresi se nalazi drugi klima-uređaj.",
+      "reconfigure_successful": "IP adresa je ažurirana."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Opcije Samsung AC",
+        "data": {
+          "live_updates": "Ažuriranja uživo (trajna veza)",
+          "scan_interval": "Interval osvežavanja (sekunde)"
+        },
+        "data_description": {
+          "live_updates": "Održava jednu trajnu vezu za trenutna push ažuriranja. Ako je isključeno, integracija anketira i ne koristi trajnu vezu (otpornije).",
+          "scan_interval": "Interval anketiranja kada su ažuriranja uživo isključena; rezervno/keepalive anketiranje kada su uključena."
+        }
+      }
+    }
+  },
+  "entity": {
+    "climate": {
+      "samsung_ac": {
+        "state_attributes": {
+          "preset_mode": {
+            "state": {
+              "none": "Isključeno",
+              "quiet": "Tiho",
+              "fast_turbo": "Brzi turbo",
+              "comfort": "Udobnost",
+              "dlight_cool": "d'light Cool",
+              "smart_saver": "Smart Saver",
+              "color_of_wind_alps": "Color of Wind: Alps",
+              "color_of_wind_florida": "Color of Wind: Florida",
+              "color_of_wind_savanna": "Color of Wind: Savanna"
+            }
+          },
+          "swing_mode": {
+            "state": {
+              "off": "Isključeno",
+              "vertical": "Vertikalno",
+              "horizontal": "Horizontalno",
+              "both": "Oboje",
+              "indirect": "Indirektno",
+              "direct": "Direktno",
+              "center": "Sredina",
+              "wide": "Široko",
+              "left": "Levo",
+              "right": "Desno",
+              "long": "Daleko"
+            }
+          }
+        }
+      }
+    },
+    "sensor": {
+      "temperature": {
+        "name": "Temperatura"
+      },
+      "humidity": {
+        "name": "Vlažnost"
+      },
+      "outdoor_temperature": {
+        "name": "Spoljna temperatura"
+      },
+      "used_time": {
+        "name": "Vreme rada"
+      },
+      "filter_use_time": {
+        "name": "Vreme korišćenja filtera"
+      },
+      "filter_life": {
+        "name": "Vek filtera"
+      },
+      "error": {
+        "name": "Kôd greške"
+      },
+      "device_clock": {
+        "name": "Sat uređaja"
+      },
+      "schedules": {
+        "name": "Rasporedi"
+      }
+    },
+    "switch": {
+      "purify": {
+        "name": "Purify (SPi)"
+      },
+      "auto_clean": {
+        "name": "Automatsko čišćenje"
+      },
+      "light": {
+        "name": "Svetlo ekrana"
+      },
+      "sterilize": {
+        "name": "Sterilizacija"
+      },
+      "smart_on": {
+        "name": "Pametno uključivanje"
+      },
+      "weather": {
+        "name": "Vreme"
+      }
+    },
+    "number": {
+      "sleep_timer": {
+        "name": "Tajmer spavanja"
+      },
+      "on_timer": {
+        "name": "Tajmer uključivanja"
+      },
+      "off_timer": {
+        "name": "Tajmer isključivanja"
+      },
+      "energy_target": {
+        "name": "Energetski cilj"
+      }
+    },
+    "select": {
+      "occupancy": {
+        "name": "Zauzetost",
+        "state": {
+          "single": "Pojedinac",
+          "couple": "Par",
+          "family": "Porodica"
+        }
+      },
+      "beep_volume": {
+        "name": "Jačina zvučnog signala",
+        "state": {
+          "mute": "Bez zvuka",
+          "33": "33%",
+          "66": "66%",
+          "100": "100%"
+        }
+      },
+      "panel": {
+        "name": "Prednja ploča",
+        "state": {
+          "open": "Otvoreno",
+          "close": "Zatvoreno"
+        }
+      },
+      "filter_clean_interval": {
+        "name": "Interval čišćenja filtera",
+        "state": {
+          "180": "180 h",
+          "300": "300 h",
+          "500": "500 h",
+          "700": "700 h"
+        }
+      }
+    }
+  },
+  "services": {
+    "get_schedules": {
+      "name": "Dohvati rasporede",
+      "description": "Navodi rasporede sačuvane u ugrađenom planeru jedinice. Time se upravlja ugrađenim planerom klima-uređaja, koji radi i kada je Home Assistant isključen i samo uključuje ili isključuje jedinicu u zadato vreme. Za složenije scenarije (temperatura, režim, ventilator…) koristite Home Assistant automatizacije."
+    },
+    "set_schedule": {
+      "name": "Postavi raspored",
+      "description": "Kreirajte ili izmenite raspored uključivanja/isključivanja. Time se upravlja ugrađenim planerom klima-uređaja, koji radi i kada je Home Assistant isključen i samo uključuje ili isključuje jedinicu u zadato vreme. Za složenije scenarije (temperatura, režim, ventilator…) koristite Home Assistant automatizacije.",
+      "fields": {
+        "time": {
+          "name": "Vreme",
+          "description": "Lokalno doba dana kada se raspored aktivira."
+        },
+        "power": {
+          "name": "Napajanje",
+          "description": "Da li se jedinica uključuje ili isključuje."
+        },
+        "repeat": {
+          "name": "Učestalost",
+          "description": "Koliko često se izvršava: jednom, svaki dan ili nedeljno na izabrane dane."
+        },
+        "days": {
+          "name": "Dani",
+          "description": "U koje dane izvršavati — obavezno za 'Jednom' i 'Nedeljno', zanemareno za 'Svaki dan'."
+        },
+        "enabled": {
+          "name": "Omogućeno",
+          "description": "Da li je raspored aktivan."
+        },
+        "schedule_id": {
+          "name": "ID rasporeda",
+          "description": "ID postojećeg rasporeda za izmenu; ostavite prazno za kreiranje novog."
+        }
+      }
+    },
+    "delete_schedule": {
+      "name": "Obriši raspored",
+      "description": "Obrišite raspored iz ugrađenog planera jedinice. Time se upravlja ugrađenim planerom klima-uređaja, koji radi i kada je Home Assistant isključen i samo uključuje ili isključuje jedinicu u zadato vreme. Za složenije scenarije (temperatura, režim, ventilator…) koristite Home Assistant automatizacije.",
+      "fields": {
+        "schedule_id": {
+          "name": "ID rasporeda",
+          "description": "ID rasporeda za brisanje (vidi senzor Rasporedi ili get_schedules)."
+        }
+      }
+    },
+    "get_power_usage": {
+      "name": "Dohvati potrošnju energije",
+      "description": "Dohvatite zabeleženu istoriju potrošnje energije klima-uređaja u vremenskom opsegu.",
+      "fields": {
+        "start": {
+          "name": "Početak",
+          "description": "Početak opsega (lokalno vreme)."
+        },
+        "end": {
+          "name": "Kraj",
+          "description": "Kraj opsega (podrazumevano: sada)."
+        },
+        "unit": {
+          "name": "Agregacija",
+          "description": "Agregiraj potrošnju po satu ili po danu."
+        }
+      }
+    },
+    "set_power_logging": {
+      "name": "Postavi beleženje potrošnje",
+      "description": "Uključite ili isključite beleženje potrošnje energije na jedinici.",
+      "fields": {
+        "enable": {
+          "name": "Omogući",
+          "description": "Da li je beleženje potrošnje energije uključeno."
+        }
+      }
+    },
+    "reset_power_logging": {
+      "name": "Resetuj beleženje potrošnje",
+      "description": "Obrišite istoriju potrošnje energije zabeleženu na jedinici."
+    },
+    "set_nickname": {
+      "name": "Postavi nadimak",
+      "description": "Postavite nadimak sačuvan na jedinici.",
+      "fields": {
+        "nickname": {
+          "name": "Nadimak",
+          "description": "Novi nadimak."
+        }
+      }
+    },
+    "get_region_code": {
+      "name": "Dohvati kôd regiona",
+      "description": "Pročitajte kôd regiona sačuvan na jedinici."
+    },
+    "set_region_code": {
+      "name": "Postavi kôd regiona",
+      "description": "Postavite kôd regiona sačuvan na jedinici.",
+      "fields": {
+        "code": {
+          "name": "Kôd",
+          "description": "Kôd regiona."
+        }
+      }
+    }
+  },
+  "selector": {
+    "schedule_power": {
+      "options": {
+        "on": "Uključeno",
+        "off": "Isključeno"
+      }
+    },
+    "schedule_repeat": {
+      "options": {
+        "once": "Jednom",
+        "daily": "Svaki dan",
+        "weekly": "Nedeljno (izabrani dani)"
+      }
+    },
+    "schedule_days": {
+      "options": {
+        "mon": "Ponedeljak",
+        "tue": "Utorak",
+        "wed": "Sreda",
+        "thu": "Četvrtak",
+        "fri": "Petak",
+        "sat": "Subota",
+        "sun": "Nedelja"
+      }
+    },
+    "power_unit": {
+      "options": {
+        "hour": "Po satu",
+        "day": "Po danu"
+      }
+    }
+  },
+  "exceptions": {
+    "command_failed": {
+      "message": "Naredba Samsung klima-uređaju nije uspela: {error}"
+    },
+    "schedule_needs_day": {
+      "message": "Izaberite barem jedan dan za rasporede 'Jednom' i 'Nedeljno'."
+    }
+  }
+}

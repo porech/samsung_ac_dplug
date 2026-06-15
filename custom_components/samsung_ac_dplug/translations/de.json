@@ -1,0 +1,358 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Samsung-Klimaanlage (DPLUG / 2878)",
+        "description": "Wie möchten Sie Ihre Klimaanlage einrichten?",
+        "menu_options": {
+          "onboard": "Neues Gerät mit dem Wi-Fi verbinden (Anleitung)",
+          "manual": "Es ist bereits in meinem Wi-Fi (IP eingeben)"
+        }
+      },
+      "onboard": {
+        "title": "Verbinden Sie das Gerät mit Ihrem Wi-Fi",
+        "description": "Alte Samsung-Geräte werden nicht über das Netzwerkprotokoll mit dem Wi-Fi verbunden — das muss einmal physisch erfolgen.\n\n**Option A — WPS (am einfachsten, empfohlen)**\n1. Halten Sie auf der Fernbedienung **`Settings` 4 Sekunden lang gedrückt** (versteckte Funktion: das Display blinkt nur), um WPS zu starten.\n2. **Drücken Sie innerhalb von 2 Minuten die WPS-Taste an Ihrem Router**.\n3. Wenn die Wi-Fi-LED am Modul dauerhaft leuchtet, ist die Verbindung hergestellt.\n\n**Option B — von einem Computer aus (falls Ihr Router keine WPS-Taste hat)**\n1. Installieren Sie **Python 3**, falls noch nicht vorhanden ({python_url}), und **laden Sie dann das Hilfsskript herunter** (eine einzige Datei, keine weiteren Installationen nötig): {script_url}\n2. Halten Sie auf der Fernbedienung **`Timer` 4 Sekunden lang gedrückt**, um das Gerät in den AP-Modus zu versetzen; es erscheint ein Wi-Fi-Netzwerk mit dem Namen **`SMARTAIRCON`**.\n3. **Verbinden Sie den Computer mit dem Netzwerk `SMARTAIRCON`** (Passwort **`1111122222`**).\n4. **Führen Sie das Skript aus** — `python3 provision.py` — und geben Sie auf Aufforderung den Namen und das Passwort Ihres heimischen Wi-Fi ein.\n5. Wenn **Done** angezeigt wird, verbindet sich das Gerät mit Ihrem Wi-Fi; verbinden Sie den Computer wieder mit Ihrem normalen Netzwerk.\n\nSobald das Gerät in Ihrem Wi-Fi ist, **schließen Sie dieses Fenster** und öffnen Sie **Einstellungen → Geräte & Dienste**: Es sollte dort automatisch angeboten werden (Erkennung). Falls nicht, starten Sie das Hinzufügen erneut und wählen Sie **Es ist bereits in meinem Wi-Fi**, um die IP einzugeben.\n\n_Für fortgeschrittene Benutzer: `python3 provision.py --help` listet die Optionen auf, um es ohne die interaktiven Abfragen auszuführen._"
+      },
+      "manual": {
+        "title": "Mit der Klimaanlage verbinden",
+        "description": "Geben Sie die IP-Adresse des Geräts ein. Das Token wird im nächsten Schritt behandelt.",
+        "data": {
+          "host": "IP-Adresse"
+        }
+      },
+      "token": {
+        "title": "Zugriffstoken abrufen",
+        "description": "Das Gerät unter {host} gibt ein Token nur beim Einschalten aus (ein physischer Zugriffsnachweis).\n\n1. **Schalten Sie die Klimaanlage mit der Fernbedienung AUS**, falls sie eingeschaltet ist.\n2. Drücken Sie unten auf **Senden** (lassen Sie das Feld leer).\n3. Schalten Sie die Klimaanlage innerhalb von ~30 Sekunden **mit der Fernbedienung EIN**.\n\nDas Token wird automatisch erfasst und gespeichert.\n\n**Alternativ** geben Sie, falls Sie das Token dieses Geräts bereits haben, es unten ein und drücken Sie Senden.",
+        "data": {
+          "token": "Token (optional)"
+        }
+      },
+      "save_token": {
+        "title": "Token abgerufen",
+        "description": "Fertig — das Token für das Gerät unter {host} wurde abgerufen und in dieser Integration gespeichert.\n\n💡 **Tipp:** Speichern Sie das Token dieses Geräts, damit Sie es künftig nicht erneut abrufen müssen (Sie können es beim Hinzufügen des Geräts direkt einfügen):\n\n```\n{token}\n```\n\nDrücken Sie **Senden**, um abzuschließen."
+      },
+      "reauth_confirm": {
+        "title": "Samsung-Klimaanlage erneut authentifizieren",
+        "description": "Das Token für das Gerät unter {host} wurde abgelehnt (es kann sich nach einem Modul-Reset ändern). Rufen Sie ein neues ab: Schalten Sie das Gerät AUS, senden Sie (Feld leer lassen) und schalten Sie es dann innerhalb von ~30s EIN. Oder geben Sie unten ein bekanntes Token ein.",
+        "data": {
+          "token": "Token (optional)"
+        }
+      },
+      "discovery_confirm": {
+        "title": "Samsung-Klimaanlage gefunden",
+        "description": "Unter {host} wurde eine Samsung-Klimaanlage erkannt. Jetzt einrichten? Im nächsten Schritt rufen Sie ein Token ab (durch Einschalten), sofern Sie es nicht bereits kennen."
+      },
+      "reconfigure": {
+        "title": "IP-Adresse ändern",
+        "description": "Geben Sie die neue IP-Adresse für diese Klimaanlage ein. Das vorhandene Token wird weiterverwendet.",
+        "data": {
+          "host": "IP-Adresse"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Verbindung nicht möglich. Prüfen Sie die IP-Adresse und ob sich das Gerät im Netzwerk befindet.",
+      "auth": "Das Token wurde abgelehnt. Lassen Sie es leer, um ein neues abzurufen.",
+      "no_token": "Kein Token empfangen. Stellen Sie sicher, dass das Gerät AUS war und dann innerhalb des Zeitfensters EINgeschaltet wurde. Versuchen Sie es erneut."
+    },
+    "abort": {
+      "already_configured": "Diese Klimaanlage ist bereits konfiguriert.",
+      "not_samsung_ac": "Dieses Gerät spricht nicht das Samsung-DPLUG-Protokoll.",
+      "reauth_successful": "Die erneute Authentifizierung war erfolgreich.",
+      "onboard_finished": "Sobald die Klimaanlage in Ihrem Wi-Fi ist, fügen Sie sie über Einstellungen → Geräte & Dienste hinzu — sie sollte automatisch erkannt werden, oder wählen Sie „Es ist bereits in meinem Wi-Fi“, um die IP einzugeben.",
+      "wrong_device": "Unter dieser Adresse befindet sich eine andere Klimaanlage.",
+      "reconfigure_successful": "Die IP-Adresse wurde aktualisiert."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Samsung-AC-Optionen",
+        "data": {
+          "live_updates": "Live-Aktualisierungen (dauerhafte Verbindung)",
+          "scan_interval": "Aktualisierungsintervall (Sekunden)"
+        },
+        "data_description": {
+          "live_updates": "Hält eine dauerhafte Verbindung für sofortige Push-Aktualisierungen aufrecht. Wenn aus, fragt die Integration ab und nutzt keine dauerhafte Verbindung (robuster).",
+          "scan_interval": "Abfrageintervall, wenn Live-Aktualisierungen aus sind; Fallback-/Keepalive-Abfrage, wenn sie an sind."
+        }
+      }
+    }
+  },
+  "entity": {
+    "climate": {
+      "samsung_ac": {
+        "state_attributes": {
+          "preset_mode": {
+            "state": {
+              "none": "Aus",
+              "quiet": "Leise",
+              "fast_turbo": "Schnell-Turbo",
+              "comfort": "Komfort",
+              "dlight_cool": "d'light Cool",
+              "smart_saver": "Smart Saver",
+              "color_of_wind_alps": "Color of Wind: Alps",
+              "color_of_wind_florida": "Color of Wind: Florida",
+              "color_of_wind_savanna": "Color of Wind: Savanna"
+            }
+          },
+          "swing_mode": {
+            "state": {
+              "off": "Aus",
+              "vertical": "Vertikal",
+              "horizontal": "Horizontal",
+              "both": "Beide",
+              "indirect": "Indirekt",
+              "direct": "Direkt",
+              "center": "Mitte",
+              "wide": "Breit",
+              "left": "Links",
+              "right": "Rechts",
+              "long": "Lang"
+            }
+          }
+        }
+      }
+    },
+    "sensor": {
+      "temperature": {
+        "name": "Temperatur"
+      },
+      "humidity": {
+        "name": "Luftfeuchtigkeit"
+      },
+      "outdoor_temperature": {
+        "name": "Außentemperatur"
+      },
+      "used_time": {
+        "name": "Betriebszeit"
+      },
+      "filter_use_time": {
+        "name": "Filterlaufzeit"
+      },
+      "filter_life": {
+        "name": "Filterlebensdauer"
+      },
+      "error": {
+        "name": "Fehlercode"
+      },
+      "device_clock": {
+        "name": "Geräteuhr"
+      },
+      "schedules": {
+        "name": "Zeitpläne"
+      }
+    },
+    "switch": {
+      "purify": {
+        "name": "Purify (SPi)"
+      },
+      "auto_clean": {
+        "name": "Automatische Reinigung"
+      },
+      "light": {
+        "name": "Display-Licht"
+      },
+      "sterilize": {
+        "name": "Sterilisieren"
+      },
+      "smart_on": {
+        "name": "Smart-Einschaltung"
+      },
+      "weather": {
+        "name": "Wetter"
+      }
+    },
+    "number": {
+      "sleep_timer": {
+        "name": "Schlaftimer"
+      },
+      "on_timer": {
+        "name": "Einschalttimer"
+      },
+      "off_timer": {
+        "name": "Ausschalttimer"
+      },
+      "energy_target": {
+        "name": "Energieziel"
+      }
+    },
+    "select": {
+      "occupancy": {
+        "name": "Belegung",
+        "state": {
+          "single": "Einzelperson",
+          "couple": "Paar",
+          "family": "Familie"
+        }
+      },
+      "beep_volume": {
+        "name": "Signaltonlautstärke",
+        "state": {
+          "mute": "Stumm",
+          "33": "33%",
+          "66": "66%",
+          "100": "100%"
+        }
+      },
+      "panel": {
+        "name": "Frontblende",
+        "state": {
+          "open": "Offen",
+          "close": "Geschlossen"
+        }
+      },
+      "filter_clean_interval": {
+        "name": "Filterreinigungsintervall",
+        "state": {
+          "180": "180 h",
+          "300": "300 h",
+          "500": "500 h",
+          "700": "700 h"
+        }
+      }
+    }
+  },
+  "services": {
+    "get_schedules": {
+      "name": "Zeitpläne abrufen",
+      "description": "Listet die im integrierten Planer des Geräts gespeicherten Zeitpläne auf. Dies steuert den integrierten Planer der Klimaanlage, der auch dann läuft, wenn Home Assistant offline ist, und das Gerät nur zu einer festgelegten Zeit ein- oder ausschaltet. Für komplexere Szenarien (Temperatur, Modus, Lüfter…) verwenden Sie Home-Assistant-Automatisierungen."
+    },
+    "set_schedule": {
+      "name": "Zeitplan festlegen",
+      "description": "Erstellt oder bearbeitet einen Ein-/Ausschalt-Zeitplan. Dies steuert den integrierten Planer der Klimaanlage, der auch dann läuft, wenn Home Assistant offline ist, und das Gerät nur zu einer festgelegten Zeit ein- oder ausschaltet. Für komplexere Szenarien (Temperatur, Modus, Lüfter…) verwenden Sie Home-Assistant-Automatisierungen.",
+      "fields": {
+        "time": {
+          "name": "Uhrzeit",
+          "description": "Ortszeit, zu der der Zeitplan auslöst."
+        },
+        "power": {
+          "name": "Ein/Aus",
+          "description": "Ob das Gerät ein- oder ausschaltet."
+        },
+        "repeat": {
+          "name": "Häufigkeit",
+          "description": "Wie oft er ausgeführt wird: einmal, jeden Tag oder wöchentlich an den ausgewählten Tagen."
+        },
+        "days": {
+          "name": "Tage",
+          "description": "An welchen Tagen ausgeführt werden soll — erforderlich für „Einmal“ und „Wöchentlich“, wird bei „Jeden Tag“ ignoriert."
+        },
+        "enabled": {
+          "name": "Aktiviert",
+          "description": "Ob der Zeitplan aktiv ist."
+        },
+        "schedule_id": {
+          "name": "Zeitplan-ID",
+          "description": "ID eines vorhandenen Zeitplans zum Bearbeiten; leer lassen, um einen neuen zu erstellen."
+        }
+      }
+    },
+    "delete_schedule": {
+      "name": "Zeitplan löschen",
+      "description": "Löscht einen Zeitplan aus dem integrierten Planer des Geräts. Dies steuert den integrierten Planer der Klimaanlage, der auch dann läuft, wenn Home Assistant offline ist, und das Gerät nur zu einer festgelegten Zeit ein- oder ausschaltet. Für komplexere Szenarien (Temperatur, Modus, Lüfter…) verwenden Sie Home-Assistant-Automatisierungen.",
+      "fields": {
+        "schedule_id": {
+          "name": "Zeitplan-ID",
+          "description": "ID des zu löschenden Zeitplans (siehe Sensor „Zeitpläne“ oder get_schedules)."
+        }
+      }
+    },
+    "get_power_usage": {
+      "name": "Stromverbrauch abrufen",
+      "description": "Ruft den aufgezeichneten Stromverbrauchsverlauf der Klimaanlage über einen Zeitraum ab.",
+      "fields": {
+        "start": {
+          "name": "Start",
+          "description": "Beginn des Zeitraums (Ortszeit)."
+        },
+        "end": {
+          "name": "Ende",
+          "description": "Ende des Zeitraums (Standard: jetzt)."
+        },
+        "unit": {
+          "name": "Aggregation",
+          "description": "Den Verbrauch pro Stunde oder pro Tag aggregieren."
+        }
+      }
+    },
+    "set_power_logging": {
+      "name": "Verbrauchsaufzeichnung einstellen",
+      "description": "Schaltet die Stromverbrauchsaufzeichnung des Geräts ein oder aus.",
+      "fields": {
+        "enable": {
+          "name": "Aktivieren",
+          "description": "Ob die Stromverbrauchsaufzeichnung aktiv ist."
+        }
+      }
+    },
+    "reset_power_logging": {
+      "name": "Verbrauchsaufzeichnung zurücksetzen",
+      "description": "Löscht den auf dem Gerät aufgezeichneten Stromverbrauchsverlauf."
+    },
+    "set_nickname": {
+      "name": "Spitznamen festlegen",
+      "description": "Legt den auf dem Gerät gespeicherten Spitznamen fest.",
+      "fields": {
+        "nickname": {
+          "name": "Spitzname",
+          "description": "Der neue Spitzname."
+        }
+      }
+    },
+    "get_region_code": {
+      "name": "Regionscode abrufen",
+      "description": "Liest den auf dem Gerät gespeicherten Regionscode."
+    },
+    "set_region_code": {
+      "name": "Regionscode festlegen",
+      "description": "Legt den auf dem Gerät gespeicherten Regionscode fest.",
+      "fields": {
+        "code": {
+          "name": "Code",
+          "description": "Der Regionscode."
+        }
+      }
+    }
+  },
+  "selector": {
+    "schedule_power": {
+      "options": {
+        "on": "Ein",
+        "off": "Aus"
+      }
+    },
+    "schedule_repeat": {
+      "options": {
+        "once": "Einmal",
+        "daily": "Jeden Tag",
+        "weekly": "Wöchentlich (ausgewählte Tage)"
+      }
+    },
+    "schedule_days": {
+      "options": {
+        "mon": "Montag",
+        "tue": "Dienstag",
+        "wed": "Mittwoch",
+        "thu": "Donnerstag",
+        "fri": "Freitag",
+        "sat": "Samstag",
+        "sun": "Sonntag"
+      }
+    },
+    "power_unit": {
+      "options": {
+        "hour": "Pro Stunde",
+        "day": "Pro Tag"
+      }
+    }
+  },
+  "exceptions": {
+    "command_failed": {
+      "message": "Samsung-AC-Befehl fehlgeschlagen: {error}"
+    },
+    "schedule_needs_day": {
+      "message": "Wählen Sie mindestens einen Tag für die Zeitpläne „Einmal“ und „Wöchentlich“ aus."
+    }
+  }
+}

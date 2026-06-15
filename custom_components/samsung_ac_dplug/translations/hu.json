@@ -1,0 +1,358 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Samsung légkondicionáló (DPLUG / 2878)",
+        "description": "Hogyan szeretné beállítani a légkondicionálót?",
+        "menu_options": {
+          "onboard": "Új egység csatlakoztatása a Wi-Fi-hez (útmutató)",
+          "manual": "Már rajta van a Wi-Fi-men (IP megadása)"
+        }
+      },
+      "onboard": {
+        "title": "Csatlakoztassa az egységet a Wi-Fi-hez",
+        "description": "A régi Samsung egységek nem hálózati protokollon keresztül csatlakoznak a Wi-Fi-hez — ezt egyszer, fizikailag kell elvégezni.\n\n**A lehetőség — WPS (a legegyszerűbb, ajánlott)**\n1. A távirányítón **tartsa nyomva a `Settings` gombot 4 másodpercig** (rejtett funkció: a kijelző csak villog) a WPS indításához.\n2. 2 percen belül **nyomja meg a WPS gombot a routeren**.\n3. Amikor a modul Wi-Fi LED-je folyamatosan világít, a csatlakozás megtörtént.\n\n**B lehetőség — számítógépről (ha a routeren nincs WPS gomb)**\n1. Telepítse a **Python 3** programot, ha még nincs meg ({python_url}), majd **töltse le a segédszkriptet** (egyetlen fájl, nincs szükség további telepítésre): {script_url}\n2. A távirányítón **tartsa nyomva a `Timer` gombot 4 másodpercig**, hogy az egységet AP módba állítsa; megjelenik egy **`SMARTAIRCON`** nevű Wi-Fi hálózat.\n3. **Csatlakoztassa a számítógépet a `SMARTAIRCON` hálózathoz** (jelszó: **`1111122222`**).\n4. **Futtassa a szkriptet** — `python3 provision.py` — és amikor a rendszer kéri, adja meg az otthoni Wi-Fi nevét és jelszavát.\n5. Amikor megjelenik a **Done** felirat, az egység csatlakozik a Wi-Fi-hez; csatlakoztassa vissza a számítógépet a szokásos hálózatához.\n\nAmint az egység a Wi-Fi-n van, **zárja be ezt az ablakot** és nyissa meg a **Beállítások → Eszközök és szolgáltatások** menüt: ott automatikusan fel kell ajánlania (felfedezés). Ha nem, kezdje újra a hozzáadást, és válassza a **Már rajta van a Wi-Fi-men** lehetőséget az IP megadásához.\n\n_Haladó felhasználóknak: a `python3 provision.py --help` felsorolja a beállításokat, amelyekkel az interaktív kérdések nélkül futtatható._"
+      },
+      "manual": {
+        "title": "Csatlakozás a légkondicionálóhoz",
+        "description": "Adja meg az egység IP-címét. A token kezelése a következő lépésben történik.",
+        "data": {
+          "host": "IP-cím"
+        }
+      },
+      "token": {
+        "title": "Hozzáférési token megszerzése",
+        "description": "A(z) {host} egység csak bekapcsoláskor ad ki tokent (fizikai hozzáférés-igazolási lépés).\n\n1. **Kapcsolja KI a légkondicionálót** a távirányítóval, ha be van kapcsolva.\n2. Nyomja meg a lenti **Küldés** gombot (hagyja üresen a mezőt).\n3. ~30 másodpercen belül **kapcsolja BE a légkondicionálót** a távirányítóval.\n\nA token automatikusan rögzítésre és tárolásra kerül.\n\n**Másik lehetőségként**, ha már megvan az egység tokenje, adja meg lent, és nyomja meg a Küldés gombot.",
+        "data": {
+          "token": "Token (opcionális)"
+        }
+      },
+      "save_token": {
+        "title": "A token megszerezve",
+        "description": "Kész — a(z) {host} egység tokenje megszerezve és elmentve ebben az integrációban.\n\n💡 **Tipp:** mentse el ennek az eszköznek a tokenjét, hogy a jövőben ne kelljen újra megszereznie (közvetlenül beillesztheti az egység hozzáadásakor):\n\n```\n{token}\n```\n\nA befejezéshez nyomja meg a **Küldés** gombot."
+      },
+      "reauth_confirm": {
+        "title": "Samsung légkondicionáló újrahitelesítése",
+        "description": "A(z) {host} egység tokenjét elutasította a rendszer (a modul visszaállítása után megváltozhat). Szerezzen újat: kapcsolja KI az egységet, küldje el (hagyja üresen), majd ~30 mp-en belül kapcsolja BE. Vagy adjon meg lent egy ismert tokent.",
+        "data": {
+          "token": "Token (opcionális)"
+        }
+      },
+      "discovery_confirm": {
+        "title": "Samsung légkondicionáló található",
+        "description": "Egy Samsung légkondicionáló található a(z) {host} címen. Beállítja most? A következő lépésben tokent szerez (bekapcsolással), kivéve, ha már ismeri."
+      },
+      "reconfigure": {
+        "title": "IP-cím módosítása",
+        "description": "Adja meg ennek a légkondicionálónak az új IP-címét. A meglévő token újra felhasználásra kerül.",
+        "data": {
+          "host": "IP-cím"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Nem lehet csatlakozni. Ellenőrizze az IP-címet, és hogy az egység a hálózaton van-e.",
+      "auth": "A tokent elutasította a rendszer. Hagyja üresen egy új megszerzéséhez.",
+      "no_token": "Nem érkezett token. Győződjön meg róla, hogy az egység KI volt kapcsolva, majd az időablakon belül BE lett kapcsolva. Próbálja újra."
+    },
+    "abort": {
+      "already_configured": "Ez a légkondicionáló már be van állítva.",
+      "not_samsung_ac": "Ez az eszköz nem beszéli a Samsung DPLUG protokollt.",
+      "reauth_successful": "Az újrahitelesítés sikeres volt.",
+      "onboard_finished": "Amint a légkondicionáló a Wi-Fi-n van, adja hozzá a Beállítások → Eszközök és szolgáltatások menüből — automatikusan fel kell fedeznie, vagy válassza a „Már rajta van a Wi-Fi-men” lehetőséget az IP megadásához.",
+      "wrong_device": "Az adott címen egy másik légkondicionáló van.",
+      "reconfigure_successful": "Az IP-cím frissítve."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Samsung AC beállítások",
+        "data": {
+          "live_updates": "Élő frissítések (állandó kapcsolat)",
+          "scan_interval": "Frissítési időköz (másodperc)"
+        },
+        "data_description": {
+          "live_updates": "Fenntart egy állandó kapcsolatot az azonnali push frissítésekhez. Ha ki van kapcsolva, az integráció lekérdez, és nem használ állandó kapcsolatot (ellenállóbb).",
+          "scan_interval": "Lekérdezési időköz, amikor az élő frissítések ki vannak kapcsolva; tartalék/keepalive lekérdezés, amikor be vannak kapcsolva."
+        }
+      }
+    }
+  },
+  "entity": {
+    "climate": {
+      "samsung_ac": {
+        "state_attributes": {
+          "preset_mode": {
+            "state": {
+              "none": "Ki",
+              "quiet": "Csendes",
+              "fast_turbo": "Fast Turbo",
+              "comfort": "Komfort",
+              "dlight_cool": "d'light Cool",
+              "smart_saver": "Smart Saver",
+              "color_of_wind_alps": "Color of Wind: Alps",
+              "color_of_wind_florida": "Color of Wind: Florida",
+              "color_of_wind_savanna": "Color of Wind: Savanna"
+            }
+          },
+          "swing_mode": {
+            "state": {
+              "off": "Ki",
+              "vertical": "Függőleges",
+              "horizontal": "Vízszintes",
+              "both": "Mindkettő",
+              "indirect": "Közvetett",
+              "direct": "Közvetlen",
+              "center": "Középre",
+              "wide": "Széles",
+              "left": "Balra",
+              "right": "Jobbra",
+              "long": "Hosszú"
+            }
+          }
+        }
+      }
+    },
+    "sensor": {
+      "temperature": {
+        "name": "Hőmérséklet"
+      },
+      "humidity": {
+        "name": "Páratartalom"
+      },
+      "outdoor_temperature": {
+        "name": "Külső hőmérséklet"
+      },
+      "used_time": {
+        "name": "Üzemidő"
+      },
+      "filter_use_time": {
+        "name": "Szűrő használati ideje"
+      },
+      "filter_life": {
+        "name": "Szűrő élettartama"
+      },
+      "error": {
+        "name": "Hibakód"
+      },
+      "device_clock": {
+        "name": "Eszköz órája"
+      },
+      "schedules": {
+        "name": "Ütemezések"
+      }
+    },
+    "switch": {
+      "purify": {
+        "name": "Purify (SPi)"
+      },
+      "auto_clean": {
+        "name": "Automatikus tisztítás"
+      },
+      "light": {
+        "name": "Kijelző világítása"
+      },
+      "sterilize": {
+        "name": "Sterilizálás"
+      },
+      "smart_on": {
+        "name": "Okos bekapcsolás"
+      },
+      "weather": {
+        "name": "Időjárás"
+      }
+    },
+    "number": {
+      "sleep_timer": {
+        "name": "Alvás időzítő"
+      },
+      "on_timer": {
+        "name": "Bekapcsolás időzítő"
+      },
+      "off_timer": {
+        "name": "Kikapcsolás időzítő"
+      },
+      "energy_target": {
+        "name": "Energiacél"
+      }
+    },
+    "select": {
+      "occupancy": {
+        "name": "Kihasználtság",
+        "state": {
+          "single": "Egyedülálló",
+          "couple": "Pár",
+          "family": "Család"
+        }
+      },
+      "beep_volume": {
+        "name": "Hangjelzés hangereje",
+        "state": {
+          "mute": "Némítás",
+          "33": "33%",
+          "66": "66%",
+          "100": "100%"
+        }
+      },
+      "panel": {
+        "name": "Előlap",
+        "state": {
+          "open": "Nyitás",
+          "close": "Zárás"
+        }
+      },
+      "filter_clean_interval": {
+        "name": "Szűrőtisztítási időköz",
+        "state": {
+          "180": "180 h",
+          "300": "300 h",
+          "500": "500 h",
+          "700": "700 h"
+        }
+      }
+    }
+  },
+  "services": {
+    "get_schedules": {
+      "name": "Ütemezések lekérése",
+      "description": "Felsorolja az egység beépített ütemezőjében tárolt ütemezéseket. Ez a légkondicionáló beépített ütemezőjét vezérli, amely akkor is fut, ha a Home Assistant offline, és csak be- vagy kikapcsolja az egységet egy beállított időpontban. Összetettebb forgatókönyvekhez (hőmérséklet, üzemmód, ventilátor…) használja a Home Assistant automatizációit."
+    },
+    "set_schedule": {
+      "name": "Ütemezés beállítása",
+      "description": "Be-/kikapcsolási ütemezés létrehozása vagy szerkesztése. Ez a légkondicionáló beépített ütemezőjét vezérli, amely akkor is fut, ha a Home Assistant offline, és csak be- vagy kikapcsolja az egységet egy beállított időpontban. Összetettebb forgatókönyvekhez (hőmérséklet, üzemmód, ventilátor…) használja a Home Assistant automatizációit.",
+      "fields": {
+        "time": {
+          "name": "Idő",
+          "description": "A napon belüli helyi idő, amikor az ütemezés elindul."
+        },
+        "power": {
+          "name": "Bekapcsolás",
+          "description": "Az egység be- vagy kikapcsol-e."
+        },
+        "repeat": {
+          "name": "Gyakoriság",
+          "description": "Milyen gyakran fut: egyszer, minden nap, vagy hetente a kiválasztott napokon."
+        },
+        "days": {
+          "name": "Napok",
+          "description": "Mely napokon fusson — kötelező az „Egyszer” és „Hetente” esetén, figyelmen kívül marad a „Minden nap” esetén."
+        },
+        "enabled": {
+          "name": "Engedélyezve",
+          "description": "Aktív-e az ütemezés."
+        },
+        "schedule_id": {
+          "name": "Ütemezés azonosítója",
+          "description": "Egy meglévő ütemezés azonosítója a szerkesztéshez; hagyja üresen új létrehozásához."
+        }
+      }
+    },
+    "delete_schedule": {
+      "name": "Ütemezés törlése",
+      "description": "Töröl egy ütemezést az egység beépített ütemezőjéből. Ez a légkondicionáló beépített ütemezőjét vezérli, amely akkor is fut, ha a Home Assistant offline, és csak be- vagy kikapcsolja az egységet egy beállított időpontban. Összetettebb forgatókönyvekhez (hőmérséklet, üzemmód, ventilátor…) használja a Home Assistant automatizációit.",
+      "fields": {
+        "schedule_id": {
+          "name": "Ütemezés azonosítója",
+          "description": "A törlendő ütemezés azonosítója (lásd az Ütemezések érzékelőt vagy a get_schedules műveletet)."
+        }
+      }
+    },
+    "get_power_usage": {
+      "name": "Energiafogyasztás lekérése",
+      "description": "Lekéri a légkondicionáló rögzített energiafogyasztási előzményeit egy időtartományra.",
+      "fields": {
+        "start": {
+          "name": "Kezdés",
+          "description": "A tartomány kezdete (helyi idő)."
+        },
+        "end": {
+          "name": "Vég",
+          "description": "A tartomány vége (alapértelmezetten: most)."
+        },
+        "unit": {
+          "name": "Összesítés",
+          "description": "A fogyasztás összesítése óránként vagy naponta."
+        }
+      }
+    },
+    "set_power_logging": {
+      "name": "Energianaplózás beállítása",
+      "description": "Be- vagy kikapcsolja az egység energiafogyasztás-naplózását.",
+      "fields": {
+        "enable": {
+          "name": "Engedélyezés",
+          "description": "Be van-e kapcsolva az energiafogyasztás naplózása."
+        }
+      }
+    },
+    "reset_power_logging": {
+      "name": "Energianaplózás visszaállítása",
+      "description": "Törli az egységen rögzített energiafogyasztási előzményeket."
+    },
+    "set_nickname": {
+      "name": "Becenév beállítása",
+      "description": "Beállítja az egységen tárolt becenevet.",
+      "fields": {
+        "nickname": {
+          "name": "Becenév",
+          "description": "Az új becenév."
+        }
+      }
+    },
+    "get_region_code": {
+      "name": "Régiókód lekérése",
+      "description": "Beolvassa az egységen tárolt régiókódot."
+    },
+    "set_region_code": {
+      "name": "Régiókód beállítása",
+      "description": "Beállítja az egységen tárolt régiókódot.",
+      "fields": {
+        "code": {
+          "name": "Kód",
+          "description": "A régiókód."
+        }
+      }
+    }
+  },
+  "selector": {
+    "schedule_power": {
+      "options": {
+        "on": "Be",
+        "off": "Ki"
+      }
+    },
+    "schedule_repeat": {
+      "options": {
+        "once": "Egyszer",
+        "daily": "Minden nap",
+        "weekly": "Hetente (kiválasztott napok)"
+      }
+    },
+    "schedule_days": {
+      "options": {
+        "mon": "Hétfő",
+        "tue": "Kedd",
+        "wed": "Szerda",
+        "thu": "Csütörtök",
+        "fri": "Péntek",
+        "sat": "Szombat",
+        "sun": "Vasárnap"
+      }
+    },
+    "power_unit": {
+      "options": {
+        "hour": "Óránként",
+        "day": "Naponta"
+      }
+    }
+  },
+  "exceptions": {
+    "command_failed": {
+      "message": "A Samsung AC parancs sikertelen: {error}"
+    },
+    "schedule_needs_day": {
+      "message": "Válasszon legalább egy napot az „Egyszer” és „Hetente” ütemezésekhez."
+    }
+  }
+}

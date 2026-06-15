@@ -1,0 +1,358 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Klimatizácia Samsung (DPLUG / 2878)",
+        "description": "Ako chcete klimatizáciu nastaviť?",
+        "menu_options": {
+          "onboard": "Pripojiť novú jednotku k Wi-Fi (návod)",
+          "manual": "Už je na mojej Wi-Fi (zadať IP)"
+        }
+      },
+      "onboard": {
+        "title": "Pripojte jednotku k Wi-Fi",
+        "description": "Staršie jednotky Samsung sa k Wi-Fi nepripájajú cez sieťový protokol — treba to urobiť raz, fyzicky.\n\n**Možnosť A — WPS (najjednoduchšie, odporúčané)**\n1. Na ovládači **podržte `Settings` 4 sekundy** (skrytá funkcia: na displeji len blikne) na spustenie WPS.\n2. Do 2 minút **stlačte tlačidlo WPS na routeri**.\n3. Keď Wi-Fi LED na module trvalo svieti, jednotka sa pripojila.\n\n**Možnosť B — z počítača (ak váš router nemá tlačidlo WPS)**\n1. Nainštalujte **Python 3**, ak ho nemáte ({python_url}), potom **stiahnite pomocný skript** (jediný súbor, nič ďalšie netreba inštalovať): {script_url}\n2. Na ovládači **podržte `Timer` 4 sekundy**, čím jednotku prepnete do režimu AP; objaví sa Wi-Fi sieť s názvom **`SMARTAIRCON`**.\n3. **Pripojte počítač k sieti `SMARTAIRCON`** (heslo **`1111122222`**).\n4. **Spustite skript** — `python3 provision.py` — a po vyzvaní zadajte názov a heslo vašej domácej Wi-Fi.\n5. Keď vypíše **Done**, jednotka sa pripojí k vašej Wi-Fi; znovu pripojte počítač k bežnej sieti.\n\nKeď je jednotka na vašej Wi-Fi, **zatvorte toto okno** a otvorte **Nastavenia → Zariadenia a služby**: mala by tam byť ponúknutá automaticky (zisťovanie). Ak nie, spustite pridávanie znova a zvoľte **Už je na mojej Wi-Fi** na zadanie jej IP adresy.\n\n_Pre pokročilých používateľov: `python3 provision.py --help` vypíše možnosti, ako ho spustiť bez interaktívnych otázok._"
+      },
+      "manual": {
+        "title": "Pripojenie ku klimatizácii",
+        "description": "Zadajte IP adresu jednotky. Token sa vyrieši v ďalšom kroku.",
+        "data": {
+          "host": "IP adresa"
+        }
+      },
+      "token": {
+        "title": "Získanie prístupového tokenu",
+        "description": "Jednotka na {host} vydáva token iba pri zapnutí (fyzický dôkaz prístupu).\n\n1. **Vypnite klimatizáciu** ovládačom, ak je zapnutá.\n2. Nižšie stlačte **Odoslať** (pole nechajte prázdne).\n3. Do ~30 sekúnd **zapnite klimatizáciu** ovládačom.\n\nToken bude automaticky zachytený a uložený.\n\n**Prípadne**, ak už token tejto jednotky máte, zadajte ho nižšie a stlačte Odoslať.",
+        "data": {
+          "token": "Token (voliteľné)"
+        }
+      },
+      "save_token": {
+        "title": "Token získaný",
+        "description": "Hotovo — token jednotky na {host} bol získaný a uložený v tejto integrácii.\n\n💡 **Tip:** uložte si token tohto zariadenia, aby ste ho v budúcnosti nemuseli získavať znova (pri pridávaní jednotky ho môžete priamo vložiť):\n\n```\n{token}\n```\n\nDokončite stlačením **Odoslať**."
+      },
+      "reauth_confirm": {
+        "title": "Opätovné overenie klimatizácie Samsung",
+        "description": "Token jednotky na {host} bol odmietnutý (po resete modulu sa môže zmeniť). Získajte nový: vypnite jednotku, odošlite (nechajte prázdne) a do ~30 s ju zapnite. Alebo nižšie zadajte známy token.",
+        "data": {
+          "token": "Token (voliteľné)"
+        }
+      },
+      "discovery_confirm": {
+        "title": "Nájdená klimatizácia Samsung",
+        "description": "Na {host} bola nájdená klimatizácia Samsung. Chcete ju teraz nastaviť? V ďalšom kroku získate token (zapnutím), ak ho už nepoznáte."
+      },
+      "reconfigure": {
+        "title": "Zmeniť IP adresu",
+        "description": "Zadajte novú IP adresu tejto klimatizácie. Existujúci token sa znova použije.",
+        "data": {
+          "host": "IP adresa"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Nedá sa pripojiť. Skontrolujte IP adresu a či je jednotka v sieti.",
+      "auth": "Token bol odmietnutý. Nechajte ho prázdny na získanie nového.",
+      "no_token": "Nebol prijatý žiadny token. Uistite sa, že jednotka bola vypnutá a potom v danom okne zapnutá. Skúste to znova."
+    },
+    "abort": {
+      "already_configured": "Táto klimatizácia je už nakonfigurovaná.",
+      "not_samsung_ac": "Toto zariadenie nepoužíva protokol Samsung DPLUG.",
+      "reauth_successful": "Opätovné overenie prebehlo úspešne.",
+      "onboard_finished": "Keď je klimatizácia na vašej Wi-Fi, pridajte ju cez Nastavenia → Zariadenia a služby — mala by byť zistená automaticky, alebo zvoľte „Už je na mojej Wi-Fi“ na zadanie jej IP adresy.",
+      "wrong_device": "Na zadanej adrese je iná klimatizácia.",
+      "reconfigure_successful": "IP adresa bola aktualizovaná."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Možnosti Samsung AC",
+        "data": {
+          "live_updates": "Živé aktualizácie (trvalé pripojenie)",
+          "scan_interval": "Interval obnovenia (sekundy)"
+        },
+        "data_description": {
+          "live_updates": "Udržiava jedno trvalé pripojenie pre okamžité push aktualizácie. Ak je vypnuté, integrácia sa dotazuje (polling) a nepoužíva trvalé pripojenie (odolnejšie).",
+          "scan_interval": "Interval dotazovania, keď sú živé aktualizácie vypnuté; záložný/keepalive dotaz, keď sú zapnuté."
+        }
+      }
+    }
+  },
+  "entity": {
+    "climate": {
+      "samsung_ac": {
+        "state_attributes": {
+          "preset_mode": {
+            "state": {
+              "none": "Vypnuté",
+              "quiet": "Tichý",
+              "fast_turbo": "Fast Turbo",
+              "comfort": "Komfort",
+              "dlight_cool": "d'light Cool",
+              "smart_saver": "Smart Saver",
+              "color_of_wind_alps": "Color of Wind: Alps",
+              "color_of_wind_florida": "Color of Wind: Florida",
+              "color_of_wind_savanna": "Color of Wind: Savanna"
+            }
+          },
+          "swing_mode": {
+            "state": {
+              "off": "Vypnuté",
+              "vertical": "Zvislé",
+              "horizontal": "Vodorovné",
+              "both": "Obidve",
+              "indirect": "Nepriame",
+              "direct": "Priame",
+              "center": "Stred",
+              "wide": "Široké",
+              "left": "Vľavo",
+              "right": "Vpravo",
+              "long": "Dlhé"
+            }
+          }
+        }
+      }
+    },
+    "sensor": {
+      "temperature": {
+        "name": "Teplota"
+      },
+      "humidity": {
+        "name": "Vlhkosť"
+      },
+      "outdoor_temperature": {
+        "name": "Vonkajšia teplota"
+      },
+      "used_time": {
+        "name": "Čas prevádzky"
+      },
+      "filter_use_time": {
+        "name": "Čas používania filtra"
+      },
+      "filter_life": {
+        "name": "Životnosť filtra"
+      },
+      "error": {
+        "name": "Chybový kód"
+      },
+      "device_clock": {
+        "name": "Hodiny zariadenia"
+      },
+      "schedules": {
+        "name": "Plány"
+      }
+    },
+    "switch": {
+      "purify": {
+        "name": "Purify (SPi)"
+      },
+      "auto_clean": {
+        "name": "Automatické čistenie"
+      },
+      "light": {
+        "name": "Podsvietenie displeja"
+      },
+      "sterilize": {
+        "name": "Sterilizácia"
+      },
+      "smart_on": {
+        "name": "Inteligentné zapnutie"
+      },
+      "weather": {
+        "name": "Počasie"
+      }
+    },
+    "number": {
+      "sleep_timer": {
+        "name": "Časovač spánku"
+      },
+      "on_timer": {
+        "name": "Časovač zapnutia"
+      },
+      "off_timer": {
+        "name": "Časovač vypnutia"
+      },
+      "energy_target": {
+        "name": "Cieľ spotreby energie"
+      }
+    },
+    "select": {
+      "occupancy": {
+        "name": "Obsadenosť",
+        "state": {
+          "single": "Jednotlivec",
+          "couple": "Pár",
+          "family": "Rodina"
+        }
+      },
+      "beep_volume": {
+        "name": "Hlasitosť pípnutia",
+        "state": {
+          "mute": "Stlmené",
+          "33": "33%",
+          "66": "66%",
+          "100": "100%"
+        }
+      },
+      "panel": {
+        "name": "Predný panel",
+        "state": {
+          "open": "Otvoriť",
+          "close": "Zavrieť"
+        }
+      },
+      "filter_clean_interval": {
+        "name": "Interval čistenia filtra",
+        "state": {
+          "180": "180 h",
+          "300": "300 h",
+          "500": "500 h",
+          "700": "700 h"
+        }
+      }
+    }
+  },
+  "services": {
+    "get_schedules": {
+      "name": "Načítať plány",
+      "description": "Vypíše plány uložené vo vstavanom plánovači jednotky. Ovláda vstavaný plánovač klimatizácie, ktorý beží aj keď je Home Assistant offline a iba v nastavený čas jednotku zapne alebo vypne. Pre zložitejšie scenáre (teplota, režim, ventilátor…) použite automatizácie Home Assistant."
+    },
+    "set_schedule": {
+      "name": "Nastaviť plán",
+      "description": "Vytvorí alebo upraví plán zapnutia/vypnutia. Ovláda vstavaný plánovač klimatizácie, ktorý beží aj keď je Home Assistant offline a iba v nastavený čas jednotku zapne alebo vypne. Pre zložitejšie scenáre (teplota, režim, ventilátor…) použite automatizácie Home Assistant.",
+      "fields": {
+        "time": {
+          "name": "Čas",
+          "description": "Miestny denný čas, kedy sa plán spustí."
+        },
+        "power": {
+          "name": "Napájanie",
+          "description": "Či sa jednotka zapne alebo vypne."
+        },
+        "repeat": {
+          "name": "Frekvencia",
+          "description": "Ako často sa spúšťa: raz, každý deň, alebo týždenne vo vybrané dni."
+        },
+        "days": {
+          "name": "Dni",
+          "description": "V ktoré dni spúšťať — vyžadované pre „Raz“ a „Týždenne“, ignorované pre „Každý deň“."
+        },
+        "enabled": {
+          "name": "Povolené",
+          "description": "Či je plán aktívny."
+        },
+        "schedule_id": {
+          "name": "ID plánu",
+          "description": "ID existujúceho plánu na úpravu; nechajte prázdne na vytvorenie nového."
+        }
+      }
+    },
+    "delete_schedule": {
+      "name": "Odstrániť plán",
+      "description": "Odstráni plán zo vstavaného plánovača jednotky. Ovláda vstavaný plánovač klimatizácie, ktorý beží aj keď je Home Assistant offline a iba v nastavený čas jednotku zapne alebo vypne. Pre zložitejšie scenáre (teplota, režim, ventilátor…) použite automatizácie Home Assistant.",
+      "fields": {
+        "schedule_id": {
+          "name": "ID plánu",
+          "description": "ID plánu na odstránenie (pozri senzor Plány alebo get_schedules)."
+        }
+      }
+    },
+    "get_power_usage": {
+      "name": "Načítať spotrebu energie",
+      "description": "Načíta históriu zaznamenanej spotreby energie klimatizácie za zvolené obdobie.",
+      "fields": {
+        "start": {
+          "name": "Začiatok",
+          "description": "Začiatok obdobia (miestny čas)."
+        },
+        "end": {
+          "name": "Koniec",
+          "description": "Koniec obdobia (predvolené: teraz)."
+        },
+        "unit": {
+          "name": "Agregácia",
+          "description": "Agregovať spotrebu po hodinách alebo po dňoch."
+        }
+      }
+    },
+    "set_power_logging": {
+      "name": "Nastaviť záznam spotreby",
+      "description": "Zapne alebo vypne záznam spotreby energie na jednotke.",
+      "fields": {
+        "enable": {
+          "name": "Povoliť",
+          "description": "Či je záznam spotreby energie zapnutý."
+        }
+      }
+    },
+    "reset_power_logging": {
+      "name": "Vynulovať záznam spotreby",
+      "description": "Vymaže históriu spotreby energie zaznamenanú na jednotke."
+    },
+    "set_nickname": {
+      "name": "Nastaviť prezývku",
+      "description": "Nastaví prezývku uloženú na jednotke.",
+      "fields": {
+        "nickname": {
+          "name": "Prezývka",
+          "description": "Nová prezývka."
+        }
+      }
+    },
+    "get_region_code": {
+      "name": "Načítať kód regiónu",
+      "description": "Prečíta kód regiónu uložený na jednotke."
+    },
+    "set_region_code": {
+      "name": "Nastaviť kód regiónu",
+      "description": "Nastaví kód regiónu uložený na jednotke.",
+      "fields": {
+        "code": {
+          "name": "Kód",
+          "description": "Kód regiónu."
+        }
+      }
+    }
+  },
+  "selector": {
+    "schedule_power": {
+      "options": {
+        "on": "Zapnuté",
+        "off": "Vypnuté"
+      }
+    },
+    "schedule_repeat": {
+      "options": {
+        "once": "Raz",
+        "daily": "Každý deň",
+        "weekly": "Týždenne (vybrané dni)"
+      }
+    },
+    "schedule_days": {
+      "options": {
+        "mon": "Pondelok",
+        "tue": "Utorok",
+        "wed": "Streda",
+        "thu": "Štvrtok",
+        "fri": "Piatok",
+        "sat": "Sobota",
+        "sun": "Nedeľa"
+      }
+    },
+    "power_unit": {
+      "options": {
+        "hour": "Za hodinu",
+        "day": "Za deň"
+      }
+    }
+  },
+  "exceptions": {
+    "command_failed": {
+      "message": "Príkaz klimatizácie Samsung zlyhal: {error}"
+    },
+    "schedule_needs_day": {
+      "message": "Vyberte aspoň jeden deň pre plány „Raz“ a „Týždenne“."
+    }
+  }
+}

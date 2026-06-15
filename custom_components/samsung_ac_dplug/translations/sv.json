@@ -1,0 +1,358 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Samsung-luftkonditionering (DPLUG / 2878)",
+        "description": "Hur vill du konfigurera din luftkonditionering?",
+        "menu_options": {
+          "onboard": "Anslut en ny enhet till Wi-Fi (instruktioner)",
+          "manual": "Den finns redan på mitt Wi-Fi (ange IP)"
+        }
+      },
+      "onboard": {
+        "title": "Anslut enheten till ditt Wi-Fi",
+        "description": "Gamla Samsung-enheter ansluts inte till Wi-Fi via nätverksprotokollet — det måste göras en gång, fysiskt.\n\n**Alternativ A — WPS (enklast, rekommenderas)**\n1. På fjärrkontrollen, **håll in `Settings` i 4 sekunder** (dold funktion: displayen blinkar bara) för att starta WPS.\n2. Inom 2 minuter, **tryck på WPS-knappen på din router**.\n3. När Wi-Fi-lysdioden på modulen lyser med fast sken är den ansluten.\n\n**Alternativ B — från en dator (om din router saknar WPS-knapp)**\n1. Installera **Python 3** om du inte har det ({python_url}), och **ladda sedan ner hjälpskriptet** (en enda fil, inget extra behöver installeras): {script_url}\n2. På fjärrkontrollen, **håll in `Timer` i 4 sekunder** för att försätta enheten i AP-läge; ett Wi-Fi-nätverk som heter **`SMARTAIRCON`** visas.\n3. **Anslut datorn till nätverket `SMARTAIRCON`** (lösenord **`1111122222`**).\n4. **Kör skriptet** — `python3 provision.py` — och ange namnet och lösenordet för ditt hem-Wi-Fi när du ombeds.\n5. När det skriver **Done** ansluts enheten till ditt Wi-Fi; återanslut datorn till ditt vanliga nätverk.\n\nNär enheten är på ditt Wi-Fi, **stäng det här fönstret** och öppna **Inställningar → Enheter och tjänster**: den bör erbjudas där automatiskt (upptäckt). Om inte, börja lägga till den igen och välj **Den finns redan på mitt Wi-Fi** för att ange dess IP.\n\n_För avancerade användare: `python3 provision.py --help` listar alternativen för att köra det utan de interaktiva frågorna._"
+      },
+      "manual": {
+        "title": "Anslut till luftkonditioneringen",
+        "description": "Ange enhetens IP-adress. Token hanteras i nästa steg.",
+        "data": {
+          "host": "IP-adress"
+        }
+      },
+      "token": {
+        "title": "Hämta åtkomsttoken",
+        "description": "Enheten på {host} utfärdar endast en token vid påslagning (ett fysiskt bevis på åtkomst).\n\n1. **Stäng av luftkonditioneringen** med fjärrkontrollen om den är på.\n2. Tryck på **Skicka** nedan (lämna fältet tomt).\n3. Inom ~30 sekunder, **slå på luftkonditioneringen** med fjärrkontrollen.\n\nToken fångas automatiskt och sparas.\n\n**Alternativt**, om du redan har den här enhetens token, ange den nedan och tryck på Skicka.",
+        "data": {
+          "token": "Token (valfritt)"
+        }
+      },
+      "save_token": {
+        "title": "Token hämtad",
+        "description": "Klart — token för enheten på {host} hämtades och sparades i den här integrationen.\n\n💡 **Tips:** spara den här enhetens token så att du slipper hämta den igen i framtiden (du kan klistra in den direkt när du lägger till enheten):\n\n```\n{token}\n```\n\nTryck på **Skicka** för att avsluta."
+      },
+      "reauth_confirm": {
+        "title": "Autentisera Samsung-luftkonditionering på nytt",
+        "description": "Token för enheten på {host} avvisades (den kan ändras efter en återställning av modulen). Hämta en ny: stäng av enheten, skicka (lämna tomt) och slå sedan på den inom ~30 s. Eller ange en känd token nedan.",
+        "data": {
+          "token": "Token (valfritt)"
+        }
+      },
+      "discovery_confirm": {
+        "title": "Samsung-luftkonditionering hittad",
+        "description": "En Samsung-luftkonditionering upptäcktes på {host}. Vill du konfigurera den nu? I nästa steg hämtar du en token (påslagning), om du inte redan känner till den."
+      },
+      "reconfigure": {
+        "title": "Byt IP-adress",
+        "description": "Ange den nya IP-adressen för den här luftkonditioneringen. Den befintliga token återanvänds.",
+        "data": {
+          "host": "IP-adress"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Kan inte ansluta. Kontrollera IP-adressen och att enheten finns på nätverket.",
+      "auth": "Token avvisades. Lämna den tom för att hämta en ny.",
+      "no_token": "Ingen token togs emot. Se till att enheten var avstängd och sedan slogs på inom tidsfönstret. Försök igen."
+    },
+    "abort": {
+      "already_configured": "Den här luftkonditioneringen är redan konfigurerad.",
+      "not_samsung_ac": "Den här enheten talar inte Samsung DPLUG-protokollet.",
+      "reauth_successful": "Den förnyade autentiseringen lyckades.",
+      "onboard_finished": "När luftkonditioneringen är på ditt Wi-Fi lägger du till den från Inställningar → Enheter och tjänster — den bör upptäckas automatiskt, eller välj “Den finns redan på mitt Wi-Fi” för att ange dess IP.",
+      "wrong_device": "Enheten på den adressen är en annan luftkonditionering.",
+      "reconfigure_successful": "IP-adressen uppdaterades."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Samsung AC-inställningar",
+        "data": {
+          "live_updates": "Liveuppdateringar (beständig anslutning)",
+          "scan_interval": "Uppdateringsintervall (sekunder)"
+        },
+        "data_description": {
+          "live_updates": "Behåll en beständig anslutning för omedelbara push-uppdateringar. Om av pollar integrationen och använder ingen beständig anslutning (mer robust).",
+          "scan_interval": "Pollningsintervall när liveuppdateringar är av; reserv-/keepalive-pollning när de är på."
+        }
+      }
+    }
+  },
+  "entity": {
+    "climate": {
+      "samsung_ac": {
+        "state_attributes": {
+          "preset_mode": {
+            "state": {
+              "none": "Av",
+              "quiet": "Tyst",
+              "fast_turbo": "Snabb turbo",
+              "comfort": "Komfort",
+              "dlight_cool": "d'light Cool",
+              "smart_saver": "Smart Saver",
+              "color_of_wind_alps": "Color of Wind: Alps",
+              "color_of_wind_florida": "Color of Wind: Florida",
+              "color_of_wind_savanna": "Color of Wind: Savanna"
+            }
+          },
+          "swing_mode": {
+            "state": {
+              "off": "Av",
+              "vertical": "Vertikal",
+              "horizontal": "Horisontell",
+              "both": "Båda",
+              "indirect": "Indirekt",
+              "direct": "Direkt",
+              "center": "Mitten",
+              "wide": "Bred",
+              "left": "Vänster",
+              "right": "Höger",
+              "long": "Lång"
+            }
+          }
+        }
+      }
+    },
+    "sensor": {
+      "temperature": {
+        "name": "Temperatur"
+      },
+      "humidity": {
+        "name": "Luftfuktighet"
+      },
+      "outdoor_temperature": {
+        "name": "Utomhustemperatur"
+      },
+      "used_time": {
+        "name": "Drifttid"
+      },
+      "filter_use_time": {
+        "name": "Filteranvändningstid"
+      },
+      "filter_life": {
+        "name": "Filterlivslängd"
+      },
+      "error": {
+        "name": "Felkod"
+      },
+      "device_clock": {
+        "name": "Enhetsklocka"
+      },
+      "schedules": {
+        "name": "Scheman"
+      }
+    },
+    "switch": {
+      "purify": {
+        "name": "Purify (SPi)"
+      },
+      "auto_clean": {
+        "name": "Automatisk rengöring"
+      },
+      "light": {
+        "name": "Displaybelysning"
+      },
+      "sterilize": {
+        "name": "Sterilisering"
+      },
+      "smart_on": {
+        "name": "Smart påslagning"
+      },
+      "weather": {
+        "name": "Väder"
+      }
+    },
+    "number": {
+      "sleep_timer": {
+        "name": "Sömntimer"
+      },
+      "on_timer": {
+        "name": "Påslagningstimer"
+      },
+      "off_timer": {
+        "name": "Avstängningstimer"
+      },
+      "energy_target": {
+        "name": "Energimål"
+      }
+    },
+    "select": {
+      "occupancy": {
+        "name": "Beläggning",
+        "state": {
+          "single": "Ensam",
+          "couple": "Par",
+          "family": "Familj"
+        }
+      },
+      "beep_volume": {
+        "name": "Pipvolym",
+        "state": {
+          "mute": "Ljud av",
+          "33": "33%",
+          "66": "66%",
+          "100": "100%"
+        }
+      },
+      "panel": {
+        "name": "Frontpanel",
+        "state": {
+          "open": "Öppna",
+          "close": "Stäng"
+        }
+      },
+      "filter_clean_interval": {
+        "name": "Intervall för filterrengöring",
+        "state": {
+          "180": "180 h",
+          "300": "300 h",
+          "500": "500 h",
+          "700": "700 h"
+        }
+      }
+    }
+  },
+  "services": {
+    "get_schedules": {
+      "name": "Hämta scheman",
+      "description": "Lista de scheman som lagrats i enhetens inbyggda schemaläggare. Detta styr luftkonditioneringens inbyggda schemaläggare, som körs även när Home Assistant är offline och bara slår på eller av enheten vid en bestämd tidpunkt. För mer komplexa scenarier (temperatur, läge, fläkt…) använd Home Assistant-automationer."
+    },
+    "set_schedule": {
+      "name": "Ställ in schema",
+      "description": "Skapa eller redigera ett på/av-schema. Detta styr luftkonditioneringens inbyggda schemaläggare, som körs även när Home Assistant är offline och bara slår på eller av enheten vid en bestämd tidpunkt. För mer komplexa scenarier (temperatur, läge, fläkt…) använd Home Assistant-automationer.",
+      "fields": {
+        "time": {
+          "name": "Tid",
+          "description": "Lokalt klockslag på dagen när schemat utlöses."
+        },
+        "power": {
+          "name": "På/av",
+          "description": "Om enheten slås på eller av."
+        },
+        "repeat": {
+          "name": "Frekvens",
+          "description": "Hur ofta det körs: en gång, varje dag eller veckovis på de valda dagarna."
+        },
+        "days": {
+          "name": "Dagar",
+          "description": "Vilka dagar det ska köras på — krävs för 'En gång' och 'Veckovis', ignoreras för 'Varje dag'."
+        },
+        "enabled": {
+          "name": "Aktiverad",
+          "description": "Om schemat är aktivt."
+        },
+        "schedule_id": {
+          "name": "Schema-ID",
+          "description": "ID för ett befintligt schema att redigera; lämna tomt för att skapa ett nytt."
+        }
+      }
+    },
+    "delete_schedule": {
+      "name": "Ta bort schema",
+      "description": "Ta bort ett schema från enhetens inbyggda schemaläggare. Detta styr luftkonditioneringens inbyggda schemaläggare, som körs även när Home Assistant är offline och bara slår på eller av enheten vid en bestämd tidpunkt. För mer komplexa scenarier (temperatur, läge, fläkt…) använd Home Assistant-automationer.",
+      "fields": {
+        "schedule_id": {
+          "name": "Schema-ID",
+          "description": "ID för det schema som ska tas bort (se sensorn Scheman eller get_schedules)."
+        }
+      }
+    },
+    "get_power_usage": {
+      "name": "Hämta strömförbrukning",
+      "description": "Hämta luftkonditioneringens registrerade strömförbrukningshistorik över ett tidsintervall.",
+      "fields": {
+        "start": {
+          "name": "Start",
+          "description": "Intervallets start (lokal tid)."
+        },
+        "end": {
+          "name": "Slut",
+          "description": "Intervallets slut (standard är nu)."
+        },
+        "unit": {
+          "name": "Aggregering",
+          "description": "Aggregera förbrukningen per timme eller per dag."
+        }
+      }
+    },
+    "set_power_logging": {
+      "name": "Ställ in strömloggning",
+      "description": "Slå på eller av enhetens strömförbrukningsloggning.",
+      "fields": {
+        "enable": {
+          "name": "Aktivera",
+          "description": "Om strömförbrukningsloggning är på."
+        }
+      }
+    },
+    "reset_power_logging": {
+      "name": "Återställ strömloggning",
+      "description": "Rensa den strömförbrukningshistorik som registrerats på enheten."
+    },
+    "set_nickname": {
+      "name": "Ställ in smeknamn",
+      "description": "Ange det smeknamn som lagras på enheten.",
+      "fields": {
+        "nickname": {
+          "name": "Smeknamn",
+          "description": "Det nya smeknamnet."
+        }
+      }
+    },
+    "get_region_code": {
+      "name": "Hämta regionskod",
+      "description": "Läs den regionskod som lagras på enheten."
+    },
+    "set_region_code": {
+      "name": "Ställ in regionskod",
+      "description": "Ange den regionskod som lagras på enheten.",
+      "fields": {
+        "code": {
+          "name": "Kod",
+          "description": "Regionskoden."
+        }
+      }
+    }
+  },
+  "selector": {
+    "schedule_power": {
+      "options": {
+        "on": "På",
+        "off": "Av"
+      }
+    },
+    "schedule_repeat": {
+      "options": {
+        "once": "En gång",
+        "daily": "Varje dag",
+        "weekly": "Veckovis (valda dagar)"
+      }
+    },
+    "schedule_days": {
+      "options": {
+        "mon": "Måndag",
+        "tue": "Tisdag",
+        "wed": "Onsdag",
+        "thu": "Torsdag",
+        "fri": "Fredag",
+        "sat": "Lördag",
+        "sun": "Söndag"
+      }
+    },
+    "power_unit": {
+      "options": {
+        "hour": "Per timme",
+        "day": "Per dag"
+      }
+    }
+  },
+  "exceptions": {
+    "command_failed": {
+      "message": "Samsung AC-kommando misslyckades: {error}"
+    },
+    "schedule_needs_day": {
+      "message": "Välj minst en dag för schemana 'En gång' och 'Veckovis'."
+    }
+  }
+}

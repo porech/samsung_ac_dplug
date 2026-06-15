@@ -1,0 +1,358 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Kondicioner Samsung (DPLUG / 2878)",
+        "description": "Si dëshironi ta konfiguroni kondicionerin?",
+        "menu_options": {
+          "onboard": "Lidh një njësi të re me Wi-Fi (udhëzime)",
+          "manual": "Është tashmë në Wi-Fi-n tim (vendos IP)"
+        }
+      },
+      "onboard": {
+        "title": "Lidhe njësinë me Wi-Fi-n",
+        "description": "Njësitë e vjetra Samsung nuk lidhen me Wi-Fi përmes protokollit të rrjetit — kjo bëhet një herë, fizikisht.\n\n**Opsioni A — WPS (më i lehti, i rekomanduar)**\n1. Në telekomandë, **mbani shtypur `Settings` për 4 sekonda** (funksion i fshehur: ekrani vetëm pulson) për të nisur WPS.\n2. Brenda 2 minutash, **shtypni butonin WPS në ruterin tuaj**.\n3. Kur LED-i i Wi-Fi në modul qëndron i ndezur vazhdimisht, njësia është lidhur.\n\n**Opsioni B — nga një kompjuter (nëse ruteri nuk ka buton WPS)**\n1. Instaloni **Python 3** nëse nuk e keni ({python_url}), pastaj **shkarkoni skriptin ndihmës** (një skedar i vetëm, pa instalime shtesë): {script_url}\n2. Në telekomandë, **mbani shtypur `Timer` për 4 sekonda** për ta vendosur njësinë në modalitetin AP; do të shfaqet një rrjet Wi-Fi me emrin **`SMARTAIRCON`**.\n3. **Lidheni kompjuterin me rrjetin `SMARTAIRCON`** (fjalëkalimi **`1111122222`**).\n4. **Ekzekutoni skriptin** — `python3 provision.py` — dhe, kur t'ju kërkohet, vendosni emrin dhe fjalëkalimin e rrjetit tuaj Wi-Fi të shtëpisë.\n5. Kur shfaq **Done**, njësia lidhet me Wi-Fi-n tuaj; rilidheni kompjuterin me rrjetin tuaj të zakonshëm.\n\nPasi njësia të jetë në Wi-Fi-n tuaj, **mbyllni këtë dritare** dhe hapni **Cilësimet → Pajisjet dhe shërbimet**: duhet të ofrohet atje automatikisht (zbulimi). Nëse jo, rinisni shtimin dhe zgjidhni **Është tashmë në Wi-Fi-n tim** për të vendosur IP-në e saj.\n\n_Për përdoruesit e avancuar: `python3 provision.py --help` rendit opsionet për ta ekzekutuar pa kërkesat ndërvepruese._"
+      },
+      "manual": {
+        "title": "Lidhja me kondicionerin",
+        "description": "Vendosni adresën IP të njësisë. Token-i trajtohet në hapin tjetër.",
+        "data": {
+          "host": "Adresa IP"
+        }
+      },
+      "token": {
+        "title": "Merr token-in e qasjes",
+        "description": "Njësia në {host} e lëshon token-in vetëm gjatë ndezjes (një provë fizike e qasjes).\n\n1. **Fikni kondicionerin** me telekomandë, nëse është ndezur.\n2. Shtypni **Dërgo** më poshtë (lëreni fushën bosh).\n3. Brenda ~30 sekondash, **ndizni kondicionerin** me telekomandë.\n\nToken-i do të kapet dhe ruhet automatikisht.\n\n**Përndryshe**, nëse e keni tashmë token-in e kësaj njësie, vendoseni më poshtë dhe shtypni Dërgo.",
+        "data": {
+          "token": "Token (opsional)"
+        }
+      },
+      "save_token": {
+        "title": "Token-i u mor",
+        "description": "U krye — token-i i njësisë në {host} u mor dhe u ruajt në këtë integrim.\n\n💡 **Këshillë:** ruajeni token-in e kësaj pajisjeje që të mos ju duhet ta merrni sërish në të ardhmen (mund ta ngjisni drejtpërdrejt kur shtoni njësinë):\n\n```\n{token}\n```\n\nShtypni **Dërgo** për të përfunduar."
+      },
+      "reauth_confirm": {
+        "title": "Riautentikimi i kondicionerit Samsung",
+        "description": "Token-i i njësisë në {host} u refuzua (mund të ndryshojë pas një rivendosjeje të modulit). Merrni një të ri: fikni njësinë, dërgoni (lëreni bosh), pastaj ndizeni brenda ~30 s. Ose vendosni një token të njohur më poshtë.",
+        "data": {
+          "token": "Token (opsional)"
+        }
+      },
+      "discovery_confirm": {
+        "title": "U gjet kondicioner Samsung",
+        "description": "U zbulua një kondicioner Samsung në {host}. Ta konfiguroni tani? Në hapin tjetër do të merrni një token (gjatë ndezjes), përveçse nëse e dini tashmë."
+      },
+      "reconfigure": {
+        "title": "Ndrysho adresën IP",
+        "description": "Vendosni adresën e re IP për këtë kondicioner. Token-i ekzistues ripërdoret.",
+        "data": {
+          "host": "Adresa IP"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Nuk lidhet dot. Kontrolloni adresën IP dhe që njësia është në rrjet.",
+      "auth": "Token-i u refuzua. Lëreni bosh për të marrë një të ri.",
+      "no_token": "Nuk u mor asnjë token. Sigurohuni që njësia ishte FIKUR, pastaj NDEZUR brenda intervalit. Provoni sërish."
+    },
+    "abort": {
+      "already_configured": "Ky kondicioner është konfiguruar tashmë.",
+      "not_samsung_ac": "Kjo pajisje nuk e flet protokollin Samsung DPLUG.",
+      "reauth_successful": "Riautentikimi qe i suksesshëm.",
+      "onboard_finished": "Pasi kondicioneri të jetë në Wi-Fi-n tuaj, shtojeni nga Cilësimet → Pajisjet dhe shërbimet — duhet të zbulohet automatikisht, ose zgjidhni „Është tashmë në Wi-Fi-n tim” për të vendosur IP-në e tij.",
+      "wrong_device": "Në atë adresë ndodhet një kondicioner tjetër.",
+      "reconfigure_successful": "Adresa IP u përditësua."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Opsionet e Samsung AC",
+        "data": {
+          "live_updates": "Përditësime të drejtpërdrejta (lidhje e vazhdueshme)",
+          "scan_interval": "Intervali i rifreskimit (sekonda)"
+        },
+        "data_description": {
+          "live_updates": "Mban një lidhje të vazhdueshme për përditësime push të menjëhershme. Nëse është fikur, integrimi bën sondazhe dhe nuk përdor lidhje të vazhdueshme (më rezistente).",
+          "scan_interval": "Intervali i sondazheve kur përditësimet e drejtpërdrejta janë fikur; sondazh rezervë/keepalive kur janë ndezur."
+        }
+      }
+    }
+  },
+  "entity": {
+    "climate": {
+      "samsung_ac": {
+        "state_attributes": {
+          "preset_mode": {
+            "state": {
+              "none": "Fikur",
+              "quiet": "I qetë",
+              "fast_turbo": "Turbo i shpejtë",
+              "comfort": "Komoditet",
+              "dlight_cool": "d'light Cool",
+              "smart_saver": "Smart Saver",
+              "color_of_wind_alps": "Color of Wind: Alps",
+              "color_of_wind_florida": "Color of Wind: Florida",
+              "color_of_wind_savanna": "Color of Wind: Savanna"
+            }
+          },
+          "swing_mode": {
+            "state": {
+              "off": "Fikur",
+              "vertical": "Vertikal",
+              "horizontal": "Horizontal",
+              "both": "Të dyja",
+              "indirect": "I tërthortë",
+              "direct": "I drejtpërdrejtë",
+              "center": "Qendër",
+              "wide": "I gjerë",
+              "left": "Majtas",
+              "right": "Djathtas",
+              "long": "I gjatë"
+            }
+          }
+        }
+      }
+    },
+    "sensor": {
+      "temperature": {
+        "name": "Temperatura"
+      },
+      "humidity": {
+        "name": "Lagështia"
+      },
+      "outdoor_temperature": {
+        "name": "Temperatura e jashtme"
+      },
+      "used_time": {
+        "name": "Koha e punës"
+      },
+      "filter_use_time": {
+        "name": "Koha e përdorimit të filtrit"
+      },
+      "filter_life": {
+        "name": "Jetëgjatësia e filtrit"
+      },
+      "error": {
+        "name": "Kodi i gabimit"
+      },
+      "device_clock": {
+        "name": "Ora e pajisjes"
+      },
+      "schedules": {
+        "name": "Oraret"
+      }
+    },
+    "switch": {
+      "purify": {
+        "name": "Purify (SPi)"
+      },
+      "auto_clean": {
+        "name": "Pastrim automatik"
+      },
+      "light": {
+        "name": "Drita e ekranit"
+      },
+      "sterilize": {
+        "name": "Sterilizim"
+      },
+      "smart_on": {
+        "name": "Ndezje smart"
+      },
+      "weather": {
+        "name": "Moti"
+      }
+    },
+    "number": {
+      "sleep_timer": {
+        "name": "Kohëmatësi i gjumit"
+      },
+      "on_timer": {
+        "name": "Kohëmatësi i ndezjes"
+      },
+      "off_timer": {
+        "name": "Kohëmatësi i fikjes"
+      },
+      "energy_target": {
+        "name": "Objektivi i energjisë"
+      }
+    },
+    "select": {
+      "occupancy": {
+        "name": "Zënia",
+        "state": {
+          "single": "Beqar",
+          "couple": "Çift",
+          "family": "Familje"
+        }
+      },
+      "beep_volume": {
+        "name": "Volumi i bip-it",
+        "state": {
+          "mute": "Pa zë",
+          "33": "33%",
+          "66": "66%",
+          "100": "100%"
+        }
+      },
+      "panel": {
+        "name": "Paneli i përparmë",
+        "state": {
+          "open": "Hapur",
+          "close": "Mbyllur"
+        }
+      },
+      "filter_clean_interval": {
+        "name": "Intervali i pastrimit të filtrit",
+        "state": {
+          "180": "180 h",
+          "300": "300 h",
+          "500": "500 h",
+          "700": "700 h"
+        }
+      }
+    }
+  },
+  "services": {
+    "get_schedules": {
+      "name": "Merr oraret",
+      "description": "Rendit oraret e ruajtura në planifikuesin e integruar të njësisë. Kjo kontrollon planifikuesin e integruar të kondicionerit, i cili funksionon edhe kur Home Assistant është jashtë linje dhe vetëm e ndez ose e fik njësinë në një orë të caktuar. Për skenarë më të ndërlikuar (temperaturë, modalitet, ventilator…) përdorni automatizimet e Home Assistant."
+    },
+    "set_schedule": {
+      "name": "Cakto orarin",
+      "description": "Krijoni ose modifikoni një orar ndezjeje/fikjeje. Kjo kontrollon planifikuesin e integruar të kondicionerit, i cili funksionon edhe kur Home Assistant është jashtë linje dhe vetëm e ndez ose e fik njësinë në një orë të caktuar. Për skenarë më të ndërlikuar (temperaturë, modalitet, ventilator…) përdorni automatizimet e Home Assistant.",
+      "fields": {
+        "time": {
+          "name": "Ora",
+          "description": "Ora lokale e ditës kur aktivizohet orari."
+        },
+        "power": {
+          "name": "Energjia",
+          "description": "Nëse njësia ndizet apo fiket."
+        },
+        "repeat": {
+          "name": "Frekuenca",
+          "description": "Sa shpesh ekzekutohet: një herë, çdo ditë, ose javore në ditët e zgjedhura."
+        },
+        "days": {
+          "name": "Ditët",
+          "description": "Në cilat ditë të ekzekutohet — i nevojshëm për 'Një herë' dhe 'Javore', shpërfillet për 'Çdo ditë'."
+        },
+        "enabled": {
+          "name": "Aktivizuar",
+          "description": "Nëse orari është aktiv."
+        },
+        "schedule_id": {
+          "name": "ID e orarit",
+          "description": "ID-ja e një orari ekzistues për ta modifikuar; lëreni bosh për të krijuar një të ri."
+        }
+      }
+    },
+    "delete_schedule": {
+      "name": "Fshi orarin",
+      "description": "Fshini një orar nga planifikuesi i integruar i njësisë. Kjo kontrollon planifikuesin e integruar të kondicionerit, i cili funksionon edhe kur Home Assistant është jashtë linje dhe vetëm e ndez ose e fik njësinë në një orë të caktuar. Për skenarë më të ndërlikuar (temperaturë, modalitet, ventilator…) përdorni automatizimet e Home Assistant.",
+      "fields": {
+        "schedule_id": {
+          "name": "ID e orarit",
+          "description": "ID-ja e orarit për ta fshirë (shihni sensorin Oraret ose get_schedules)."
+        }
+      }
+    },
+    "get_power_usage": {
+      "name": "Merr konsumin e energjisë",
+      "description": "Merrni historikun e regjistruar të konsumit të energjisë së kondicionerit gjatë një intervali kohor.",
+      "fields": {
+        "start": {
+          "name": "Fillimi",
+          "description": "Fillimi i intervalit (ora lokale)."
+        },
+        "end": {
+          "name": "Fundi",
+          "description": "Fundi i intervalit (parazgjedhje: tani)."
+        },
+        "unit": {
+          "name": "Agregimi",
+          "description": "Agrego konsumin për orë ose për ditë."
+        }
+      }
+    },
+    "set_power_logging": {
+      "name": "Cakto regjistrimin e konsumit",
+      "description": "Ndizni ose fikni regjistrimin e konsumit të energjisë në njësi.",
+      "fields": {
+        "enable": {
+          "name": "Aktivizo",
+          "description": "Nëse regjistrimi i konsumit të energjisë është i ndezur."
+        }
+      }
+    },
+    "reset_power_logging": {
+      "name": "Rivendos regjistrimin e konsumit",
+      "description": "Fshini historikun e konsumit të energjisë të regjistruar në njësi."
+    },
+    "set_nickname": {
+      "name": "Cakto pseudonimin",
+      "description": "Caktoni pseudonimin e ruajtur në njësi.",
+      "fields": {
+        "nickname": {
+          "name": "Pseudonimi",
+          "description": "Pseudonimi i ri."
+        }
+      }
+    },
+    "get_region_code": {
+      "name": "Merr kodin e rajonit",
+      "description": "Lexoni kodin e rajonit të ruajtur në njësi."
+    },
+    "set_region_code": {
+      "name": "Cakto kodin e rajonit",
+      "description": "Caktoni kodin e rajonit të ruajtur në njësi.",
+      "fields": {
+        "code": {
+          "name": "Kodi",
+          "description": "Kodi i rajonit."
+        }
+      }
+    }
+  },
+  "selector": {
+    "schedule_power": {
+      "options": {
+        "on": "Ndezur",
+        "off": "Fikur"
+      }
+    },
+    "schedule_repeat": {
+      "options": {
+        "once": "Një herë",
+        "daily": "Çdo ditë",
+        "weekly": "Javore (ditët e zgjedhura)"
+      }
+    },
+    "schedule_days": {
+      "options": {
+        "mon": "E hënë",
+        "tue": "E martë",
+        "wed": "E mërkurë",
+        "thu": "E enjte",
+        "fri": "E premte",
+        "sat": "E shtunë",
+        "sun": "E diel"
+      }
+    },
+    "power_unit": {
+      "options": {
+        "hour": "Për orë",
+        "day": "Për ditë"
+      }
+    }
+  },
+  "exceptions": {
+    "command_failed": {
+      "message": "Komanda për kondicionerin Samsung dështoi: {error}"
+    },
+    "schedule_needs_day": {
+      "message": "Zgjidhni të paktën një ditë për oraret 'Një herë' dhe 'Javore'."
+    }
+  }
+}

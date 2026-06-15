@@ -1,0 +1,358 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Samsung-Klimaanlag (DPLUG / 2878)",
+        "description": "Wéi wëllt Dir Är Klimaanlag ariichten?",
+        "menu_options": {
+          "onboard": "En neit Gerät mam Wi-Fi verbannen (Uleedung)",
+          "manual": "Et ass scho bei mengem Wi-Fi (IP aginn)"
+        }
+      },
+      "onboard": {
+        "title": "Verbannt d'Gerät mat Ärem Wi-Fi",
+        "description": "Al Samsung-Geräter ginn net iwwer de Netzwierkprotokoll mam Wi-Fi verbonnen — dat muss eemol kierperlech gemaach ginn.\n\n**Optioun A — WPS (am einfachsten, recommandéiert)**\n1. Haalt op der Fernsteierung **`Settings` 4 Sekonnen gedréckt** (verstoppt Funktioun: den Display blénkt nëmmen) fir WPS ze starten.\n2. **Dréckt bannent 2 Minutten den WPS-Knäppchen op Ärem Router**.\n3. Wann d'Wi-Fi-LED um Modul fest leucht, ass d'Verbindung hiergestallt.\n\n**Optioun B — vun engem Computer aus (wann Äre Router kee WPS-Knäppchen huet)**\n1. Installéiert **Python 3**, falls Dir et nach net hutt ({python_url}), an **luet duerno d'Hëllefsskript erof** (eng eenzeg Datei, keng zousätzlech Installatiounen néideg): {script_url}\n2. Haalt op der Fernsteierung **`Timer` 4 Sekonnen gedréckt**, fir d'Gerät an den AP-Modus ze setzen; et erschéngt e Wi-Fi-Netzwierk mam Numm **`SMARTAIRCON`**.\n3. **Verbannt de Computer mam Netzwierk `SMARTAIRCON`** (Passwuert **`1111122222`**).\n4. **Féiert d'Skript aus** — `python3 provision.py` — a gitt, wann gefrot gëtt, den Numm an d'Passwuert vun Ärem Heem-Wi-Fi an.\n5. Wann **Done** ugewise gëtt, verbënnt sech d'Gerät mat Ärem Wi-Fi; verbannt de Computer erëm mat Ärem normalen Netzwierk.\n\nSoubal d'Gerät bei Ärem Wi-Fi ass, **maacht dëst Fënster zou** an öffnet **Astellungen → Geräter & Servicer**: et soll do automatesch ugebuede ginn (Erkennung). Wann net, fänkt d'Bäisetzen nei un a wielt **Et ass scho bei mengem Wi-Fi**, fir d'IP anzeginn.\n\n_Fir fortgeschratt Benotzer: `python3 provision.py --help` lëscht d'Optiounen op, fir et ouni déi interaktiv Ufroen auszeféieren._"
+      },
+      "manual": {
+        "title": "Mat der Klimaanlag verbannen",
+        "description": "Gitt d'IP-Adress vum Gerät an. Den Token gëtt am nächste Schrëtt behandelt.",
+        "data": {
+          "host": "IP-Adress"
+        }
+      },
+      "token": {
+        "title": "Zougrëffstoken ofruffen",
+        "description": "D'Gerät op {host} gëtt en Token nëmme beim Aschalten eraus (e kierperlechen Zougrëffsbeweis).\n\n1. **Schalt d'Klimaanlag mat der Fernsteierung AUS**, wann se un ass.\n2. Dréckt hei ënnen op **Schécken** (loosst d'Feld eidel).\n3. Schalt d'Klimaanlag bannent ~30 Sekonnen **AN** mat der Fernsteierung.\n\nDen Token gëtt automatesch erfaasst a gespäichert.\n\n**Alternativ** gitt, wann Dir den Token vun dësem Gerät scho hutt, en hei ënnen an a dréckt Schécken.",
+        "data": {
+          "token": "Token (fakultativ)"
+        }
+      },
+      "save_token": {
+        "title": "Token ofgeruff",
+        "description": "Fäerdeg — den Token fir d'Gerät op {host} gouf ofgeruff an an dëser Integratioun gespäichert.\n\n💡 **Tipp:** späichert den Token vun dësem Gerät, sou datt Dir en an Zukunft net nei ofruffe musst (Dir kënnt en direkt beim Bäisetze vum Gerät erapechen):\n\n```\n{token}\n```\n\nDréckt **Schécken** fir ofzeschléissen."
+      },
+      "reauth_confirm": {
+        "title": "Samsung-Klimaanlag nei authentifizéieren",
+        "description": "Den Token fir d'Gerät op {host} gouf refuséiert (en kann sech no engem Modul-Reset änneren). Rufft en neien of: schalt d'Gerät AUS, schéckt (loosst eidel) a schalt et duerno bannent ~30s AN. Oder gitt hei ënnen e bekannten Token an.",
+        "data": {
+          "token": "Token (fakultativ)"
+        }
+      },
+      "discovery_confirm": {
+        "title": "Samsung-Klimaanlag fonnt",
+        "description": "Op {host} gouf eng Samsung-Klimaanlag erkannt. Elo ariichten? Am nächste Schrëtt ruff Dir en Token of (duerch Aschalten), ausser Dir kennt en scho."
+      },
+      "reconfigure": {
+        "title": "IP-Adress änneren",
+        "description": "Gitt déi nei IP-Adress fir dës Klimaanlag an. De bestoende Token gëtt erëm benotzt.",
+        "data": {
+          "host": "IP-Adress"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Keng Verbindung méiglech. Iwwerpréift d'IP-Adress an ob d'Gerät am Netzwierk ass.",
+      "auth": "Den Token gouf refuséiert. Loosst en eidel, fir en neien ofzeruffen.",
+      "no_token": "Keen Token kritt. Vergewëssert Iech, datt d'Gerät AUS war an duerno bannent dem Zäitfënster AN geschalt gouf. Probéiert et nach eng Kéier."
+    },
+    "abort": {
+      "already_configured": "Dës Klimaanlag ass scho konfiguréiert.",
+      "not_samsung_ac": "Dëst Gerät schwätzt net de Samsung-DPLUG-Protokoll.",
+      "reauth_successful": "Déi nei Authentifizéierung war erfollegräich.",
+      "onboard_finished": "Soubal d'Klimaanlag bei Ärem Wi-Fi ass, setzt se iwwer Astellungen → Geräter & Servicer bäi — se soll automatesch erkannt ginn, oder wielt „Et ass scho bei mengem Wi-Fi“, fir d'IP anzeginn.",
+      "wrong_device": "Op där Adress ass eng aner Klimaanlag.",
+      "reconfigure_successful": "D'IP-Adress gouf aktualiséiert."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Samsung-AC-Optiounen",
+        "data": {
+          "live_updates": "Live-Aktualiséierungen (permanent Verbindung)",
+          "scan_interval": "Aktualiséierungsintervall (Sekonnen)"
+        },
+        "data_description": {
+          "live_updates": "Hält eng permanent Verbindung op fir direkt Push-Aktualiséierungen. Wann aus, mécht d'Integratioun Polling a benotzt keng permanent Verbindung (méi robust).",
+          "scan_interval": "Polling-Intervall, wann Live-Aktualiséierungen aus sinn; Fallback-/Keepalive-Poll, wann se un sinn."
+        }
+      }
+    }
+  },
+  "entity": {
+    "climate": {
+      "samsung_ac": {
+        "state_attributes": {
+          "preset_mode": {
+            "state": {
+              "none": "Aus",
+              "quiet": "Roueg",
+              "fast_turbo": "Schnell-Turbo",
+              "comfort": "Komfort",
+              "dlight_cool": "d'light Cool",
+              "smart_saver": "Smart Saver",
+              "color_of_wind_alps": "Color of Wind: Alps",
+              "color_of_wind_florida": "Color of Wind: Florida",
+              "color_of_wind_savanna": "Color of Wind: Savanna"
+            }
+          },
+          "swing_mode": {
+            "state": {
+              "off": "Aus",
+              "vertical": "Vertikal",
+              "horizontal": "Horizontal",
+              "both": "Béid",
+              "indirect": "Indirekt",
+              "direct": "Direkt",
+              "center": "Mëtt",
+              "wide": "Breet",
+              "left": "Lénks",
+              "right": "Riets",
+              "long": "Laang"
+            }
+          }
+        }
+      }
+    },
+    "sensor": {
+      "temperature": {
+        "name": "Temperatur"
+      },
+      "humidity": {
+        "name": "Loftfiichtegkeet"
+      },
+      "outdoor_temperature": {
+        "name": "Baussentemperatur"
+      },
+      "used_time": {
+        "name": "Betribszäit"
+      },
+      "filter_use_time": {
+        "name": "Filterlafzäit"
+      },
+      "filter_life": {
+        "name": "Filterliewensdauer"
+      },
+      "error": {
+        "name": "Feelercode"
+      },
+      "device_clock": {
+        "name": "Geräteauer"
+      },
+      "schedules": {
+        "name": "Zäitpläng"
+      }
+    },
+    "switch": {
+      "purify": {
+        "name": "Purify (SPi)"
+      },
+      "auto_clean": {
+        "name": "Automatesch Botzen"
+      },
+      "light": {
+        "name": "Display-Luucht"
+      },
+      "sterilize": {
+        "name": "Steriliséieren"
+      },
+      "smart_on": {
+        "name": "Smart-Aschalten"
+      },
+      "weather": {
+        "name": "Wieder"
+      }
+    },
+    "number": {
+      "sleep_timer": {
+        "name": "Schlofstimer"
+      },
+      "on_timer": {
+        "name": "Aschalt-Timer"
+      },
+      "off_timer": {
+        "name": "Ausschalt-Timer"
+      },
+      "energy_target": {
+        "name": "Energiezil"
+      }
+    },
+    "select": {
+      "occupancy": {
+        "name": "Belegung",
+        "state": {
+          "single": "Eenzelperson",
+          "couple": "Pärchen",
+          "family": "Famill"
+        }
+      },
+      "beep_volume": {
+        "name": "Signaltounvolumen",
+        "state": {
+          "mute": "Stomm",
+          "33": "33%",
+          "66": "66%",
+          "100": "100%"
+        }
+      },
+      "panel": {
+        "name": "Frontplack",
+        "state": {
+          "open": "Op",
+          "close": "Zou"
+        }
+      },
+      "filter_clean_interval": {
+        "name": "Filterbotzintervall",
+        "state": {
+          "180": "180 h",
+          "300": "300 h",
+          "500": "500 h",
+          "700": "700 h"
+        }
+      }
+    }
+  },
+  "services": {
+    "get_schedules": {
+      "name": "Zäitpläng ofruffen",
+      "description": "Lëscht d'Zäitpläng op, déi am agebaute Planer vum Gerät gespäichert sinn. Dëst steiert den agebaute Planer vun der Klimaanlag, deen och leeft, wann Home Assistant offline ass, an d'Gerät nëmmen zu enger festgeluechter Zäit un- oder ausschalt. Fir méi komplex Szenarie (Temperatur, Modus, Ventilator…) benotzt Home-Assistant-Automatisatiounen."
+    },
+    "set_schedule": {
+      "name": "Zäitplang festleeën",
+      "description": "Erstellt oder beaarbecht en Un/Aus-Zäitplang. Dëst steiert den agebaute Planer vun der Klimaanlag, deen och leeft, wann Home Assistant offline ass, an d'Gerät nëmmen zu enger festgeluechter Zäit un- oder ausschalt. Fir méi komplex Szenarie (Temperatur, Modus, Ventilator…) benotzt Home-Assistant-Automatisatiounen.",
+      "fields": {
+        "time": {
+          "name": "Auerzäit",
+          "description": "Lokal Zäit, zu där den Zäitplang ausléist."
+        },
+        "power": {
+          "name": "Un/Aus",
+          "description": "Ob d'Gerät un- oder ausschalt."
+        },
+        "repeat": {
+          "name": "Heefegkeet",
+          "description": "Wéi dacks en ausgefouert gëtt: eemol, all Dag oder wëchentlech un de gewielten Deeg."
+        },
+        "days": {
+          "name": "Deeg",
+          "description": "Un wéi enge Deeg en ausgefouert gëtt — néideg fir „Eemol“ a „Wëchentlech“, gëtt bei „All Dag“ ignoréiert."
+        },
+        "enabled": {
+          "name": "Aktivéiert",
+          "description": "Ob den Zäitplang aktiv ass."
+        },
+        "schedule_id": {
+          "name": "Zäitplang-ID",
+          "description": "ID vun engem bestoende Zäitplang fir ze beaarbechten; loosst eidel, fir en neien ze erstellen."
+        }
+      }
+    },
+    "delete_schedule": {
+      "name": "Zäitplang läschen",
+      "description": "Läscht en Zäitplang aus dem agebaute Planer vum Gerät. Dëst steiert den agebaute Planer vun der Klimaanlag, deen och leeft, wann Home Assistant offline ass, an d'Gerät nëmmen zu enger festgeluechter Zäit un- oder ausschalt. Fir méi komplex Szenarie (Temperatur, Modus, Ventilator…) benotzt Home-Assistant-Automatisatiounen.",
+      "fields": {
+        "schedule_id": {
+          "name": "Zäitplang-ID",
+          "description": "ID vum Zäitplang, deen ze läsche ass (kuckt de Sensor „Zäitpläng“ oder get_schedules)."
+        }
+      }
+    },
+    "get_power_usage": {
+      "name": "Stroumverbrauch ofruffen",
+      "description": "Rifft den opgezeechente Stroumverbrauchsverlaf vun der Klimaanlag iwwer eng Zäitperiod of.",
+      "fields": {
+        "start": {
+          "name": "Start",
+          "description": "Ufank vun der Period (lokal Zäit)."
+        },
+        "end": {
+          "name": "Enn",
+          "description": "Enn vun der Period (Standard: elo)."
+        },
+        "unit": {
+          "name": "Aggregatioun",
+          "description": "De Verbrauch pro Stonn oder pro Dag aggregéieren."
+        }
+      }
+    },
+    "set_power_logging": {
+      "name": "Verbrauchsopzeechnung astellen",
+      "description": "Schalt d'Stroumverbrauchsopzeechnung vum Gerät un oder aus.",
+      "fields": {
+        "enable": {
+          "name": "Aktivéieren",
+          "description": "Ob d'Stroumverbrauchsopzeechnung un ass."
+        }
+      }
+    },
+    "reset_power_logging": {
+      "name": "Verbrauchsopzeechnung zrécksetzen",
+      "description": "Läscht den um Gerät opgezeechente Stroumverbrauchsverlaf."
+    },
+    "set_nickname": {
+      "name": "Spëtznumm festleeën",
+      "description": "Leet de Spëtznumm fest, deen um Gerät gespäichert ass.",
+      "fields": {
+        "nickname": {
+          "name": "Spëtznumm",
+          "description": "Den neie Spëtznumm."
+        }
+      }
+    },
+    "get_region_code": {
+      "name": "Regiounscode ofruffen",
+      "description": "Lifft de Regiounscode, deen um Gerät gespäichert ass."
+    },
+    "set_region_code": {
+      "name": "Regiounscode festleeën",
+      "description": "Leet de Regiounscode fest, deen um Gerät gespäichert ass.",
+      "fields": {
+        "code": {
+          "name": "Code",
+          "description": "De Regiounscode."
+        }
+      }
+    }
+  },
+  "selector": {
+    "schedule_power": {
+      "options": {
+        "on": "Un",
+        "off": "Aus"
+      }
+    },
+    "schedule_repeat": {
+      "options": {
+        "once": "Eemol",
+        "daily": "All Dag",
+        "weekly": "Wëchentlech (gewielten Deeg)"
+      }
+    },
+    "schedule_days": {
+      "options": {
+        "mon": "Méindeg",
+        "tue": "Dënschdeg",
+        "wed": "Mëttwoch",
+        "thu": "Donneschdeg",
+        "fri": "Freideg",
+        "sat": "Samschdeg",
+        "sun": "Sonndeg"
+      }
+    },
+    "power_unit": {
+      "options": {
+        "hour": "Pro Stonn",
+        "day": "Pro Dag"
+      }
+    }
+  },
+  "exceptions": {
+    "command_failed": {
+      "message": "Samsung-AC-Kommando feelgeschloen: {error}"
+    },
+    "schedule_needs_day": {
+      "message": "Wielt op d'mannst een Dag fir d'Zäitpläng „Eemol“ a „Wëchentlech“ aus."
+    }
+  }
+}

@@ -1,0 +1,358 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Samsung-airconditioner (DPLUG / 2878)",
+        "description": "Hoe wilt u uw airconditioner instellen?",
+        "menu_options": {
+          "onboard": "Een nieuw apparaat met wifi verbinden (instructies)",
+          "manual": "Het staat al op mijn wifi (IP invoeren)"
+        }
+      },
+      "onboard": {
+        "title": "Verbind het apparaat met uw wifi",
+        "description": "Oude Samsung-apparaten worden niet via het netwerkprotocol met wifi verbonden — dat moet eenmalig fysiek gebeuren.\n\n**Optie A — WPS (eenvoudigst, aanbevolen)**\n1. Houd op de afstandsbediening **`Settings` 4 seconden ingedrukt** (verborgen functie: het display knippert alleen) om WPS te starten.\n2. **Druk binnen 2 minuten op de WPS-knop van uw router**.\n3. Wanneer de wifi-led op de module continu brandt, is de verbinding gemaakt.\n\n**Optie B — vanaf een computer (als uw router geen WPS-knop heeft)**\n1. Installeer **Python 3** als u dat nog niet hebt ({python_url}) en **download daarna het hulpscript** (één enkel bestand, geen extra installaties nodig): {script_url}\n2. Houd op de afstandsbediening **`Timer` 4 seconden ingedrukt** om het apparaat in AP-modus te zetten; er verschijnt een wifi-netwerk met de naam **`SMARTAIRCON`**.\n3. **Verbind de computer met het netwerk `SMARTAIRCON`** (wachtwoord **`1111122222`**).\n4. **Voer het script uit** — `python3 provision.py` — en voer, wanneer daarom wordt gevraagd, de naam en het wachtwoord van uw thuis-wifi in.\n5. Wanneer **Done** verschijnt, verbindt het apparaat zich met uw wifi; verbind de computer weer met uw normale netwerk.\n\nZodra het apparaat op uw wifi staat, **sluit u dit venster** en opent u **Instellingen → Apparaten en diensten**: het zou daar automatisch moeten worden aangeboden (detectie). Zo niet, start het toevoegen dan opnieuw en kies **Het staat al op mijn wifi** om het IP-adres in te voeren.\n\n_Voor gevorderde gebruikers: `python3 provision.py --help` toont de opties om het uit te voeren zonder de interactieve vragen._"
+      },
+      "manual": {
+        "title": "Verbinden met de airconditioner",
+        "description": "Voer het IP-adres van het apparaat in. Het token wordt in de volgende stap afgehandeld.",
+        "data": {
+          "host": "IP-adres"
+        }
+      },
+      "token": {
+        "title": "Het toegangstoken ophalen",
+        "description": "Het apparaat op {host} geeft alleen bij het inschakelen een token af (een fysieke toegangscontrole).\n\n1. **Schakel de airconditioner UIT** met de afstandsbediening, als hij aan staat.\n2. Druk hieronder op **Verzenden** (laat het veld leeg).\n3. Schakel de airconditioner binnen ~30 seconden **AAN** met de afstandsbediening.\n\nHet token wordt automatisch vastgelegd en opgeslagen.\n\n**Of**, als u het token van dit apparaat al hebt, voer het hieronder in en druk op Verzenden.",
+        "data": {
+          "token": "Token (optioneel)"
+        }
+      },
+      "save_token": {
+        "title": "Token opgehaald",
+        "description": "Klaar — het token voor het apparaat op {host} is opgehaald en in deze integratie opgeslagen.\n\n💡 **Tip:** bewaar het token van dit apparaat zodat u het in de toekomst niet opnieuw hoeft op te halen (u kunt het rechtstreeks plakken bij het toevoegen van het apparaat):\n\n```\n{token}\n```\n\nDruk op **Verzenden** om af te ronden."
+      },
+      "reauth_confirm": {
+        "title": "Samsung-airconditioner opnieuw verifiëren",
+        "description": "Het token voor het apparaat op {host} is geweigerd (het kan veranderen na een module-reset). Haal een nieuw token op: schakel het apparaat UIT, verzend (laat leeg) en schakel het daarna binnen ~30s AAN. Of voer hieronder een bekend token in.",
+        "data": {
+          "token": "Token (optioneel)"
+        }
+      },
+      "discovery_confirm": {
+        "title": "Samsung-airconditioner gevonden",
+        "description": "Er is een Samsung-airconditioner gedetecteerd op {host}. Nu instellen? In de volgende stap haalt u een token op (bij het inschakelen), tenzij u het al kent."
+      },
+      "reconfigure": {
+        "title": "IP-adres wijzigen",
+        "description": "Voer het nieuwe IP-adres voor deze airconditioner in. Het bestaande token wordt hergebruikt.",
+        "data": {
+          "host": "IP-adres"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Kan geen verbinding maken. Controleer het IP-adres en of het apparaat op het netwerk staat.",
+      "auth": "Het token is geweigerd. Laat het leeg om een nieuw token op te halen.",
+      "no_token": "Geen token ontvangen. Zorg ervoor dat het apparaat UIT stond en binnen het tijdvenster werd AANgezet. Probeer het opnieuw."
+    },
+    "abort": {
+      "already_configured": "Deze airconditioner is al geconfigureerd.",
+      "not_samsung_ac": "Dit apparaat spreekt het Samsung-DPLUG-protocol niet.",
+      "reauth_successful": "De herverificatie is geslaagd.",
+      "onboard_finished": "Zodra de airconditioner op uw wifi staat, voegt u hem toe via Instellingen → Apparaten en diensten — hij zou automatisch moeten worden gedetecteerd, of kies “Het staat al op mijn wifi” om het IP-adres in te voeren.",
+      "wrong_device": "Op dat adres bevindt zich een andere airconditioner.",
+      "reconfigure_successful": "Het IP-adres is bijgewerkt."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Samsung AC-opties",
+        "data": {
+          "live_updates": "Live-updates (permanente verbinding)",
+          "scan_interval": "Vernieuwingsinterval (seconden)"
+        },
+        "data_description": {
+          "live_updates": "Houdt één permanente verbinding open voor directe push-updates. Indien uit, doet de integratie polling en gebruikt geen permanente verbinding (robuuster).",
+          "scan_interval": "Polling-interval wanneer live-updates uit zijn; fallback-/keepalive-polling wanneer ze aan zijn."
+        }
+      }
+    }
+  },
+  "entity": {
+    "climate": {
+      "samsung_ac": {
+        "state_attributes": {
+          "preset_mode": {
+            "state": {
+              "none": "Uit",
+              "quiet": "Stil",
+              "fast_turbo": "Snelle turbo",
+              "comfort": "Comfort",
+              "dlight_cool": "d'light Cool",
+              "smart_saver": "Smart Saver",
+              "color_of_wind_alps": "Color of Wind: Alps",
+              "color_of_wind_florida": "Color of Wind: Florida",
+              "color_of_wind_savanna": "Color of Wind: Savanna"
+            }
+          },
+          "swing_mode": {
+            "state": {
+              "off": "Uit",
+              "vertical": "Verticaal",
+              "horizontal": "Horizontaal",
+              "both": "Beide",
+              "indirect": "Indirect",
+              "direct": "Direct",
+              "center": "Midden",
+              "wide": "Breed",
+              "left": "Links",
+              "right": "Rechts",
+              "long": "Lang"
+            }
+          }
+        }
+      }
+    },
+    "sensor": {
+      "temperature": {
+        "name": "Temperatuur"
+      },
+      "humidity": {
+        "name": "Luchtvochtigheid"
+      },
+      "outdoor_temperature": {
+        "name": "Buitentemperatuur"
+      },
+      "used_time": {
+        "name": "Bedrijfstijd"
+      },
+      "filter_use_time": {
+        "name": "Filtergebruikstijd"
+      },
+      "filter_life": {
+        "name": "Filterlevensduur"
+      },
+      "error": {
+        "name": "Foutcode"
+      },
+      "device_clock": {
+        "name": "Apparaatklok"
+      },
+      "schedules": {
+        "name": "Schema's"
+      }
+    },
+    "switch": {
+      "purify": {
+        "name": "Purify (SPi)"
+      },
+      "auto_clean": {
+        "name": "Automatisch reinigen"
+      },
+      "light": {
+        "name": "Displayverlichting"
+      },
+      "sterilize": {
+        "name": "Steriliseren"
+      },
+      "smart_on": {
+        "name": "Slim inschakelen"
+      },
+      "weather": {
+        "name": "Weer"
+      }
+    },
+    "number": {
+      "sleep_timer": {
+        "name": "Slaaptimer"
+      },
+      "on_timer": {
+        "name": "Inschakeltimer"
+      },
+      "off_timer": {
+        "name": "Uitschakeltimer"
+      },
+      "energy_target": {
+        "name": "Energiedoel"
+      }
+    },
+    "select": {
+      "occupancy": {
+        "name": "Bezetting",
+        "state": {
+          "single": "Eenpersoons",
+          "couple": "Stel",
+          "family": "Gezin"
+        }
+      },
+      "beep_volume": {
+        "name": "Pieptoonvolume",
+        "state": {
+          "mute": "Gedempt",
+          "33": "33%",
+          "66": "66%",
+          "100": "100%"
+        }
+      },
+      "panel": {
+        "name": "Voorpaneel",
+        "state": {
+          "open": "Open",
+          "close": "Dicht"
+        }
+      },
+      "filter_clean_interval": {
+        "name": "Filterreinigingsinterval",
+        "state": {
+          "180": "180 h",
+          "300": "300 h",
+          "500": "500 h",
+          "700": "700 h"
+        }
+      }
+    }
+  },
+  "services": {
+    "get_schedules": {
+      "name": "Schema's ophalen",
+      "description": "Toont de schema's die zijn opgeslagen in de ingebouwde planner van het apparaat. Dit bestuurt de ingebouwde planner van de airconditioner, die ook draait wanneer Home Assistant offline is en het apparaat alleen op een ingesteld tijdstip in- of uitschakelt. Gebruik voor complexere scenario's (temperatuur, modus, ventilator…) Home Assistant-automatiseringen."
+    },
+    "set_schedule": {
+      "name": "Schema instellen",
+      "description": "Maakt of bewerkt een aan/uit-schema. Dit bestuurt de ingebouwde planner van de airconditioner, die ook draait wanneer Home Assistant offline is en het apparaat alleen op een ingesteld tijdstip in- of uitschakelt. Gebruik voor complexere scenario's (temperatuur, modus, ventilator…) Home Assistant-automatiseringen.",
+      "fields": {
+        "time": {
+          "name": "Tijd",
+          "description": "Lokale tijd van de dag waarop het schema wordt geactiveerd."
+        },
+        "power": {
+          "name": "Aan/uit",
+          "description": "Of het apparaat in- of uitschakelt."
+        },
+        "repeat": {
+          "name": "Frequentie",
+          "description": "Hoe vaak het wordt uitgevoerd: eenmalig, elke dag of wekelijks op de geselecteerde dagen."
+        },
+        "days": {
+          "name": "Dagen",
+          "description": "Op welke dagen het wordt uitgevoerd — vereist voor 'Eenmalig' en 'Wekelijks', genegeerd bij 'Elke dag'."
+        },
+        "enabled": {
+          "name": "Ingeschakeld",
+          "description": "Of het schema actief is."
+        },
+        "schedule_id": {
+          "name": "Schema-ID",
+          "description": "ID van een bestaand schema om te bewerken; laat leeg om een nieuw schema te maken."
+        }
+      }
+    },
+    "delete_schedule": {
+      "name": "Schema verwijderen",
+      "description": "Verwijdert een schema uit de ingebouwde planner van het apparaat. Dit bestuurt de ingebouwde planner van de airconditioner, die ook draait wanneer Home Assistant offline is en het apparaat alleen op een ingesteld tijdstip in- of uitschakelt. Gebruik voor complexere scenario's (temperatuur, modus, ventilator…) Home Assistant-automatiseringen.",
+      "fields": {
+        "schedule_id": {
+          "name": "Schema-ID",
+          "description": "ID van het te verwijderen schema (zie de sensor Schema's of get_schedules)."
+        }
+      }
+    },
+    "get_power_usage": {
+      "name": "Stroomverbruik ophalen",
+      "description": "Haalt de geregistreerde geschiedenis van het stroomverbruik van de airconditioner over een tijdsperiode op.",
+      "fields": {
+        "start": {
+          "name": "Begin",
+          "description": "Begin van de periode (lokale tijd)."
+        },
+        "end": {
+          "name": "Einde",
+          "description": "Einde van de periode (standaard: nu)."
+        },
+        "unit": {
+          "name": "Aggregatie",
+          "description": "Het verbruik per uur of per dag aggregeren."
+        }
+      }
+    },
+    "set_power_logging": {
+      "name": "Verbruiksregistratie instellen",
+      "description": "Schakelt de stroomverbruiksregistratie van het apparaat in of uit.",
+      "fields": {
+        "enable": {
+          "name": "Inschakelen",
+          "description": "Of de stroomverbruiksregistratie aan is."
+        }
+      }
+    },
+    "reset_power_logging": {
+      "name": "Verbruiksregistratie resetten",
+      "description": "Wist de op het apparaat geregistreerde geschiedenis van het stroomverbruik."
+    },
+    "set_nickname": {
+      "name": "Bijnaam instellen",
+      "description": "Stelt de op het apparaat opgeslagen bijnaam in.",
+      "fields": {
+        "nickname": {
+          "name": "Bijnaam",
+          "description": "De nieuwe bijnaam."
+        }
+      }
+    },
+    "get_region_code": {
+      "name": "Regiocode ophalen",
+      "description": "Leest de op het apparaat opgeslagen regiocode."
+    },
+    "set_region_code": {
+      "name": "Regiocode instellen",
+      "description": "Stelt de op het apparaat opgeslagen regiocode in.",
+      "fields": {
+        "code": {
+          "name": "Code",
+          "description": "De regiocode."
+        }
+      }
+    }
+  },
+  "selector": {
+    "schedule_power": {
+      "options": {
+        "on": "Aan",
+        "off": "Uit"
+      }
+    },
+    "schedule_repeat": {
+      "options": {
+        "once": "Eenmalig",
+        "daily": "Elke dag",
+        "weekly": "Wekelijks (geselecteerde dagen)"
+      }
+    },
+    "schedule_days": {
+      "options": {
+        "mon": "Maandag",
+        "tue": "Dinsdag",
+        "wed": "Woensdag",
+        "thu": "Donderdag",
+        "fri": "Vrijdag",
+        "sat": "Zaterdag",
+        "sun": "Zondag"
+      }
+    },
+    "power_unit": {
+      "options": {
+        "hour": "Per uur",
+        "day": "Per dag"
+      }
+    }
+  },
+  "exceptions": {
+    "command_failed": {
+      "message": "Samsung AC-opdracht mislukt: {error}"
+    },
+    "schedule_needs_day": {
+      "message": "Selecteer ten minste één dag voor de schema's 'Eenmalig' en 'Wekelijks'."
+    }
+  }
+}

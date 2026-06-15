@@ -1,0 +1,358 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Samsung aire-girogailua (DPLUG / 2878)",
+        "description": "Nola konfiguratu nahi duzu aire-girogailua?",
+        "menu_options": {
+          "onboard": "Konektatu unitate berri bat Wi-Fira (argibideak)",
+          "manual": "Dagoeneko nire Wi-Fian dago (sartu IPa)"
+        }
+      },
+      "onboard": {
+        "title": "Konektatu unitatea zure Wi-Fira",
+        "description": "Samsung gailu zaharrak ez dira Wi-Fira sare-protokoloaren bidez konektatzen — behin egin behar da, fisikoki.\n\n**A aukera — WPS (errazena, gomendatua)**\n1. Urruneko agintean, **eutsi `Settings` sakatuta 4 segundoz** (ezkutuko funtzioa: pantailak keinu egiten du soilik) WPS abiarazteko.\n2. 2 minutu baino lehen, **sakatu zure routerraren WPS botoia**.\n3. Moduluaren Wi-Fi LEDa piztuta finko geratzen denean, konektatu da.\n\n**B aukera — ordenagailu batetik (zure routerrak WPS botoirik ez badu)**\n1. Instalatu **Python 3** ez baduzu ({python_url}), eta gero **deskargatu laguntza-script-a** (fitxategi bakarra, ez dago besterik instalatu beharrik): {script_url}\n2. Urruneko agintean, **eutsi `Timer` sakatuta 4 segundoz** unitatea AP moduan jartzeko; **`SMARTAIRCON`** izeneko Wi-Fi sare bat agertuko da.\n3. **Konektatu ordenagailua `SMARTAIRCON` sarera** (pasahitza **`1111122222`**).\n4. **Exekutatu script-a** — `python3 provision.py` — eta, eskatzen zaizunean, sartu zure etxeko Wi-Fiaren izena eta pasahitza.\n5. **Done** erakusten duenean, unitatea zure Wi-Fira konektatuko da; berriz konektatu ordenagailua zure ohiko sarera.\n\nUnitatea zure Wi-Fian dagoenean, **itxi leiho hau** eta ireki **Ezarpenak → Gailuak eta zerbitzuak**: han automatikoki eskaini beharko litzateke (aurkikuntza). Agertzen ez bada, hasi gehitzen berriro eta hautatu **Dagoeneko nire Wi-Fian dago** haren IPa sartzeko.\n\n_Erabiltzaile aurreratuentzat: `python3 provision.py --help` aukerak zerrendatzen ditu galdera interaktiborik gabe exekutatzeko._"
+      },
+      "manual": {
+        "title": "Konektatu aire-girogailura",
+        "description": "Sartu unitatearen IP helbidea. Tokena hurrengo urratsean kudeatzen da.",
+        "data": {
+          "host": "IP helbidea"
+        }
+      },
+      "token": {
+        "title": "Eskuratu sarbide-tokena",
+        "description": "{host}-(e)ko unitateak pizterakoan baino ez du token bat ematen (sarbide fisikoa frogatzeko urratsa).\n\n1. **Itzali aire-girogailua** urruneko agintearekin, piztuta badago.\n2. Sakatu **Bidali** behean (utzi eremua hutsik).\n3. ~30 segundo baino lehen, **piztu aire-girogailua** urruneko agintearekin.\n\nTokena automatikoki harrapatu eta gordeko da.\n\n**Bestela**, unitate honen tokena dagoeneko baduzu, sartu behean eta sakatu Bidali.",
+        "data": {
+          "token": "Tokena (aukerakoa)"
+        }
+      },
+      "save_token": {
+        "title": "Tokena eskuratuta",
+        "description": "Eginda — {host}-(e)ko unitatearen tokena eskuratu eta integrazio honetan gorde da.\n\n💡 **Aholkua:** gorde gailu honen tokena etorkizunean berriz eskuratu behar ez izateko (zuzenean itsats dezakezu unitatea gehitzean):\n\n```\n{token}\n```\n\nSakatu **Bidali** amaitzeko."
+      },
+      "reauth_confirm": {
+        "title": "Berriz autentifikatu Samsung aire-girogailua",
+        "description": "{host}-(e)ko unitatearen tokena ukatu egin da (modulua berrezarri ondoren alda daiteke). Eskuratu berri bat: itzali unitatea, bidali (utzi hutsik), eta gero piztu ~30 s-tan. Edo sartu behean token ezagun bat.",
+        "data": {
+          "token": "Tokena (aukerakoa)"
+        }
+      },
+      "discovery_confirm": {
+        "title": "Samsung aire-girogailua aurkitu da",
+        "description": "Samsung aire-girogailu bat aurkitu da {host}-(e)n. Orain konfiguratu nahi duzu? Hurrengo urratsean token bat eskuratuko duzu (pizterakoan), dagoeneko ez baduzu ezagutzen."
+      },
+      "reconfigure": {
+        "title": "Aldatu IP helbidea",
+        "description": "Sartu aire-girogailu honen IP helbide berria. Lehendik dagoen tokena berrerabiltzen da.",
+        "data": {
+          "host": "IP helbidea"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Ezin da konektatu. Egiaztatu IP helbidea eta unitatea sarean dagoela.",
+      "auth": "Tokena ukatu egin da. Utzi hutsik berri bat eskuratzeko.",
+      "no_token": "Ez da tokenik jaso. Ziurtatu unitatea itzalita zegoela eta gero denbora-tartean piztu zela. Saiatu berriro."
+    },
+    "abort": {
+      "already_configured": "Aire-girogailu hau dagoeneko konfiguratuta dago.",
+      "not_samsung_ac": "Gailu honek ez du Samsung DPLUG protokoloa hitz egiten.",
+      "reauth_successful": "Berrautentifikazioa ondo egin da.",
+      "onboard_finished": "Aire-girogailua zure Wi-Fian dagoenean, gehitu Ezarpenak → Gailuak eta zerbitzuak atalean — automatikoki aurkitu beharko litzateke, edo hautatu «Dagoeneko nire Wi-Fian dago» haren IPa sartzeko.",
+      "wrong_device": "Helbide horretako unitatea beste aire-girogailu bat da.",
+      "reconfigure_successful": "IP helbidea eguneratu da."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Samsung AC aukerak",
+        "data": {
+          "live_updates": "Zuzeneko eguneratzeak (konexio iraunkorra)",
+          "scan_interval": "Freskatze-tartea (segundoak)"
+        },
+        "data_description": {
+          "live_updates": "Mantendu konexio iraunkor bat berehalako push eguneratzeetarako. Desaktibatuta badago, integrazioak inkesta (polling) egiten du eta ez du konexio iraunkorrik erabiltzen (erresilienteagoa).",
+          "scan_interval": "Inkesta-tartea zuzeneko eguneratzeak desaktibatuta daudenean; ordezko/keepalive inkesta aktibatuta daudenean."
+        }
+      }
+    }
+  },
+  "entity": {
+    "climate": {
+      "samsung_ac": {
+        "state_attributes": {
+          "preset_mode": {
+            "state": {
+              "none": "Itzalita",
+              "quiet": "Isila",
+              "fast_turbo": "Turbo azkarra",
+              "comfort": "Comfort",
+              "dlight_cool": "d'light Cool",
+              "smart_saver": "Smart Saver",
+              "color_of_wind_alps": "Color of Wind: Alps",
+              "color_of_wind_florida": "Color of Wind: Florida",
+              "color_of_wind_savanna": "Color of Wind: Savanna"
+            }
+          },
+          "swing_mode": {
+            "state": {
+              "off": "Itzalita",
+              "vertical": "Bertikala",
+              "horizontal": "Horizontala",
+              "both": "Biak",
+              "indirect": "Zeharkakoa",
+              "direct": "Zuzena",
+              "center": "Erdia",
+              "wide": "Zabala",
+              "left": "Ezkerra",
+              "right": "Eskuina",
+              "long": "Luzea"
+            }
+          }
+        }
+      }
+    },
+    "sensor": {
+      "temperature": {
+        "name": "Tenperatura"
+      },
+      "humidity": {
+        "name": "Hezetasuna"
+      },
+      "outdoor_temperature": {
+        "name": "Kanpoko tenperatura"
+      },
+      "used_time": {
+        "name": "Funtzionamendu-denbora"
+      },
+      "filter_use_time": {
+        "name": "Iragazkiaren erabilera-denbora"
+      },
+      "filter_life": {
+        "name": "Iragazkiaren bizitza"
+      },
+      "error": {
+        "name": "Errore-kodea"
+      },
+      "device_clock": {
+        "name": "Gailuaren erlojua"
+      },
+      "schedules": {
+        "name": "Programazioak"
+      }
+    },
+    "switch": {
+      "purify": {
+        "name": "Purify (SPi)"
+      },
+      "auto_clean": {
+        "name": "Garbiketa automatikoa"
+      },
+      "light": {
+        "name": "Pantailaren argia"
+      },
+      "sterilize": {
+        "name": "Esterilizazioa"
+      },
+      "smart_on": {
+        "name": "Pizte adimenduna"
+      },
+      "weather": {
+        "name": "Eguraldia"
+      }
+    },
+    "number": {
+      "sleep_timer": {
+        "name": "Lo-tenporizadorea"
+      },
+      "on_timer": {
+        "name": "Pizteko tenporizadorea"
+      },
+      "off_timer": {
+        "name": "Itzaltzeko tenporizadorea"
+      },
+      "energy_target": {
+        "name": "Energia-helburua"
+      }
+    },
+    "select": {
+      "occupancy": {
+        "name": "Okupazioa",
+        "state": {
+          "single": "Bakarra",
+          "couple": "Bikotea",
+          "family": "Familia"
+        }
+      },
+      "beep_volume": {
+        "name": "Soinuaren bolumena",
+        "state": {
+          "mute": "Mutu",
+          "33": "33%",
+          "66": "66%",
+          "100": "100%"
+        }
+      },
+      "panel": {
+        "name": "Aurreko panela",
+        "state": {
+          "open": "Irekita",
+          "close": "Itxita"
+        }
+      },
+      "filter_clean_interval": {
+        "name": "Iragazkia garbitzeko tartea",
+        "state": {
+          "180": "180 h",
+          "300": "300 h",
+          "500": "500 h",
+          "700": "700 h"
+        }
+      }
+    }
+  },
+  "services": {
+    "get_schedules": {
+      "name": "Eskuratu programazioak",
+      "description": "Zerrendatu unitatearen programatzaile integratuan gordetako programazioak. Honek aire-girogailuaren programatzaile integratua kontrolatzen du, Home Assistant deskonektatuta dagoenean ere funtzionatzen duena, eta unitatea ezarritako ordu batean piztu edo itzaltzen baino ez du egiten. Egoera konplexuagoetarako (tenperatura, modua, haizagailua…) erabili Home Assistant automatizazioak."
+    },
+    "set_schedule": {
+      "name": "Ezarri programazioa",
+      "description": "Sortu edo editatu pizteko/itzaltzeko programazio bat. Honek aire-girogailuaren programatzaile integratua kontrolatzen du, Home Assistant deskonektatuta dagoenean ere funtzionatzen duena, eta unitatea ezarritako ordu batean piztu edo itzaltzen baino ez du egiten. Egoera konplexuagoetarako (tenperatura, modua, haizagailua…) erabili Home Assistant automatizazioak.",
+      "fields": {
+        "time": {
+          "name": "Ordua",
+          "description": "Programazioa abiarazten den eguneko ordu lokala."
+        },
+        "power": {
+          "name": "Piztea",
+          "description": "Unitatea pizten edo itzaltzen den."
+        },
+        "repeat": {
+          "name": "Maiztasuna",
+          "description": "Zenbatero exekutatzen den: behin, egunero edo astero hautatutako egunetan."
+        },
+        "days": {
+          "name": "Egunak",
+          "description": "Zein egunetan exekutatu — beharrezkoa «Behin» eta «Astero» kasuetarako, baztertua «Egunero» kasuan."
+        },
+        "enabled": {
+          "name": "Gaituta",
+          "description": "Programazioa aktibo dagoen."
+        },
+        "schedule_id": {
+          "name": "Programazioaren IDa",
+          "description": "Editatu beharreko programazio baten IDa; utzi hutsik berri bat sortzeko."
+        }
+      }
+    },
+    "delete_schedule": {
+      "name": "Ezabatu programazioa",
+      "description": "Ezabatu programazio bat unitatearen programatzaile integratutik. Honek aire-girogailuaren programatzaile integratua kontrolatzen du, Home Assistant deskonektatuta dagoenean ere funtzionatzen duena, eta unitatea ezarritako ordu batean piztu edo itzaltzen baino ez du egiten. Egoera konplexuagoetarako (tenperatura, modua, haizagailua…) erabili Home Assistant automatizazioak.",
+      "fields": {
+        "schedule_id": {
+          "name": "Programazioaren IDa",
+          "description": "Ezabatu beharreko programazioaren IDa (ikusi Programazioak sentsorea edo get_schedules)."
+        }
+      }
+    },
+    "get_power_usage": {
+      "name": "Eskuratu energia-kontsumoa",
+      "description": "Berreskuratu aire-girogailuak denbora-tarte batean erregistratutako energia-kontsumoaren historia.",
+      "fields": {
+        "start": {
+          "name": "Hasiera",
+          "description": "Tartearen hasiera (ordu lokala)."
+        },
+        "end": {
+          "name": "Amaiera",
+          "description": "Tartearen amaiera (lehenetsia: orain)."
+        },
+        "unit": {
+          "name": "Agregazioa",
+          "description": "Agregatu kontsumoa orduko edo eguneko."
+        }
+      }
+    },
+    "set_power_logging": {
+      "name": "Ezarri kontsumoaren erregistroa",
+      "description": "Aktibatu edo desaktibatu unitatearen energia-kontsumoaren erregistroa.",
+      "fields": {
+        "enable": {
+          "name": "Aktibatu",
+          "description": "Energia-kontsumoaren erregistroa aktibo dagoen."
+        }
+      }
+    },
+    "reset_power_logging": {
+      "name": "Berrezarri kontsumoaren erregistroa",
+      "description": "Garbitu unitatean erregistratutako energia-kontsumoaren historia."
+    },
+    "set_nickname": {
+      "name": "Ezarri ezizena",
+      "description": "Ezarri unitatean gordetako ezizena.",
+      "fields": {
+        "nickname": {
+          "name": "Ezizena",
+          "description": "Ezizen berria."
+        }
+      }
+    },
+    "get_region_code": {
+      "name": "Eskuratu eskualde-kodea",
+      "description": "Irakurri unitatean gordetako eskualde-kodea."
+    },
+    "set_region_code": {
+      "name": "Ezarri eskualde-kodea",
+      "description": "Ezarri unitatean gordetako eskualde-kodea.",
+      "fields": {
+        "code": {
+          "name": "Kodea",
+          "description": "Eskualde-kodea."
+        }
+      }
+    }
+  },
+  "selector": {
+    "schedule_power": {
+      "options": {
+        "on": "Piztuta",
+        "off": "Itzalita"
+      }
+    },
+    "schedule_repeat": {
+      "options": {
+        "once": "Behin",
+        "daily": "Egunero",
+        "weekly": "Astero (hautatutako egunak)"
+      }
+    },
+    "schedule_days": {
+      "options": {
+        "mon": "Astelehena",
+        "tue": "Asteartea",
+        "wed": "Asteazkena",
+        "thu": "Osteguna",
+        "fri": "Ostirala",
+        "sat": "Larunbata",
+        "sun": "Igandea"
+      }
+    },
+    "power_unit": {
+      "options": {
+        "hour": "Orduko",
+        "day": "Eguneko"
+      }
+    }
+  },
+  "exceptions": {
+    "command_failed": {
+      "message": "Samsung aire-girogailuaren agindua huts egin du: {error}"
+    },
+    "schedule_needs_day": {
+      "message": "Hautatu gutxienez egun bat «Behin» eta «Astero» programazioetarako."
+    }
+  }
+}

@@ -1,0 +1,358 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Samsungi kliimaseade (DPLUG / 2878)",
+        "description": "Kuidas soovite oma kliimaseadme seadistada?",
+        "menu_options": {
+          "onboard": "Ühenda uus seade Wi-Fi-ga (juhised)",
+          "manual": "See on juba minu Wi-Fi-võrgus (sisesta IP)"
+        }
+      },
+      "onboard": {
+        "title": "Ühendage seade oma Wi-Fi-võrku",
+        "description": "Vanad Samsungi seadmed ei ühendu Wi-Fi-võrku võrguprotokolli kaudu — seda tuleb teha üks kord, füüsiliselt.\n\n**Variant A — WPS (lihtsaim, soovitatav)**\n1. Hoidke puldil **`Settings` nuppu 4 sekundit all** (peidetud funktsioon: ekraan üksnes vilgub), et käivitada WPS.\n2. Vajutage 2 minuti jooksul **ruuteri WPS-nuppu**.\n3. Kui mooduli Wi-Fi LED põleb püsivalt, on ühendus loodud.\n\n**Variant B — arvutist (kui ruuteril pole WPS-nuppu)**\n1. Paigaldage **Python 3**, kui teil seda pole ({python_url}), seejärel **laadige alla abiskript** (üks fail, lisapaigaldusi pole vaja): {script_url}\n2. Hoidke puldil **`Timer` nuppu 4 sekundit all**, et seada seade AP-režiimi; ilmub Wi-Fi-võrk nimega **`SMARTAIRCON`**.\n3. **Ühendage arvuti `SMARTAIRCON` võrku** (parool **`1111122222`**).\n4. **Käivitage skript** — `python3 provision.py` — ja sisestage küsimisel oma kodu Wi-Fi nimi ja parool.\n5. Kui ilmub **Done**, ühendub seade teie Wi-Fi-võrku; ühendage arvuti tagasi oma tavavõrku.\n\nKui seade on teie Wi-Fi-võrgus, **sulgege see aken** ja avage **Seaded → Seadmed ja teenused**: seda peaks seal automaatselt pakutama (avastamine). Kui ei, alustage lisamist uuesti ja valige **See on juba minu Wi-Fi-võrgus**, et sisestada selle IP.\n\n_Edasijõudnud kasutajatele: `python3 provision.py --help` loetleb valikud selle käivitamiseks ilma interaktiivsete küsimusteta._"
+      },
+      "manual": {
+        "title": "Ühendu kliimaseadmega",
+        "description": "Sisestage seadme IP-aadress. Lubatõendit käsitletakse järgmises etapis.",
+        "data": {
+          "host": "IP-aadress"
+        }
+      },
+      "token": {
+        "title": "Hangi juurdepääsutõend",
+        "description": "Seade aadressil {host} väljastab lubatõendi ainult sisselülitamisel (füüsiline juurdepääsu tõendamise samm).\n\n1. **Lülitage kliimaseade VÄLJA** puldiga, kui see on sees.\n2. Vajutage allpool **Saada** (jätke väli tühjaks).\n3. **Lülitage kliimaseade SISSE** puldiga ~30 sekundi jooksul.\n\nLubatõend salvestatakse automaatselt.\n\n**Teise võimalusena**, kui teil on selle seadme lubatõend juba olemas, sisestage see allpool ja vajutage Saada.",
+        "data": {
+          "token": "Lubatõend (valikuline)"
+        }
+      },
+      "save_token": {
+        "title": "Lubatõend hangitud",
+        "description": "Valmis — seadme {host} lubatõend hangiti ja salvestati sellesse sidumisse.\n\n💡 **Näpunäide:** salvestage selle seadme lubatõend, et te ei peaks seda tulevikus uuesti hankima (saate selle seadme lisamisel otse kleepida):\n\n```\n{token}\n```\n\nLõpetamiseks vajutage **Saada**."
+      },
+      "reauth_confirm": {
+        "title": "Samsungi kliimaseadme taastuvastamine",
+        "description": "Seadme {host} lubatõend lükati tagasi (see võib mooduli lähtestamise järel muutuda). Hankige uus: lülitage seade VÄLJA, saatke (jätke tühjaks), seejärel lülitage see ~30 s jooksul SISSE. Või sisestage allpool teadaolev lubatõend.",
+        "data": {
+          "token": "Lubatõend (valikuline)"
+        }
+      },
+      "discovery_confirm": {
+        "title": "Samsungi kliimaseade leitud",
+        "description": "Aadressil {host} avastati Samsungi kliimaseade. Kas seadistada see nüüd? Järgmises etapis hangite lubatõendi (sisselülitamisega), kui te seda juba ei tea."
+      },
+      "reconfigure": {
+        "title": "Muuda IP-aadressi",
+        "description": "Sisestage selle kliimaseadme uus IP-aadress. Olemasolevat lubatõendit kasutatakse uuesti.",
+        "data": {
+          "host": "IP-aadress"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Ei saa ühendust. Kontrollige IP-aadressi ja seda, et seade on võrgus.",
+      "auth": "Lubatõend lükati tagasi. Jätke see tühjaks, et hankida uus.",
+      "no_token": "Lubatõendit ei saadud. Veenduge, et seade oli VÄLJAS ja seejärel ajaakna jooksul SISSE lülitatud. Proovige uuesti."
+    },
+    "abort": {
+      "already_configured": "See kliimaseade on juba seadistatud.",
+      "not_samsung_ac": "See seade ei räägi Samsung DPLUG protokolli.",
+      "reauth_successful": "Taastuvastamine õnnestus.",
+      "onboard_finished": "Kui kliimaseade on teie Wi-Fi-võrgus, lisage see menüüst Seaded → Seadmed ja teenused — see peaks avastatama automaatselt, või valige „See on juba minu Wi-Fi-võrgus”, et sisestada selle IP.",
+      "wrong_device": "Sellel aadressil on teine kliimaseade.",
+      "reconfigure_successful": "IP-aadress uuendati."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Samsung AC valikud",
+        "data": {
+          "live_updates": "Reaalajas värskendused (püsiühendus)",
+          "scan_interval": "Värskendamise intervall (sekundites)"
+        },
+        "data_description": {
+          "live_updates": "Hoiab üht püsiühendust kohesteks push-värskendusteks. Kui väljas, küsib sidumine olekut (polling) ega kasuta püsiühendust (vastupidavam).",
+          "scan_interval": "Küsimise intervall, kui reaalajas värskendused on väljas; varu-/keepalive-päring, kui need on sees."
+        }
+      }
+    }
+  },
+  "entity": {
+    "climate": {
+      "samsung_ac": {
+        "state_attributes": {
+          "preset_mode": {
+            "state": {
+              "none": "Väljas",
+              "quiet": "Vaikne",
+              "fast_turbo": "Fast Turbo",
+              "comfort": "Mugavus",
+              "dlight_cool": "d'light Cool",
+              "smart_saver": "Smart Saver",
+              "color_of_wind_alps": "Color of Wind: Alps",
+              "color_of_wind_florida": "Color of Wind: Florida",
+              "color_of_wind_savanna": "Color of Wind: Savanna"
+            }
+          },
+          "swing_mode": {
+            "state": {
+              "off": "Väljas",
+              "vertical": "Vertikaalne",
+              "horizontal": "Horisontaalne",
+              "both": "Mõlemad",
+              "indirect": "Kaudne",
+              "direct": "Otsene",
+              "center": "Kesk",
+              "wide": "Lai",
+              "left": "Vasak",
+              "right": "Parem",
+              "long": "Pikk"
+            }
+          }
+        }
+      }
+    },
+    "sensor": {
+      "temperature": {
+        "name": "Temperatuur"
+      },
+      "humidity": {
+        "name": "Õhuniiskus"
+      },
+      "outdoor_temperature": {
+        "name": "Välistemperatuur"
+      },
+      "used_time": {
+        "name": "Tööaeg"
+      },
+      "filter_use_time": {
+        "name": "Filtri kasutusaeg"
+      },
+      "filter_life": {
+        "name": "Filtri eluiga"
+      },
+      "error": {
+        "name": "Veakood"
+      },
+      "device_clock": {
+        "name": "Seadme kell"
+      },
+      "schedules": {
+        "name": "Ajakavad"
+      }
+    },
+    "switch": {
+      "purify": {
+        "name": "Purify (SPi)"
+      },
+      "auto_clean": {
+        "name": "Automaatpuhastus"
+      },
+      "light": {
+        "name": "Ekraani valgustus"
+      },
+      "sterilize": {
+        "name": "Steriliseerimine"
+      },
+      "smart_on": {
+        "name": "Nutikas sisselülitus"
+      },
+      "weather": {
+        "name": "Ilm"
+      }
+    },
+    "number": {
+      "sleep_timer": {
+        "name": "Unetaimer"
+      },
+      "on_timer": {
+        "name": "Sisselülituse taimer"
+      },
+      "off_timer": {
+        "name": "Väljalülituse taimer"
+      },
+      "energy_target": {
+        "name": "Energiaeesmärk"
+      }
+    },
+    "select": {
+      "occupancy": {
+        "name": "Hõivatus",
+        "state": {
+          "single": "Üksik",
+          "couple": "Paar",
+          "family": "Pere"
+        }
+      },
+      "beep_volume": {
+        "name": "Piiksu helitugevus",
+        "state": {
+          "mute": "Vaigistus",
+          "33": "33%",
+          "66": "66%",
+          "100": "100%"
+        }
+      },
+      "panel": {
+        "name": "Esipaneel",
+        "state": {
+          "open": "Ava",
+          "close": "Sulge"
+        }
+      },
+      "filter_clean_interval": {
+        "name": "Filtri puhastusintervall",
+        "state": {
+          "180": "180 h",
+          "300": "300 h",
+          "500": "500 h",
+          "700": "700 h"
+        }
+      }
+    }
+  },
+  "services": {
+    "get_schedules": {
+      "name": "Hangi ajakavad",
+      "description": "Loetleb seadme sisseehitatud ajastisse salvestatud ajakavad. See juhib kliimaseadme sisseehitatud ajastit, mis töötab ka siis, kui Home Assistant on võrguühenduseta, ja üksnes lülitab seadme määratud ajal sisse või välja. Keerukamate stsenaariumide jaoks (temperatuur, režiim, ventilaator…) kasutage Home Assistanti automatiseeringuid."
+    },
+    "set_schedule": {
+      "name": "Määra ajakava",
+      "description": "Loo või muuda sisse-/väljalülitamise ajakava. See juhib kliimaseadme sisseehitatud ajastit, mis töötab ka siis, kui Home Assistant on võrguühenduseta, ja üksnes lülitab seadme määratud ajal sisse või välja. Keerukamate stsenaariumide jaoks (temperatuur, režiim, ventilaator…) kasutage Home Assistanti automatiseeringuid.",
+      "fields": {
+        "time": {
+          "name": "Aeg",
+          "description": "Kohalik kellaaeg, mil ajakava käivitub."
+        },
+        "power": {
+          "name": "Toide",
+          "description": "Kas seade lülitub sisse või välja."
+        },
+        "repeat": {
+          "name": "Sagedus",
+          "description": "Kui sageli see käivitub: üks kord, iga päev või iganädalaselt valitud päevadel."
+        },
+        "days": {
+          "name": "Päevad",
+          "description": "Millistel päevadel käivitada — nõutav „Üks kord” ja „Iganädalaselt” puhul, eiratakse „Iga päev” puhul."
+        },
+        "enabled": {
+          "name": "Lubatud",
+          "description": "Kas ajakava on aktiivne."
+        },
+        "schedule_id": {
+          "name": "Ajakava ID",
+          "description": "Muudetava olemasoleva ajakava ID; jätke tühjaks uue loomiseks."
+        }
+      }
+    },
+    "delete_schedule": {
+      "name": "Kustuta ajakava",
+      "description": "Kustutab ajakava seadme sisseehitatud ajastist. See juhib kliimaseadme sisseehitatud ajastit, mis töötab ka siis, kui Home Assistant on võrguühenduseta, ja üksnes lülitab seadme määratud ajal sisse või välja. Keerukamate stsenaariumide jaoks (temperatuur, režiim, ventilaator…) kasutage Home Assistanti automatiseeringuid.",
+      "fields": {
+        "schedule_id": {
+          "name": "Ajakava ID",
+          "description": "Kustutatava ajakava ID (vaadake Ajakavad andurit või get_schedules)."
+        }
+      }
+    },
+    "get_power_usage": {
+      "name": "Hangi energiatarbimine",
+      "description": "Toob kliimaseadme salvestatud energiatarbimise ajaloo teatud ajavahemiku kohta.",
+      "fields": {
+        "start": {
+          "name": "Algus",
+          "description": "Vahemiku algus (kohalik aeg)."
+        },
+        "end": {
+          "name": "Lõpp",
+          "description": "Vahemiku lõpp (vaikimisi: praegu)."
+        },
+        "unit": {
+          "name": "Koondamine",
+          "description": "Koonda tarbimine tunni või päeva kaupa."
+        }
+      }
+    },
+    "set_power_logging": {
+      "name": "Määra energialogimine",
+      "description": "Lülitab seadme energiatarbimise logimise sisse või välja.",
+      "fields": {
+        "enable": {
+          "name": "Luba",
+          "description": "Kas energiatarbimise logimine on sees."
+        }
+      }
+    },
+    "reset_power_logging": {
+      "name": "Lähtesta energialogimine",
+      "description": "Kustutab seadmesse salvestatud energiatarbimise ajaloo."
+    },
+    "set_nickname": {
+      "name": "Määra hüüdnimi",
+      "description": "Määrab seadmesse salvestatud hüüdnime.",
+      "fields": {
+        "nickname": {
+          "name": "Hüüdnimi",
+          "description": "Uus hüüdnimi."
+        }
+      }
+    },
+    "get_region_code": {
+      "name": "Hangi piirkonnakood",
+      "description": "Loeb seadmesse salvestatud piirkonnakoodi."
+    },
+    "set_region_code": {
+      "name": "Määra piirkonnakood",
+      "description": "Määrab seadmesse salvestatud piirkonnakoodi.",
+      "fields": {
+        "code": {
+          "name": "Kood",
+          "description": "Piirkonnakood."
+        }
+      }
+    }
+  },
+  "selector": {
+    "schedule_power": {
+      "options": {
+        "on": "Sees",
+        "off": "Väljas"
+      }
+    },
+    "schedule_repeat": {
+      "options": {
+        "once": "Üks kord",
+        "daily": "Iga päev",
+        "weekly": "Iganädalaselt (valitud päevad)"
+      }
+    },
+    "schedule_days": {
+      "options": {
+        "mon": "Esmaspäev",
+        "tue": "Teisipäev",
+        "wed": "Kolmapäev",
+        "thu": "Neljapäev",
+        "fri": "Reede",
+        "sat": "Laupäev",
+        "sun": "Pühapäev"
+      }
+    },
+    "power_unit": {
+      "options": {
+        "hour": "Tunnis",
+        "day": "Päevas"
+      }
+    }
+  },
+  "exceptions": {
+    "command_failed": {
+      "message": "Samsung AC käsk ebaõnnestus: {error}"
+    },
+    "schedule_needs_day": {
+      "message": "Valige vähemalt üks päev „Üks kord” ja „Iganädalaselt” ajakavade jaoks."
+    }
+  }
+}

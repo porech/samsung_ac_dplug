@@ -1,0 +1,358 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Samsung エアコン (DPLUG / 2878)",
+        "description": "エアコンをどのように設定しますか？",
+        "menu_options": {
+          "onboard": "新しいユニットを Wi-Fi に接続する（手順）",
+          "manual": "すでに自分の Wi-Fi 上にある（IP を入力）"
+        }
+      },
+      "onboard": {
+        "title": "ユニットを Wi-Fi に接続する",
+        "description": "古い Samsung のユニットはネットワーク経由のプロトコルで Wi-Fi に参加できません —— 一度だけ、物理的に行ってください。\n\n**オプション A —— WPS（最も簡単、おすすめ）**\n1. リモコンで **`Settings` を 4 秒間長押し** します（隠し機能：ディスプレイは点滅するだけです）。これで WPS が開始します。\n2. 2 分以内に、**ルーターの WPS ボタンを押します**。\n3. モジュールの Wi-Fi LED が点灯したままになれば、接続完了です。\n\n**オプション B —— パソコンから（ルーターに WPS ボタンがない場合）**\n1. **Python 3** が入っていなければインストールし（{python_url}）、次に**補助スクリプトをダウンロード**します（追加のインストール不要の単一ファイル）：{script_url}\n2. リモコンで **`Timer` を 4 秒間長押し** してユニットを AP モードにします。**`SMARTAIRCON`** という名前の Wi-Fi ネットワークが表示されます。\n3. **パソコンを `SMARTAIRCON` ネットワークに接続します**（パスワード **`1111122222`**）。\n4. **スクリプトを実行します** —— `python3 provision.py` —— 求められたら、ご自宅の Wi-Fi 名とパスワードを入力します。\n5. **Done** と表示されたら、ユニットが Wi-Fi に参加します。パソコンを通常のネットワークに再接続してください。\n\nユニットが Wi-Fi 上に入ったら、**このウィンドウを閉じて** **設定 → デバイスとサービス** を開きます。そこに自動的に表示されるはずです（検出）。表示されない場合は、追加をもう一度開始して **すでに自分の Wi-Fi 上にある** を選び、IP を入力してください。\n\n_上級者向け：`python3 provision.py --help` で、対話プロンプトなしで実行するためのオプションが一覧表示されます。_"
+      },
+      "manual": {
+        "title": "エアコンに接続する",
+        "description": "ユニットの IP アドレスを入力してください。トークンは次のステップで扱います。",
+        "data": {
+          "host": "IP アドレス"
+        }
+      },
+      "token": {
+        "title": "アクセストークンを取得する",
+        "description": "{host} のユニットは電源投入時にのみトークンを発行します（物理的なアクセス証明のステップです）。\n\n1. エアコンがオンの場合は、リモコンで**エアコンをオフにします**。\n2. 下の **送信** を押します（フィールドは空のままにします）。\n3. 約 30 秒以内に、リモコンで**エアコンをオンにします**。\n\nトークンは自動的に取得され、保存されます。\n\n**または**、すでにこのユニットのトークンをお持ちの場合は、下に入力して送信を押してください。",
+        "data": {
+          "token": "トークン（任意）"
+        }
+      },
+      "save_token": {
+        "title": "トークンを取得しました",
+        "description": "完了 —— {host} のユニットのトークンを取得し、この統合に保存しました。\n\n💡 **ヒント：** 今後再取得しなくて済むよう、このデバイスのトークンを保存しておきましょう（ユニットを追加するときに直接貼り付けられます）：\n\n```\n{token}\n```\n\n**送信** を押して完了します。"
+      },
+      "reauth_confirm": {
+        "title": "Samsung エアコンの再認証",
+        "description": "{host} のユニットのトークンが拒否されました（モジュールのリセット後に変わることがあります）。新しいトークンを取得してください：ユニットをオフにし、送信し（空のまま）、約 30 秒以内にオンにします。または既知のトークンを下に入力します。",
+        "data": {
+          "token": "トークン（任意）"
+        }
+      },
+      "discovery_confirm": {
+        "title": "Samsung エアコンが見つかりました",
+        "description": "{host} で Samsung エアコンが検出されました。今すぐ設定しますか？次のステップでは、すでに分かっている場合を除き、トークンを取得します（電源投入）。"
+      },
+      "reconfigure": {
+        "title": "IP アドレスを変更する",
+        "description": "このエアコンの新しい IP アドレスを入力してください。既存のトークンが再利用されます。",
+        "data": {
+          "host": "IP アドレス"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "接続できません。IP アドレスと、ユニットがネットワークに接続されているか確認してください。",
+      "auth": "トークンが拒否されました。新しいものを取得するには空のままにしてください。",
+      "no_token": "トークンを受信しませんでした。ユニットをオフにしてから、時間内にオンにしたか確認してください。もう一度お試しください。"
+    },
+    "abort": {
+      "already_configured": "このエアコンはすでに設定されています。",
+      "not_samsung_ac": "このデバイスは Samsung DPLUG プロトコルに対応していません。",
+      "reauth_successful": "再認証に成功しました。",
+      "onboard_finished": "エアコンが Wi-Fi 上に入ったら、設定 → デバイスとサービス から追加してください —— 自動的に検出されるはずです。または「すでに自分の Wi-Fi 上にある」を選んで IP を入力してください。",
+      "wrong_device": "そのアドレスにあるユニットは別のエアコンです。",
+      "reconfigure_successful": "IP アドレスが更新されました。"
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Samsung AC オプション",
+        "data": {
+          "live_updates": "ライブ更新（持続的な接続）",
+          "scan_interval": "更新間隔（秒）"
+        },
+        "data_description": {
+          "live_updates": "即時のプッシュ更新のために持続的な接続を 1 つ維持します。オフの場合、統合はポーリングを行い、持続的な接続を使いません（より堅牢です）。",
+          "scan_interval": "ライブ更新がオフのときのポーリング間隔。オンのときはフォールバック/キープアライブのポーリングです。"
+        }
+      }
+    }
+  },
+  "entity": {
+    "climate": {
+      "samsung_ac": {
+        "state_attributes": {
+          "preset_mode": {
+            "state": {
+              "none": "オフ",
+              "quiet": "静音",
+              "fast_turbo": "急速ターボ",
+              "comfort": "快適",
+              "dlight_cool": "d'light Cool",
+              "smart_saver": "スマートセーバー",
+              "color_of_wind_alps": "Color of Wind: Alps",
+              "color_of_wind_florida": "Color of Wind: Florida",
+              "color_of_wind_savanna": "Color of Wind: Savanna"
+            }
+          },
+          "swing_mode": {
+            "state": {
+              "off": "オフ",
+              "vertical": "上下",
+              "horizontal": "左右",
+              "both": "上下左右",
+              "indirect": "間接",
+              "direct": "直接",
+              "center": "中央",
+              "wide": "ワイド",
+              "left": "左",
+              "right": "右",
+              "long": "遠方"
+            }
+          }
+        }
+      }
+    },
+    "sensor": {
+      "temperature": {
+        "name": "温度"
+      },
+      "humidity": {
+        "name": "湿度"
+      },
+      "outdoor_temperature": {
+        "name": "外気温"
+      },
+      "used_time": {
+        "name": "稼働時間"
+      },
+      "filter_use_time": {
+        "name": "フィルター使用時間"
+      },
+      "filter_life": {
+        "name": "フィルター寿命"
+      },
+      "error": {
+        "name": "エラーコード"
+      },
+      "device_clock": {
+        "name": "デバイスの時計"
+      },
+      "schedules": {
+        "name": "スケジュール"
+      }
+    },
+    "switch": {
+      "purify": {
+        "name": "空気清浄 (SPi)"
+      },
+      "auto_clean": {
+        "name": "自動クリーン"
+      },
+      "light": {
+        "name": "ディスプレイ照明"
+      },
+      "sterilize": {
+        "name": "除菌"
+      },
+      "smart_on": {
+        "name": "スマートオン"
+      },
+      "weather": {
+        "name": "天気"
+      }
+    },
+    "number": {
+      "sleep_timer": {
+        "name": "おやすみタイマー"
+      },
+      "on_timer": {
+        "name": "オンタイマー"
+      },
+      "off_timer": {
+        "name": "オフタイマー"
+      },
+      "energy_target": {
+        "name": "エネルギー目標"
+      }
+    },
+    "select": {
+      "occupancy": {
+        "name": "在室人数",
+        "state": {
+          "single": "1 人",
+          "couple": "2 人",
+          "family": "家族"
+        }
+      },
+      "beep_volume": {
+        "name": "操作音の音量",
+        "state": {
+          "mute": "ミュート",
+          "33": "33%",
+          "66": "66%",
+          "100": "100%"
+        }
+      },
+      "panel": {
+        "name": "フロントパネル",
+        "state": {
+          "open": "開",
+          "close": "閉"
+        }
+      },
+      "filter_clean_interval": {
+        "name": "フィルター清掃間隔",
+        "state": {
+          "180": "180 h",
+          "300": "300 h",
+          "500": "500 h",
+          "700": "700 h"
+        }
+      }
+    }
+  },
+  "services": {
+    "get_schedules": {
+      "name": "スケジュールを取得",
+      "description": "ユニットの内蔵スケジューラーに保存されているスケジュールを一覧表示します。これはエアコンの内蔵スケジューラーを操作するもので、Home Assistant がオフラインでも動作し、設定した時刻にユニットをオンまたはオフにするだけです。より複雑なシナリオ（温度、モード、風量など）には Home Assistant のオートメーションを使用してください。"
+    },
+    "set_schedule": {
+      "name": "スケジュールを設定",
+      "description": "オン/オフのスケジュールを作成または編集します。これはエアコンの内蔵スケジューラーを操作するもので、Home Assistant がオフラインでも動作し、設定した時刻にユニットをオンまたはオフにするだけです。より複雑なシナリオ（温度、モード、風量など）には Home Assistant のオートメーションを使用してください。",
+      "fields": {
+        "time": {
+          "name": "時刻",
+          "description": "スケジュールが作動する現地時刻。"
+        },
+        "power": {
+          "name": "電源",
+          "description": "ユニットをオンにするかオフにするか。"
+        },
+        "repeat": {
+          "name": "頻度",
+          "description": "実行頻度：1 回、毎日、または選択した曜日に毎週。"
+        },
+        "days": {
+          "name": "曜日",
+          "description": "実行する曜日 —— 「1 回」と「毎週」では必須、「毎日」では無視されます。"
+        },
+        "enabled": {
+          "name": "有効",
+          "description": "スケジュールが有効かどうか。"
+        },
+        "schedule_id": {
+          "name": "スケジュール ID",
+          "description": "編集する既存スケジュールの ID。新規作成する場合は空のままにします。"
+        }
+      }
+    },
+    "delete_schedule": {
+      "name": "スケジュールを削除",
+      "description": "ユニットの内蔵スケジューラーからスケジュールを削除します。これはエアコンの内蔵スケジューラーを操作するもので、Home Assistant がオフラインでも動作し、設定した時刻にユニットをオンまたはオフにするだけです。より複雑なシナリオ（温度、モード、風量など）には Home Assistant のオートメーションを使用してください。",
+      "fields": {
+        "schedule_id": {
+          "name": "スケジュール ID",
+          "description": "削除するスケジュールの ID（「スケジュール」センサーまたは get_schedules を参照）。"
+        }
+      }
+    },
+    "get_power_usage": {
+      "name": "電力使用量を取得",
+      "description": "指定した期間にエアコンが記録した電力使用量の履歴を取得します。",
+      "fields": {
+        "start": {
+          "name": "開始",
+          "description": "期間の開始（現地時刻）。"
+        },
+        "end": {
+          "name": "終了",
+          "description": "期間の終了（既定では現在）。"
+        },
+        "unit": {
+          "name": "集計単位",
+          "description": "使用量を時間単位または日単位で集計します。"
+        }
+      }
+    },
+    "set_power_logging": {
+      "name": "電力ログを設定",
+      "description": "ユニットの電力使用量ログのオン/オフを切り替えます。",
+      "fields": {
+        "enable": {
+          "name": "有効化",
+          "description": "電力使用量のログが有効かどうか。"
+        }
+      }
+    },
+    "reset_power_logging": {
+      "name": "電力ログをリセット",
+      "description": "ユニットに記録された電力使用量の履歴を消去します。"
+    },
+    "set_nickname": {
+      "name": "ニックネームを設定",
+      "description": "ユニットに保存されているニックネームを設定します。",
+      "fields": {
+        "nickname": {
+          "name": "ニックネーム",
+          "description": "新しいニックネーム。"
+        }
+      }
+    },
+    "get_region_code": {
+      "name": "地域コードを取得",
+      "description": "ユニットに保存されている地域コードを読み取ります。"
+    },
+    "set_region_code": {
+      "name": "地域コードを設定",
+      "description": "ユニットに保存される地域コードを設定します。",
+      "fields": {
+        "code": {
+          "name": "コード",
+          "description": "地域コード。"
+        }
+      }
+    }
+  },
+  "selector": {
+    "schedule_power": {
+      "options": {
+        "on": "オン",
+        "off": "オフ"
+      }
+    },
+    "schedule_repeat": {
+      "options": {
+        "once": "1 回",
+        "daily": "毎日",
+        "weekly": "毎週（選択した曜日）"
+      }
+    },
+    "schedule_days": {
+      "options": {
+        "mon": "月曜日",
+        "tue": "火曜日",
+        "wed": "水曜日",
+        "thu": "木曜日",
+        "fri": "金曜日",
+        "sat": "土曜日",
+        "sun": "日曜日"
+      }
+    },
+    "power_unit": {
+      "options": {
+        "hour": "時間ごと",
+        "day": "日ごと"
+      }
+    }
+  },
+  "exceptions": {
+    "command_failed": {
+      "message": "Samsung AC コマンドが失敗しました：{error}"
+    },
+    "schedule_needs_day": {
+      "message": "「1 回」と「毎週」のスケジュールには少なくとも 1 つの曜日を選択してください。"
+    }
+  }
+}

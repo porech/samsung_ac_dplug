@@ -1,0 +1,358 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Máy điều hòa Samsung (DPLUG / 2878)",
+        "description": "Bạn muốn thiết lập máy điều hòa như thế nào?",
+        "menu_options": {
+          "onboard": "Kết nối thiết bị mới vào Wi-Fi (hướng dẫn)",
+          "manual": "Đã có trên Wi-Fi của tôi (nhập IP)"
+        }
+      },
+      "onboard": {
+        "title": "Kết nối thiết bị vào Wi-Fi của bạn",
+        "description": "Các thiết bị Samsung đời cũ không thể vào Wi-Fi qua giao thức mạng — phải làm một lần, thủ công.\n\n**Phương án A — WPS (đơn giản nhất, khuyên dùng)**\n1. Trên điều khiển, **giữ `Settings` trong 4 giây** (chức năng ẩn: màn hình chỉ nháy một cái) để khởi động WPS.\n2. Trong vòng 2 phút, **nhấn nút WPS trên router của bạn**.\n3. Khi đèn LED Wi-Fi trên mô-đun sáng ổn định, nghĩa là đã kết nối.\n\n**Phương án B — từ máy tính (nếu router không có nút WPS)**\n1. Cài đặt **Python 3** nếu bạn chưa có ({python_url}), sau đó **tải tập lệnh hỗ trợ** (một tệp duy nhất, không cần cài thêm gì): {script_url}\n2. Trên điều khiển, **giữ `Timer` trong 4 giây** để đưa thiết bị vào chế độ AP; một mạng Wi-Fi tên **`SMARTAIRCON`** sẽ xuất hiện.\n3. **Kết nối máy tính vào mạng `SMARTAIRCON`** (mật khẩu **`1111122222`**).\n4. **Chạy tập lệnh** — `python3 provision.py` — và khi được hỏi, nhập tên và mật khẩu Wi-Fi nhà bạn.\n5. Khi hiện chữ **Done**, thiết bị sẽ vào Wi-Fi của bạn; hãy kết nối lại máy tính với mạng thông thường.\n\nKhi thiết bị đã ở trên Wi-Fi, **đóng cửa sổ này** và mở **Cài đặt → Thiết bị & Dịch vụ**: nó sẽ được đề xuất ở đó tự động (phát hiện). Nếu không, hãy bắt đầu thêm lại và chọn **Đã có trên Wi-Fi của tôi** để nhập IP của nó.\n\n_Dành cho người dùng nâng cao: `python3 provision.py --help` liệt kê các tùy chọn để chạy mà không cần nhắc tương tác._"
+      },
+      "manual": {
+        "title": "Kết nối với máy điều hòa",
+        "description": "Nhập địa chỉ IP của thiết bị. Token sẽ được xử lý ở bước tiếp theo.",
+        "data": {
+          "host": "Địa chỉ IP"
+        }
+      },
+      "token": {
+        "title": "Lấy token truy cập",
+        "description": "Thiết bị tại {host} chỉ cấp token khi bật nguồn (một bước chứng minh quyền truy cập vật lý).\n\n1. **Tắt máy điều hòa** bằng điều khiển, nếu nó đang bật.\n2. Nhấn **Gửi** bên dưới (để trống ô).\n3. Trong vòng ~30 giây, **bật máy điều hòa** bằng điều khiển.\n\nToken sẽ được tự động ghi lại và lưu.\n\n**Hoặc**, nếu bạn đã có token của thiết bị này, hãy nhập vào bên dưới và nhấn Gửi.",
+        "data": {
+          "token": "Token (tùy chọn)"
+        }
+      },
+      "save_token": {
+        "title": "Đã lấy token",
+        "description": "Xong — token của thiết bị tại {host} đã được lấy và lưu trong tích hợp này.\n\n💡 **Mẹo:** hãy lưu token của thiết bị này để sau này không phải lấy lại (bạn có thể dán trực tiếp khi thêm thiết bị):\n\n```\n{token}\n```\n\nNhấn **Gửi** để hoàn tất."
+      },
+      "reauth_confirm": {
+        "title": "Xác thực lại máy điều hòa Samsung",
+        "description": "Token của thiết bị tại {host} đã bị từ chối (nó có thể thay đổi sau khi đặt lại mô-đun). Hãy lấy token mới: tắt thiết bị, gửi (để trống), rồi bật lại trong vòng ~30 giây. Hoặc nhập một token đã biết bên dưới.",
+        "data": {
+          "token": "Token (tùy chọn)"
+        }
+      },
+      "discovery_confirm": {
+        "title": "Đã tìm thấy máy điều hòa Samsung",
+        "description": "Đã phát hiện một máy điều hòa Samsung tại {host}. Thiết lập ngay bây giờ? Ở bước tiếp theo, bạn sẽ lấy token (bật nguồn), trừ khi bạn đã biết nó."
+      },
+      "reconfigure": {
+        "title": "Thay đổi địa chỉ IP",
+        "description": "Nhập địa chỉ IP mới cho máy điều hòa này. Token hiện có sẽ được dùng lại.",
+        "data": {
+          "host": "Địa chỉ IP"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Không thể kết nối. Hãy kiểm tra địa chỉ IP và đảm bảo thiết bị có trên mạng.",
+      "auth": "Token đã bị từ chối. Để trống để lấy token mới.",
+      "no_token": "Không nhận được token. Hãy đảm bảo thiết bị đã TẮT, rồi BẬT trong khoảng thời gian cho phép. Thử lại."
+    },
+    "abort": {
+      "already_configured": "Máy điều hòa này đã được cấu hình.",
+      "not_samsung_ac": "Thiết bị này không hỗ trợ giao thức Samsung DPLUG.",
+      "reauth_successful": "Xác thực lại thành công.",
+      "onboard_finished": "Khi máy điều hòa đã ở trên Wi-Fi, hãy thêm nó từ Cài đặt → Thiết bị & Dịch vụ — nó sẽ được phát hiện tự động, hoặc chọn “Đã có trên Wi-Fi của tôi” để nhập IP của nó.",
+      "wrong_device": "Thiết bị tại địa chỉ đó là một máy điều hòa khác.",
+      "reconfigure_successful": "Địa chỉ IP đã được cập nhật."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Tùy chọn Samsung AC",
+        "data": {
+          "live_updates": "Cập nhật trực tiếp (kết nối liên tục)",
+          "scan_interval": "Khoảng làm mới (giây)"
+        },
+        "data_description": {
+          "live_updates": "Giữ một kết nối liên tục để nhận cập nhật đẩy tức thì. Nếu tắt, tích hợp sẽ thăm dò và không dùng kết nối liên tục (ổn định hơn).",
+          "scan_interval": "Khoảng thăm dò khi cập nhật trực tiếp tắt; thăm dò dự phòng/giữ kết nối khi bật."
+        }
+      }
+    }
+  },
+  "entity": {
+    "climate": {
+      "samsung_ac": {
+        "state_attributes": {
+          "preset_mode": {
+            "state": {
+              "none": "Tắt",
+              "quiet": "Yên tĩnh",
+              "fast_turbo": "Tăng tốc nhanh",
+              "comfort": "Thoải mái",
+              "dlight_cool": "d'light Cool",
+              "smart_saver": "Smart Saver",
+              "color_of_wind_alps": "Color of Wind: Alps",
+              "color_of_wind_florida": "Color of Wind: Florida",
+              "color_of_wind_savanna": "Color of Wind: Savanna"
+            }
+          },
+          "swing_mode": {
+            "state": {
+              "off": "Tắt",
+              "vertical": "Dọc",
+              "horizontal": "Ngang",
+              "both": "Cả hai",
+              "indirect": "Gián tiếp",
+              "direct": "Trực tiếp",
+              "center": "Giữa",
+              "wide": "Rộng",
+              "left": "Trái",
+              "right": "Phải",
+              "long": "Xa"
+            }
+          }
+        }
+      }
+    },
+    "sensor": {
+      "temperature": {
+        "name": "Nhiệt độ"
+      },
+      "humidity": {
+        "name": "Độ ẩm"
+      },
+      "outdoor_temperature": {
+        "name": "Nhiệt độ ngoài trời"
+      },
+      "used_time": {
+        "name": "Thời gian hoạt động"
+      },
+      "filter_use_time": {
+        "name": "Thời gian sử dụng bộ lọc"
+      },
+      "filter_life": {
+        "name": "Tuổi thọ bộ lọc"
+      },
+      "error": {
+        "name": "Mã lỗi"
+      },
+      "device_clock": {
+        "name": "Đồng hồ thiết bị"
+      },
+      "schedules": {
+        "name": "Lịch hẹn"
+      }
+    },
+    "switch": {
+      "purify": {
+        "name": "Lọc khí (SPi)"
+      },
+      "auto_clean": {
+        "name": "Tự làm sạch"
+      },
+      "light": {
+        "name": "Đèn màn hình"
+      },
+      "sterilize": {
+        "name": "Khử khuẩn"
+      },
+      "smart_on": {
+        "name": "Bật thông minh"
+      },
+      "weather": {
+        "name": "Thời tiết"
+      }
+    },
+    "number": {
+      "sleep_timer": {
+        "name": "Hẹn giờ ngủ"
+      },
+      "on_timer": {
+        "name": "Hẹn giờ bật"
+      },
+      "off_timer": {
+        "name": "Hẹn giờ tắt"
+      },
+      "energy_target": {
+        "name": "Mục tiêu năng lượng"
+      }
+    },
+    "select": {
+      "occupancy": {
+        "name": "Số người",
+        "state": {
+          "single": "Một người",
+          "couple": "Hai người",
+          "family": "Gia đình"
+        }
+      },
+      "beep_volume": {
+        "name": "Âm lượng tiếng bíp",
+        "state": {
+          "mute": "Tắt tiếng",
+          "33": "33%",
+          "66": "66%",
+          "100": "100%"
+        }
+      },
+      "panel": {
+        "name": "Mặt trước",
+        "state": {
+          "open": "Mở",
+          "close": "Đóng"
+        }
+      },
+      "filter_clean_interval": {
+        "name": "Khoảng vệ sinh bộ lọc",
+        "state": {
+          "180": "180 h",
+          "300": "300 h",
+          "500": "500 h",
+          "700": "700 h"
+        }
+      }
+    }
+  },
+  "services": {
+    "get_schedules": {
+      "name": "Lấy lịch hẹn",
+      "description": "Liệt kê các lịch hẹn được lưu trong bộ lập lịch tích hợp của thiết bị. Tính năng này điều khiển bộ lập lịch tích hợp của máy điều hòa, vốn vẫn chạy ngay cả khi Home Assistant ngoại tuyến và chỉ bật hoặc tắt thiết bị vào một thời điểm định sẵn. Đối với các kịch bản phức tạp hơn (nhiệt độ, chế độ, quạt…) hãy dùng tự động hóa của Home Assistant."
+    },
+    "set_schedule": {
+      "name": "Đặt lịch hẹn",
+      "description": "Tạo hoặc chỉnh sửa một lịch hẹn bật/tắt. Tính năng này điều khiển bộ lập lịch tích hợp của máy điều hòa, vốn vẫn chạy ngay cả khi Home Assistant ngoại tuyến và chỉ bật hoặc tắt thiết bị vào một thời điểm định sẵn. Đối với các kịch bản phức tạp hơn (nhiệt độ, chế độ, quạt…) hãy dùng tự động hóa của Home Assistant.",
+      "fields": {
+        "time": {
+          "name": "Thời gian",
+          "description": "Giờ địa phương trong ngày khi lịch hẹn kích hoạt."
+        },
+        "power": {
+          "name": "Nguồn",
+          "description": "Thiết bị sẽ bật hay tắt."
+        },
+        "repeat": {
+          "name": "Tần suất",
+          "description": "Chạy thường xuyên ra sao: một lần, mỗi ngày, hoặc hàng tuần vào các ngày đã chọn."
+        },
+        "days": {
+          "name": "Các ngày",
+          "description": "Chạy vào những ngày nào — bắt buộc với 'Một lần' và 'Hàng tuần', bỏ qua với 'Mỗi ngày'."
+        },
+        "enabled": {
+          "name": "Đã bật",
+          "description": "Lịch hẹn có đang hoạt động hay không."
+        },
+        "schedule_id": {
+          "name": "ID lịch hẹn",
+          "description": "ID của một lịch hẹn hiện có để chỉnh sửa; để trống để tạo mới."
+        }
+      }
+    },
+    "delete_schedule": {
+      "name": "Xóa lịch hẹn",
+      "description": "Xóa một lịch hẹn khỏi bộ lập lịch tích hợp của thiết bị. Tính năng này điều khiển bộ lập lịch tích hợp của máy điều hòa, vốn vẫn chạy ngay cả khi Home Assistant ngoại tuyến và chỉ bật hoặc tắt thiết bị vào một thời điểm định sẵn. Đối với các kịch bản phức tạp hơn (nhiệt độ, chế độ, quạt…) hãy dùng tự động hóa của Home Assistant.",
+      "fields": {
+        "schedule_id": {
+          "name": "ID lịch hẹn",
+          "description": "ID của lịch hẹn cần xóa (xem cảm biến Lịch hẹn hoặc get_schedules)."
+        }
+      }
+    },
+    "get_power_usage": {
+      "name": "Lấy mức tiêu thụ điện",
+      "description": "Truy xuất lịch sử mức tiêu thụ điện mà máy điều hòa đã ghi lại trong một khoảng thời gian.",
+      "fields": {
+        "start": {
+          "name": "Bắt đầu",
+          "description": "Điểm bắt đầu của khoảng thời gian (giờ địa phương)."
+        },
+        "end": {
+          "name": "Kết thúc",
+          "description": "Điểm kết thúc của khoảng thời gian (mặc định là bây giờ)."
+        },
+        "unit": {
+          "name": "Tổng hợp",
+          "description": "Tổng hợp mức tiêu thụ theo giờ hoặc theo ngày."
+        }
+      }
+    },
+    "set_power_logging": {
+      "name": "Đặt ghi nhật ký điện năng",
+      "description": "Bật hoặc tắt việc ghi nhật ký mức tiêu thụ điện của thiết bị.",
+      "fields": {
+        "enable": {
+          "name": "Bật",
+          "description": "Việc ghi nhật ký mức tiêu thụ điện có đang bật hay không."
+        }
+      }
+    },
+    "reset_power_logging": {
+      "name": "Đặt lại nhật ký điện năng",
+      "description": "Xóa lịch sử mức tiêu thụ điện được ghi trên thiết bị."
+    },
+    "set_nickname": {
+      "name": "Đặt biệt danh",
+      "description": "Đặt biệt danh được lưu trên thiết bị.",
+      "fields": {
+        "nickname": {
+          "name": "Biệt danh",
+          "description": "Biệt danh mới."
+        }
+      }
+    },
+    "get_region_code": {
+      "name": "Lấy mã vùng",
+      "description": "Đọc mã vùng được lưu trên thiết bị."
+    },
+    "set_region_code": {
+      "name": "Đặt mã vùng",
+      "description": "Đặt mã vùng được lưu trên thiết bị.",
+      "fields": {
+        "code": {
+          "name": "Mã",
+          "description": "Mã vùng."
+        }
+      }
+    }
+  },
+  "selector": {
+    "schedule_power": {
+      "options": {
+        "on": "Bật",
+        "off": "Tắt"
+      }
+    },
+    "schedule_repeat": {
+      "options": {
+        "once": "Một lần",
+        "daily": "Mỗi ngày",
+        "weekly": "Hàng tuần (các ngày đã chọn)"
+      }
+    },
+    "schedule_days": {
+      "options": {
+        "mon": "Thứ Hai",
+        "tue": "Thứ Ba",
+        "wed": "Thứ Tư",
+        "thu": "Thứ Năm",
+        "fri": "Thứ Sáu",
+        "sat": "Thứ Bảy",
+        "sun": "Chủ Nhật"
+      }
+    },
+    "power_unit": {
+      "options": {
+        "hour": "Theo giờ",
+        "day": "Theo ngày"
+      }
+    }
+  },
+  "exceptions": {
+    "command_failed": {
+      "message": "Lệnh tới máy điều hòa Samsung thất bại: {error}"
+    },
+    "schedule_needs_day": {
+      "message": "Hãy chọn ít nhất một ngày cho lịch hẹn 'Một lần' và 'Hàng tuần'."
+    }
+  }
+}

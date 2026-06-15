@@ -1,0 +1,358 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "三星空调 (DPLUG / 2878)",
+        "description": "您想如何设置空调？",
+        "menu_options": {
+          "onboard": "将新设备连接到 Wi-Fi（操作说明）",
+          "manual": "已经在我的 Wi-Fi 上（输入 IP）"
+        }
+      },
+      "onboard": {
+        "title": "将设备连接到您的 Wi-Fi",
+        "description": "老款三星设备无法通过网络协议加入 Wi-Fi —— 需要手动操作一次。\n\n**方案 A —— WPS（最简单，推荐）**\n1. 在遥控器上，**长按 `Settings` 4 秒**（隐藏功能：显示屏只会闪烁一下）以启动 WPS。\n2. 在 2 分钟内，**按下路由器上的 WPS 按钮**。\n3. 当模块上的 Wi-Fi 指示灯常亮时，表示已连接成功。\n\n**方案 B —— 从电脑操作（如果路由器没有 WPS 按钮）**\n1. 如果还没有安装 **Python 3** 请先安装（{python_url}），然后**下载辅助脚本**（单个文件，无需额外安装）：{script_url}\n2. 在遥控器上，**长按 `Timer` 4 秒**让设备进入 AP 模式；会出现一个名为 **`SMARTAIRCON`** 的 Wi-Fi 网络。\n3. **将电脑连接到 `SMARTAIRCON` 网络**（密码 **`1111122222`**）。\n4. **运行脚本** —— `python3 provision.py` —— 在提示时，输入您家庭 Wi-Fi 的名称和密码。\n5. 当显示 **Done** 时，设备即加入您的 Wi-Fi；请将电脑重新连接回您的常用网络。\n\n设备连上 Wi-Fi 后，**关闭此窗口**并打开 **设置 → 设备与服务**：它应该会在那里自动出现（发现）。如果没有，请重新开始添加并选择 **已经在我的 Wi-Fi 上** 来输入它的 IP。\n\n_面向高级用户：`python3 provision.py --help` 列出了在没有交互式提示的情况下运行它的选项。_"
+      },
+      "manual": {
+        "title": "连接到空调",
+        "description": "输入设备的 IP 地址。令牌将在下一步处理。",
+        "data": {
+          "host": "IP 地址"
+        }
+      },
+      "token": {
+        "title": "获取访问令牌",
+        "description": "位于 {host} 的设备只在开机时发放令牌（一种物理访问验证步骤）。\n\n1. 如果空调已开启，请用遥控器**关闭空调**。\n2. 点击下方的 **提交**（字段留空）。\n3. 在约 30 秒内，用遥控器**开启空调**。\n\n令牌将被自动捕获并保存。\n\n**或者**，如果您已经有此设备的令牌，请在下方输入并点击提交。",
+        "data": {
+          "token": "令牌（可选）"
+        }
+      },
+      "save_token": {
+        "title": "已获取令牌",
+        "description": "完成 —— 位于 {host} 的设备的令牌已获取并保存到此集成中。\n\n💡 **提示：** 请保存此设备的令牌，以免将来需要重新获取（在添加设备时可以直接粘贴）：\n\n```\n{token}\n```\n\n点击 **提交** 完成。"
+      },
+      "reauth_confirm": {
+        "title": "重新认证三星空调",
+        "description": "位于 {host} 的设备的令牌被拒绝（在模块重置后可能会改变）。请获取一个新令牌：关闭设备，提交（留空），然后在约 30 秒内开启。或者在下方输入已知的令牌。",
+        "data": {
+          "token": "令牌（可选）"
+        }
+      },
+      "discovery_confirm": {
+        "title": "已找到三星空调",
+        "description": "在 {host} 发现了一台三星空调。现在设置吗？在下一步中，您将获取令牌（开机），除非您已经知道它。"
+      },
+      "reconfigure": {
+        "title": "更改 IP 地址",
+        "description": "输入此空调的新 IP 地址。将沿用现有的令牌。",
+        "data": {
+          "host": "IP 地址"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "无法连接。请检查 IP 地址以及设备是否已接入网络。",
+      "auth": "令牌被拒绝。将其留空以获取新令牌。",
+      "no_token": "未收到令牌。请确认设备先关闭，然后在时间窗口内开启。请重试。"
+    },
+    "abort": {
+      "already_configured": "此空调已配置。",
+      "not_samsung_ac": "此设备不支持 Samsung DPLUG 协议。",
+      "reauth_successful": "重新认证成功。",
+      "onboard_finished": "空调连上 Wi-Fi 后，从 设置 → 设备与服务 添加 —— 它应该会被自动发现，或者选择“已经在我的 Wi-Fi 上”来输入它的 IP。",
+      "wrong_device": "该地址上的设备是另一台空调。",
+      "reconfigure_successful": "IP 地址已更新。"
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "三星空调选项",
+        "data": {
+          "live_updates": "实时更新（持久连接）",
+          "scan_interval": "刷新间隔（秒）"
+        },
+        "data_description": {
+          "live_updates": "保持一个持久连接以获得即时推送更新。如果关闭，集成将通过轮询工作且不使用持久连接（更稳健）。",
+          "scan_interval": "实时更新关闭时的轮询间隔；实时更新开启时的回退/保活轮询。"
+        }
+      }
+    }
+  },
+  "entity": {
+    "climate": {
+      "samsung_ac": {
+        "state_attributes": {
+          "preset_mode": {
+            "state": {
+              "none": "关闭",
+              "quiet": "静音",
+              "fast_turbo": "快速强劲",
+              "comfort": "舒适",
+              "dlight_cool": "d'light Cool",
+              "smart_saver": "智能节能",
+              "color_of_wind_alps": "Color of Wind: Alps",
+              "color_of_wind_florida": "Color of Wind: Florida",
+              "color_of_wind_savanna": "Color of Wind: Savanna"
+            }
+          },
+          "swing_mode": {
+            "state": {
+              "off": "关闭",
+              "vertical": "垂直",
+              "horizontal": "水平",
+              "both": "双向",
+              "indirect": "间接",
+              "direct": "直接",
+              "center": "居中",
+              "wide": "宽幅",
+              "left": "左",
+              "right": "右",
+              "long": "远距"
+            }
+          }
+        }
+      }
+    },
+    "sensor": {
+      "temperature": {
+        "name": "温度"
+      },
+      "humidity": {
+        "name": "湿度"
+      },
+      "outdoor_temperature": {
+        "name": "室外温度"
+      },
+      "used_time": {
+        "name": "运行时间"
+      },
+      "filter_use_time": {
+        "name": "滤网使用时间"
+      },
+      "filter_life": {
+        "name": "滤网寿命"
+      },
+      "error": {
+        "name": "错误代码"
+      },
+      "device_clock": {
+        "name": "设备时钟"
+      },
+      "schedules": {
+        "name": "定时计划"
+      }
+    },
+    "switch": {
+      "purify": {
+        "name": "净化 (SPi)"
+      },
+      "auto_clean": {
+        "name": "自动清洁"
+      },
+      "light": {
+        "name": "显示屏灯光"
+      },
+      "sterilize": {
+        "name": "杀菌"
+      },
+      "smart_on": {
+        "name": "智能开机"
+      },
+      "weather": {
+        "name": "天气"
+      }
+    },
+    "number": {
+      "sleep_timer": {
+        "name": "睡眠定时"
+      },
+      "on_timer": {
+        "name": "开机定时"
+      },
+      "off_timer": {
+        "name": "关机定时"
+      },
+      "energy_target": {
+        "name": "能耗目标"
+      }
+    },
+    "select": {
+      "occupancy": {
+        "name": "入住人数",
+        "state": {
+          "single": "单人",
+          "couple": "双人",
+          "family": "家庭"
+        }
+      },
+      "beep_volume": {
+        "name": "提示音音量",
+        "state": {
+          "mute": "静音",
+          "33": "33%",
+          "66": "66%",
+          "100": "100%"
+        }
+      },
+      "panel": {
+        "name": "前面板",
+        "state": {
+          "open": "打开",
+          "close": "关闭"
+        }
+      },
+      "filter_clean_interval": {
+        "name": "滤网清洁间隔",
+        "state": {
+          "180": "180 h",
+          "300": "300 h",
+          "500": "500 h",
+          "700": "700 h"
+        }
+      }
+    }
+  },
+  "services": {
+    "get_schedules": {
+      "name": "读取定时计划",
+      "description": "列出存储在设备内置定时器中的定时计划。此功能控制空调的内置定时器，即使 Home Assistant 离线时它也会运行，并且只在设定时间开启或关闭设备。对于更复杂的场景（温度、模式、风速……），请使用 Home Assistant 自动化。"
+    },
+    "set_schedule": {
+      "name": "设置定时计划",
+      "description": "创建或编辑一个开/关定时计划。此功能控制空调的内置定时器，即使 Home Assistant 离线时它也会运行，并且只在设定时间开启或关闭设备。对于更复杂的场景（温度、模式、风速……），请使用 Home Assistant 自动化。",
+      "fields": {
+        "time": {
+          "name": "时间",
+          "description": "定时计划触发的当地时间。"
+        },
+        "power": {
+          "name": "电源",
+          "description": "设备是开启还是关闭。"
+        },
+        "repeat": {
+          "name": "频率",
+          "description": "运行频率：一次、每天，或每周在所选日期运行。"
+        },
+        "days": {
+          "name": "日期",
+          "description": "在哪些日期运行 —— “一次”和“每周”需要此项，“每天”则忽略。"
+        },
+        "enabled": {
+          "name": "已启用",
+          "description": "定时计划是否处于激活状态。"
+        },
+        "schedule_id": {
+          "name": "定时计划 ID",
+          "description": "要编辑的现有定时计划的 ID；留空则创建新计划。"
+        }
+      }
+    },
+    "delete_schedule": {
+      "name": "删除定时计划",
+      "description": "从设备的内置定时器中删除一个定时计划。此功能控制空调的内置定时器，即使 Home Assistant 离线时它也会运行，并且只在设定时间开启或关闭设备。对于更复杂的场景（温度、模式、风速……），请使用 Home Assistant 自动化。",
+      "fields": {
+        "schedule_id": {
+          "name": "定时计划 ID",
+          "description": "要删除的定时计划的 ID（参见“定时计划”传感器或 get_schedules）。"
+        }
+      }
+    },
+    "get_power_usage": {
+      "name": "读取耗电量",
+      "description": "检索空调在某个时间范围内记录的耗电量历史。",
+      "fields": {
+        "start": {
+          "name": "开始",
+          "description": "范围的开始（当地时间）。"
+        },
+        "end": {
+          "name": "结束",
+          "description": "范围的结束（默认为现在）。"
+        },
+        "unit": {
+          "name": "聚合方式",
+          "description": "按小时或按天聚合用量。"
+        }
+      }
+    },
+    "set_power_logging": {
+      "name": "设置耗电记录",
+      "description": "开启或关闭设备的耗电量记录。",
+      "fields": {
+        "enable": {
+          "name": "启用",
+          "description": "耗电量记录是否开启。"
+        }
+      }
+    },
+    "reset_power_logging": {
+      "name": "重置耗电记录",
+      "description": "清除设备上记录的耗电量历史。"
+    },
+    "set_nickname": {
+      "name": "设置昵称",
+      "description": "设置存储在设备上的昵称。",
+      "fields": {
+        "nickname": {
+          "name": "昵称",
+          "description": "新的昵称。"
+        }
+      }
+    },
+    "get_region_code": {
+      "name": "读取地区代码",
+      "description": "读取存储在设备上的地区代码。"
+    },
+    "set_region_code": {
+      "name": "设置地区代码",
+      "description": "设置存储在设备上的地区代码。",
+      "fields": {
+        "code": {
+          "name": "代码",
+          "description": "地区代码。"
+        }
+      }
+    }
+  },
+  "selector": {
+    "schedule_power": {
+      "options": {
+        "on": "开启",
+        "off": "关闭"
+      }
+    },
+    "schedule_repeat": {
+      "options": {
+        "once": "一次",
+        "daily": "每天",
+        "weekly": "每周（所选日期）"
+      }
+    },
+    "schedule_days": {
+      "options": {
+        "mon": "星期一",
+        "tue": "星期二",
+        "wed": "星期三",
+        "thu": "星期四",
+        "fri": "星期五",
+        "sat": "星期六",
+        "sun": "星期日"
+      }
+    },
+    "power_unit": {
+      "options": {
+        "hour": "按小时",
+        "day": "按天"
+      }
+    }
+  },
+  "exceptions": {
+    "command_failed": {
+      "message": "三星空调命令失败：{error}"
+    },
+    "schedule_needs_day": {
+      "message": "请为“一次”和“每周”定时计划选择至少一天。"
+    }
+  }
+}

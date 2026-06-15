@@ -1,0 +1,358 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Samsung-klimaanlæg (DPLUG / 2878)",
+        "description": "Hvordan vil du konfigurere dit klimaanlæg?",
+        "menu_options": {
+          "onboard": "Forbind en ny enhed til Wi-Fi (vejledning)",
+          "manual": "Den er allerede på mit Wi-Fi (indtast IP)"
+        }
+      },
+      "onboard": {
+        "title": "Forbind enheden til dit Wi-Fi",
+        "description": "Gamle Samsung-enheder kan ikke kobles på Wi-Fi via netværksprotokollen — det skal gøres én gang, fysisk.\n\n**Mulighed A — WPS (nemmest, anbefales)**\n1. På fjernbetjeningen **holdes `Settings` nede i 4 sekunder** (skjult funktion: displayet blinker kun) for at starte WPS.\n2. Inden for 2 minutter **trykkes på WPS-knappen på din router**.\n3. Når Wi-Fi-LED'en på modulet lyser konstant, er den koblet på.\n\n**Mulighed B — fra en computer (hvis din router ikke har en WPS-knap)**\n1. Installer **Python 3**, hvis du ikke har det ({python_url}), og **download derefter hjælpescriptet** (en enkelt fil, intet ekstra skal installeres): {script_url}\n2. På fjernbetjeningen **holdes `Timer` nede i 4 sekunder** for at sætte enheden i AP-tilstand; et Wi-Fi-netværk ved navn **`SMARTAIRCON`** vil dukke op.\n3. **Forbind computeren til netværket `SMARTAIRCON`** (adgangskode **`1111122222`**).\n4. **Kør scriptet** — `python3 provision.py` — og indtast navnet og adgangskoden til dit hjemme-Wi-Fi, når du bliver bedt om det.\n5. Når der står **Done**, kobler enheden sig på dit Wi-Fi; forbind computeren til dit normale netværk igen.\n\nNår enheden er på dit Wi-Fi, **luk dette vindue** og åbn **Indstillinger → Enheder og tjenester**: den bør automatisk blive foreslået der (registrering). Hvis ikke, start tilføjelsen igen og vælg **Den er allerede på mit Wi-Fi** for at indtaste dens IP.\n\n_For avancerede brugere: `python3 provision.py --help` viser mulighederne for at køre det uden de interaktive spørgsmål._"
+      },
+      "manual": {
+        "title": "Forbind til klimaanlægget",
+        "description": "Indtast enhedens IP-adresse. Tokenet håndteres i næste trin.",
+        "data": {
+          "host": "IP-adresse"
+        }
+      },
+      "token": {
+        "title": "Hent adgangstokenet",
+        "description": "Enheden på {host} udsteder kun et token ved opstart (et fysisk bevis på adgang).\n\n1. **Sluk for klimaanlægget** med fjernbetjeningen, hvis det er tændt.\n2. Tryk på **Send** nedenfor (lad feltet være tomt).\n3. Inden for ~30 sekunder **tændes klimaanlægget** med fjernbetjeningen.\n\nTokenet fanges automatisk og gemmes.\n\n**Alternativt**, hvis du allerede har denne enheds token, kan du indtaste det nedenfor og trykke på Send.",
+        "data": {
+          "token": "Token (valgfrit)"
+        }
+      },
+      "save_token": {
+        "title": "Token hentet",
+        "description": "Færdig — tokenet for enheden på {host} blev hentet og gemt i denne integration.\n\n💡 **Tip:** gem denne enheds token, så du ikke behøver at hente det igen fremover (du kan indsætte det direkte, når du tilføjer enheden):\n\n```\n{token}\n```\n\nTryk på **Send** for at afslutte."
+      },
+      "reauth_confirm": {
+        "title": "Godkend Samsung-klimaanlæg igen",
+        "description": "Tokenet for enheden på {host} blev afvist (det kan ændre sig efter en nulstilling af modulet). Hent et nyt: sluk enheden, send (lad feltet være tomt), og tænd den derefter inden for ~30 s. Eller indtast et kendt token nedenfor.",
+        "data": {
+          "token": "Token (valgfrit)"
+        }
+      },
+      "discovery_confirm": {
+        "title": "Samsung-klimaanlæg fundet",
+        "description": "Der blev fundet et Samsung-klimaanlæg på {host}. Vil du konfigurere det nu? I næste trin henter du et token (opstart), medmindre du allerede kender det."
+      },
+      "reconfigure": {
+        "title": "Skift IP-adresse",
+        "description": "Indtast den nye IP-adresse for dette klimaanlæg. Det eksisterende token genbruges.",
+        "data": {
+          "host": "IP-adresse"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Kan ikke oprette forbindelse. Tjek IP-adressen, og at enheden er på netværket.",
+      "auth": "Tokenet blev afvist. Lad det være tomt for at hente et nyt.",
+      "no_token": "Intet token modtaget. Sørg for, at enheden var slukket og derefter blev tændt inden for tidsvinduet. Prøv igen."
+    },
+    "abort": {
+      "already_configured": "Dette klimaanlæg er allerede konfigureret.",
+      "not_samsung_ac": "Denne enhed taler ikke Samsung DPLUG-protokollen.",
+      "reauth_successful": "Fornyet godkendelse blev gennemført.",
+      "onboard_finished": "Når klimaanlægget er på dit Wi-Fi, kan du tilføje det fra Indstillinger → Enheder og tjenester — det bør blive registreret automatisk, eller vælg “Den er allerede på mit Wi-Fi” for at indtaste dets IP.",
+      "wrong_device": "Enheden på den adresse er et andet klimaanlæg.",
+      "reconfigure_successful": "IP-adressen blev opdateret."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Samsung AC-indstillinger",
+        "data": {
+          "live_updates": "Liveopdateringer (vedvarende forbindelse)",
+          "scan_interval": "Opdateringsinterval (sekunder)"
+        },
+        "data_description": {
+          "live_updates": "Behold én vedvarende forbindelse for øjeblikkelige push-opdateringer. Hvis slået fra, poller integrationen og bruger ingen vedvarende forbindelse (mere robust).",
+          "scan_interval": "Polling-interval, når liveopdateringer er slået fra; reserve-/keepalive-poll, når de er slået til."
+        }
+      }
+    }
+  },
+  "entity": {
+    "climate": {
+      "samsung_ac": {
+        "state_attributes": {
+          "preset_mode": {
+            "state": {
+              "none": "Fra",
+              "quiet": "Stille",
+              "fast_turbo": "Hurtig turbo",
+              "comfort": "Komfort",
+              "dlight_cool": "d'light Cool",
+              "smart_saver": "Smart Saver",
+              "color_of_wind_alps": "Color of Wind: Alps",
+              "color_of_wind_florida": "Color of Wind: Florida",
+              "color_of_wind_savanna": "Color of Wind: Savanna"
+            }
+          },
+          "swing_mode": {
+            "state": {
+              "off": "Fra",
+              "vertical": "Lodret",
+              "horizontal": "Vandret",
+              "both": "Begge",
+              "indirect": "Indirekte",
+              "direct": "Direkte",
+              "center": "Midten",
+              "wide": "Bred",
+              "left": "Venstre",
+              "right": "Højre",
+              "long": "Lang"
+            }
+          }
+        }
+      }
+    },
+    "sensor": {
+      "temperature": {
+        "name": "Temperatur"
+      },
+      "humidity": {
+        "name": "Luftfugtighed"
+      },
+      "outdoor_temperature": {
+        "name": "Udendørstemperatur"
+      },
+      "used_time": {
+        "name": "Driftstid"
+      },
+      "filter_use_time": {
+        "name": "Filterbrugstid"
+      },
+      "filter_life": {
+        "name": "Filterlevetid"
+      },
+      "error": {
+        "name": "Fejlkode"
+      },
+      "device_clock": {
+        "name": "Enhedsur"
+      },
+      "schedules": {
+        "name": "Tidsplaner"
+      }
+    },
+    "switch": {
+      "purify": {
+        "name": "Purify (SPi)"
+      },
+      "auto_clean": {
+        "name": "Automatisk rensning"
+      },
+      "light": {
+        "name": "Displaylys"
+      },
+      "sterilize": {
+        "name": "Sterilisering"
+      },
+      "smart_on": {
+        "name": "Smart tænding"
+      },
+      "weather": {
+        "name": "Vejr"
+      }
+    },
+    "number": {
+      "sleep_timer": {
+        "name": "Sleep-timer"
+      },
+      "on_timer": {
+        "name": "Tænd-timer"
+      },
+      "off_timer": {
+        "name": "Sluk-timer"
+      },
+      "energy_target": {
+        "name": "Energimål"
+      }
+    },
+    "select": {
+      "occupancy": {
+        "name": "Belægning",
+        "state": {
+          "single": "Enkelt",
+          "couple": "Par",
+          "family": "Familie"
+        }
+      },
+      "beep_volume": {
+        "name": "Biplydstyrke",
+        "state": {
+          "mute": "Lydløs",
+          "33": "33%",
+          "66": "66%",
+          "100": "100%"
+        }
+      },
+      "panel": {
+        "name": "Frontpanel",
+        "state": {
+          "open": "Åbn",
+          "close": "Luk"
+        }
+      },
+      "filter_clean_interval": {
+        "name": "Interval for filterrensning",
+        "state": {
+          "180": "180 h",
+          "300": "300 h",
+          "500": "500 h",
+          "700": "700 h"
+        }
+      }
+    }
+  },
+  "services": {
+    "get_schedules": {
+      "name": "Hent tidsplaner",
+      "description": "Vis de tidsplaner, der er gemt i enhedens indbyggede planlægger. Dette styrer klimaanlæggets indbyggede planlægger, som kører, selv når Home Assistant er offline, og kun tænder eller slukker enheden på et fastsat tidspunkt. Til mere komplekse scenarier (temperatur, tilstand, ventilator…) skal du bruge Home Assistant-automatiseringer."
+    },
+    "set_schedule": {
+      "name": "Indstil tidsplan",
+      "description": "Opret eller rediger en tænd/sluk-tidsplan. Dette styrer klimaanlæggets indbyggede planlægger, som kører, selv når Home Assistant er offline, og kun tænder eller slukker enheden på et fastsat tidspunkt. Til mere komplekse scenarier (temperatur, tilstand, ventilator…) skal du bruge Home Assistant-automatiseringer.",
+      "fields": {
+        "time": {
+          "name": "Tidspunkt",
+          "description": "Lokalt klokkeslæt på dagen, hvor tidsplanen udløses."
+        },
+        "power": {
+          "name": "Tænd/sluk",
+          "description": "Om enheden tænder eller slukker."
+        },
+        "repeat": {
+          "name": "Hyppighed",
+          "description": "Hvor ofte den kører: én gang, hver dag eller ugentligt på de valgte dage."
+        },
+        "days": {
+          "name": "Dage",
+          "description": "Hvilke dage den skal køre på — påkrævet for 'Én gang' og 'Ugentligt', ignoreres for 'Hver dag'."
+        },
+        "enabled": {
+          "name": "Aktiveret",
+          "description": "Om tidsplanen er aktiv."
+        },
+        "schedule_id": {
+          "name": "Tidsplan-ID",
+          "description": "ID for en eksisterende tidsplan, der skal redigeres; lad feltet være tomt for at oprette en ny."
+        }
+      }
+    },
+    "delete_schedule": {
+      "name": "Slet tidsplan",
+      "description": "Slet en tidsplan fra enhedens indbyggede planlægger. Dette styrer klimaanlæggets indbyggede planlægger, som kører, selv når Home Assistant er offline, og kun tænder eller slukker enheden på et fastsat tidspunkt. Til mere komplekse scenarier (temperatur, tilstand, ventilator…) skal du bruge Home Assistant-automatiseringer.",
+      "fields": {
+        "schedule_id": {
+          "name": "Tidsplan-ID",
+          "description": "ID for den tidsplan, der skal slettes (se sensoren Tidsplaner eller get_schedules)."
+        }
+      }
+    },
+    "get_power_usage": {
+      "name": "Hent strømforbrug",
+      "description": "Hent klimaanlæggets registrerede strømforbrugshistorik over et tidsrum.",
+      "fields": {
+        "start": {
+          "name": "Start",
+          "description": "Tidsrummets start (lokal tid)."
+        },
+        "end": {
+          "name": "Slut",
+          "description": "Tidsrummets slut (standard er nu)."
+        },
+        "unit": {
+          "name": "Aggregering",
+          "description": "Aggregér forbruget pr. time eller pr. dag."
+        }
+      }
+    },
+    "set_power_logging": {
+      "name": "Indstil strømlogning",
+      "description": "Slå enhedens strømforbrugslogning til eller fra.",
+      "fields": {
+        "enable": {
+          "name": "Aktivér",
+          "description": "Om strømforbrugslogning er slået til."
+        }
+      }
+    },
+    "reset_power_logging": {
+      "name": "Nulstil strømlogning",
+      "description": "Ryd den strømforbrugshistorik, der er registreret på enheden."
+    },
+    "set_nickname": {
+      "name": "Indstil kælenavn",
+      "description": "Angiv det kælenavn, der er gemt på enheden.",
+      "fields": {
+        "nickname": {
+          "name": "Kælenavn",
+          "description": "Det nye kælenavn."
+        }
+      }
+    },
+    "get_region_code": {
+      "name": "Hent regionskode",
+      "description": "Læs den regionskode, der er gemt på enheden."
+    },
+    "set_region_code": {
+      "name": "Indstil regionskode",
+      "description": "Angiv den regionskode, der er gemt på enheden.",
+      "fields": {
+        "code": {
+          "name": "Kode",
+          "description": "Regionskoden."
+        }
+      }
+    }
+  },
+  "selector": {
+    "schedule_power": {
+      "options": {
+        "on": "Til",
+        "off": "Fra"
+      }
+    },
+    "schedule_repeat": {
+      "options": {
+        "once": "Én gang",
+        "daily": "Hver dag",
+        "weekly": "Ugentligt (valgte dage)"
+      }
+    },
+    "schedule_days": {
+      "options": {
+        "mon": "Mandag",
+        "tue": "Tirsdag",
+        "wed": "Onsdag",
+        "thu": "Torsdag",
+        "fri": "Fredag",
+        "sat": "Lørdag",
+        "sun": "Søndag"
+      }
+    },
+    "power_unit": {
+      "options": {
+        "hour": "Pr. time",
+        "day": "Pr. dag"
+      }
+    }
+  },
+  "exceptions": {
+    "command_failed": {
+      "message": "Samsung AC-kommando mislykkedes: {error}"
+    },
+    "schedule_needs_day": {
+      "message": "Vælg mindst én dag for tidsplanerne 'Én gang' og 'Ugentligt'."
+    }
+  }
+}

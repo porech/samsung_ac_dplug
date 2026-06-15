@@ -1,0 +1,358 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Samsung Klima (DPLUG / 2878)",
+        "description": "Klimanızı nasıl kurmak istersiniz?",
+        "menu_options": {
+          "onboard": "Yeni bir üniteyi Wi-Fi'ye bağla (yönergeler)",
+          "manual": "Zaten Wi-Fi ağımda (IP gir)"
+        }
+      },
+      "onboard": {
+        "title": "Üniteyi Wi-Fi ağınıza bağlayın",
+        "description": "Eski Samsung üniteleri ağ protokolü üzerinden Wi-Fi'ye katılmaz — bunu bir kez, fiziksel olarak yapmanız gerekir.\n\n**Seçenek A — WPS (en kolayı, önerilir)**\n1. Kumandada, WPS'i başlatmak için **`Settings` tuşunu 4 saniye basılı tutun** (gizli işlev: ekran yalnızca yanıp söner).\n2. 2 dakika içinde, **yönlendiricinizdeki WPS düğmesine basın**.\n3. Modüldeki Wi-Fi LED'i sabit yandığında bağlantı kurulmuş demektir.\n\n**Seçenek B — bir bilgisayardan (yönlendiricinizde WPS düğmesi yoksa)**\n1. Yoksa **Python 3** kurun ({python_url}), ardından **yardımcı betiği indirin** (tek bir dosya, ek kurulum gerekmez): {script_url}\n2. Kumandada, üniteyi AP moduna almak için **`Timer` tuşunu 4 saniye basılı tutun**; **`SMARTAIRCON`** adında bir Wi-Fi ağı görünecektir.\n3. **Bilgisayarı `SMARTAIRCON` ağına bağlayın** (parola **`1111122222`**).\n4. **Betiği çalıştırın** — `python3 provision.py` — ve istendiğinde ev Wi-Fi adınızı ve parolanızı girin.\n5. **Done** yazısı göründüğünde ünite Wi-Fi ağınıza katılır; bilgisayarı normal ağınıza yeniden bağlayın.\n\nÜnite Wi-Fi ağınıza katıldığında **bu pencereyi kapatın** ve **Ayarlar → Cihazlar ve Hizmetler**'i açın: orada otomatik olarak önerilmesi gerekir (keşif). Önerilmezse, eklemeyi yeniden başlatın ve IP'sini girmek için **Zaten Wi-Fi ağımda**'yı seçin.\n\n_İleri düzey kullanıcılar için: `python3 provision.py --help`, etkileşimli sorular olmadan çalıştırma seçeneklerini listeler._"
+      },
+      "manual": {
+        "title": "Klimaya bağlan",
+        "description": "Ünitenin IP adresini girin. Token bir sonraki adımda ele alınır.",
+        "data": {
+          "host": "IP adresi"
+        }
+      },
+      "token": {
+        "title": "Erişim token'ını al",
+        "description": "{host} adresindeki ünite token'ı yalnızca açılışta verir (fiziksel erişim kanıtı adımı).\n\n1. Açıksa kumandayla **klimayı KAPATIN**.\n2. Aşağıdaki **Gönder** düğmesine basın (alanı boş bırakın).\n3. ~30 saniye içinde kumandayla **klimayı AÇIN**.\n\nToken otomatik olarak yakalanıp kaydedilir.\n\n**Alternatif olarak**, bu ünitenin token'ına zaten sahipseniz aşağıya girip Gönder'e basın.",
+        "data": {
+          "token": "Token (isteğe bağlı)"
+        }
+      },
+      "save_token": {
+        "title": "Token alındı",
+        "description": "Tamam — {host} adresindeki ünitenin token'ı alındı ve bu entegrasyona kaydedildi.\n\n💡 **İpucu:** İleride yeniden almak zorunda kalmamak için bu cihazın token'ını saklayın (üniteyi eklerken doğrudan yapıştırabilirsiniz):\n\n```\n{token}\n```\n\nBitirmek için **Gönder**'e basın."
+      },
+      "reauth_confirm": {
+        "title": "Samsung klimanın kimliğini yeniden doğrula",
+        "description": "{host} adresindeki ünitenin token'ı reddedildi (bir modül sıfırlamasından sonra değişebilir). Yenisini alın: üniteyi KAPATIN, gönderin (boş bırakın), sonra ~30 sn içinde AÇIN. Veya bilinen bir token'ı aşağıya girin.",
+        "data": {
+          "token": "Token (isteğe bağlı)"
+        }
+      },
+      "discovery_confirm": {
+        "title": "Samsung klima bulundu",
+        "description": "{host} adresinde bir Samsung klima bulundu. Şimdi kurulsun mu? Bir sonraki adımda, zaten bilmiyorsanız bir token alacaksınız (açılış)."
+      },
+      "reconfigure": {
+        "title": "IP adresini değiştir",
+        "description": "Bu klima için yeni IP adresini girin. Mevcut token yeniden kullanılır.",
+        "data": {
+          "host": "IP adresi"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Bağlanılamıyor. IP adresini ve ünitenin ağda olduğunu kontrol edin.",
+      "auth": "Token reddedildi. Yenisini almak için boş bırakın.",
+      "no_token": "Token alınamadı. Ünitenin KAPALI olduğundan, sonra zaman aralığında AÇILDIĞINDAN emin olun. Tekrar deneyin."
+    },
+    "abort": {
+      "already_configured": "Bu klima zaten yapılandırılmış.",
+      "not_samsung_ac": "Bu cihaz Samsung DPLUG protokolünü konuşmuyor.",
+      "reauth_successful": "Kimlik yeniden doğrulama başarılı oldu.",
+      "onboard_finished": "Klima Wi-Fi ağınıza katıldığında, Ayarlar → Cihazlar ve Hizmetler'den ekleyin — otomatik olarak keşfedilmesi gerekir veya IP'sini girmek için “Zaten Wi-Fi ağımda”yı seçin.",
+      "wrong_device": "O adresteki ünite farklı bir klima.",
+      "reconfigure_successful": "IP adresi güncellendi."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Samsung AC seçenekleri",
+        "data": {
+          "live_updates": "Canlı güncellemeler (kalıcı bağlantı)",
+          "scan_interval": "Yenileme aralığı (saniye)"
+        },
+        "data_description": {
+          "live_updates": "Anlık push güncellemeleri için tek bir kalıcı bağlantı tutar. Kapalıysa, entegrasyon yoklama yapar ve kalıcı bağlantı kullanmaz (daha dayanıklı).",
+          "scan_interval": "Canlı güncellemeler kapalıyken yoklama aralığı; açıkken yedek/keepalive yoklaması."
+        }
+      }
+    }
+  },
+  "entity": {
+    "climate": {
+      "samsung_ac": {
+        "state_attributes": {
+          "preset_mode": {
+            "state": {
+              "none": "Kapalı",
+              "quiet": "Sessiz",
+              "fast_turbo": "Hızlı Turbo",
+              "comfort": "Konfor",
+              "dlight_cool": "d'light Cool",
+              "smart_saver": "Smart Saver",
+              "color_of_wind_alps": "Color of Wind: Alps",
+              "color_of_wind_florida": "Color of Wind: Florida",
+              "color_of_wind_savanna": "Color of Wind: Savanna"
+            }
+          },
+          "swing_mode": {
+            "state": {
+              "off": "Kapalı",
+              "vertical": "Dikey",
+              "horizontal": "Yatay",
+              "both": "Her ikisi",
+              "indirect": "Dolaylı",
+              "direct": "Doğrudan",
+              "center": "Orta",
+              "wide": "Geniş",
+              "left": "Sol",
+              "right": "Sağ",
+              "long": "Uzun"
+            }
+          }
+        }
+      }
+    },
+    "sensor": {
+      "temperature": {
+        "name": "Sıcaklık"
+      },
+      "humidity": {
+        "name": "Nem"
+      },
+      "outdoor_temperature": {
+        "name": "Dış ortam sıcaklığı"
+      },
+      "used_time": {
+        "name": "Çalışma süresi"
+      },
+      "filter_use_time": {
+        "name": "Filtre kullanım süresi"
+      },
+      "filter_life": {
+        "name": "Filtre ömrü"
+      },
+      "error": {
+        "name": "Hata kodu"
+      },
+      "device_clock": {
+        "name": "Cihaz saati"
+      },
+      "schedules": {
+        "name": "Programlar"
+      }
+    },
+    "switch": {
+      "purify": {
+        "name": "Purify (SPi)"
+      },
+      "auto_clean": {
+        "name": "Otomatik temizleme"
+      },
+      "light": {
+        "name": "Ekran ışığı"
+      },
+      "sterilize": {
+        "name": "Sterilize et"
+      },
+      "smart_on": {
+        "name": "Akıllı açma"
+      },
+      "weather": {
+        "name": "Hava durumu"
+      }
+    },
+    "number": {
+      "sleep_timer": {
+        "name": "Uyku zamanlayıcısı"
+      },
+      "on_timer": {
+        "name": "Açılma zamanlayıcısı"
+      },
+      "off_timer": {
+        "name": "Kapanma zamanlayıcısı"
+      },
+      "energy_target": {
+        "name": "Enerji hedefi"
+      }
+    },
+    "select": {
+      "occupancy": {
+        "name": "Doluluk",
+        "state": {
+          "single": "Tek kişi",
+          "couple": "Çift",
+          "family": "Aile"
+        }
+      },
+      "beep_volume": {
+        "name": "Bip sesi seviyesi",
+        "state": {
+          "mute": "Sessiz",
+          "33": "33%",
+          "66": "66%",
+          "100": "100%"
+        }
+      },
+      "panel": {
+        "name": "Ön panel",
+        "state": {
+          "open": "Açık",
+          "close": "Kapalı"
+        }
+      },
+      "filter_clean_interval": {
+        "name": "Filtre temizleme aralığı",
+        "state": {
+          "180": "180 h",
+          "300": "300 h",
+          "500": "500 h",
+          "700": "700 h"
+        }
+      }
+    }
+  },
+  "services": {
+    "get_schedules": {
+      "name": "Programları getir",
+      "description": "Ünitenin yerleşik zamanlayıcısında saklanan programları listeler. Bu, klimanın yerleşik zamanlayıcısını yönetir; Home Assistant çevrimdışı olsa bile çalışır ve üniteyi yalnızca belirli bir saatte açar veya kapatır. Daha karmaşık senaryolar için (sıcaklık, mod, fan…) Home Assistant otomasyonlarını kullanın."
+    },
+    "set_schedule": {
+      "name": "Program ayarla",
+      "description": "Bir açma/kapama programı oluşturur veya düzenler. Bu, klimanın yerleşik zamanlayıcısını yönetir; Home Assistant çevrimdışı olsa bile çalışır ve üniteyi yalnızca belirli bir saatte açar veya kapatır. Daha karmaşık senaryolar için (sıcaklık, mod, fan…) Home Assistant otomasyonlarını kullanın.",
+      "fields": {
+        "time": {
+          "name": "Saat",
+          "description": "Programın tetikleneceği günün yerel saati."
+        },
+        "power": {
+          "name": "Güç",
+          "description": "Ünitenin açılması mı yoksa kapanması mı."
+        },
+        "repeat": {
+          "name": "Sıklık",
+          "description": "Ne sıklıkta çalışacağı: bir kez, her gün veya seçili günlerde haftalık."
+        },
+        "days": {
+          "name": "Günler",
+          "description": "Hangi günlerde çalışacağı — 'Bir kez' ve 'Haftalık' için gerekli, 'Her gün' için yoksayılır."
+        },
+        "enabled": {
+          "name": "Etkin",
+          "description": "Programın etkin olup olmadığı."
+        },
+        "schedule_id": {
+          "name": "Program kimliği",
+          "description": "Düzenlenecek mevcut bir programın kimliği; yeni bir tane oluşturmak için boş bırakın."
+        }
+      }
+    },
+    "delete_schedule": {
+      "name": "Programı sil",
+      "description": "Ünitenin yerleşik zamanlayıcısından bir programı siler. Bu, klimanın yerleşik zamanlayıcısını yönetir; Home Assistant çevrimdışı olsa bile çalışır ve üniteyi yalnızca belirli bir saatte açar veya kapatır. Daha karmaşık senaryolar için (sıcaklık, mod, fan…) Home Assistant otomasyonlarını kullanın.",
+      "fields": {
+        "schedule_id": {
+          "name": "Program kimliği",
+          "description": "Silinecek programın kimliği (Programlar sensörüne veya get_schedules'a bakın)."
+        }
+      }
+    },
+    "get_power_usage": {
+      "name": "Güç kullanımını getir",
+      "description": "Klimanın bir zaman aralığında kaydedilmiş güç kullanım geçmişini alır.",
+      "fields": {
+        "start": {
+          "name": "Başlangıç",
+          "description": "Aralığın başlangıcı (yerel saat)."
+        },
+        "end": {
+          "name": "Bitiş",
+          "description": "Aralığın bitişi (varsayılan: şimdi)."
+        },
+        "unit": {
+          "name": "Toplama",
+          "description": "Kullanımı saat başına veya gün başına toplar."
+        }
+      }
+    },
+    "set_power_logging": {
+      "name": "Güç kaydını ayarla",
+      "description": "Ünitenin güç kullanımı kaydını açar veya kapatır.",
+      "fields": {
+        "enable": {
+          "name": "Etkinleştir",
+          "description": "Güç kullanımı kaydının açık olup olmadığı."
+        }
+      }
+    },
+    "reset_power_logging": {
+      "name": "Güç kaydını sıfırla",
+      "description": "Ünitede kaydedilmiş güç kullanım geçmişini temizler."
+    },
+    "set_nickname": {
+      "name": "Takma ad ayarla",
+      "description": "Ünitede saklanan takma adı ayarlar.",
+      "fields": {
+        "nickname": {
+          "name": "Takma ad",
+          "description": "Yeni takma ad."
+        }
+      }
+    },
+    "get_region_code": {
+      "name": "Bölge kodunu getir",
+      "description": "Ünitede saklanan bölge kodunu okur."
+    },
+    "set_region_code": {
+      "name": "Bölge kodunu ayarla",
+      "description": "Ünitede saklanan bölge kodunu ayarlar.",
+      "fields": {
+        "code": {
+          "name": "Kod",
+          "description": "Bölge kodu."
+        }
+      }
+    }
+  },
+  "selector": {
+    "schedule_power": {
+      "options": {
+        "on": "Açık",
+        "off": "Kapalı"
+      }
+    },
+    "schedule_repeat": {
+      "options": {
+        "once": "Bir kez",
+        "daily": "Her gün",
+        "weekly": "Haftalık (seçili günler)"
+      }
+    },
+    "schedule_days": {
+      "options": {
+        "mon": "Pazartesi",
+        "tue": "Salı",
+        "wed": "Çarşamba",
+        "thu": "Perşembe",
+        "fri": "Cuma",
+        "sat": "Cumartesi",
+        "sun": "Pazar"
+      }
+    },
+    "power_unit": {
+      "options": {
+        "hour": "Saat başına",
+        "day": "Gün başına"
+      }
+    }
+  },
+  "exceptions": {
+    "command_failed": {
+      "message": "Samsung AC komutu başarısız oldu: {error}"
+    },
+    "schedule_needs_day": {
+      "message": "'Bir kez' ve 'Haftalık' programlar için en az bir gün seçin."
+    }
+  }
+}

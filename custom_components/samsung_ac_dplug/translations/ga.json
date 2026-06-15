@@ -1,0 +1,358 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Aerchóiriú Samsung (DPLUG / 2878)",
+        "description": "Conas ar mhaith leat d'aerchóiritheoir a shocrú?",
+        "menu_options": {
+          "onboard": "Ceangail aonad nua le Wi-Fi (treoracha)",
+          "manual": "Tá sé ar mo Wi-Fi cheana féin (cuir isteach IP)"
+        }
+      },
+      "onboard": {
+        "title": "Ceangail an t-aonad le do Wi-Fi",
+        "description": "Ní cheanglaíonn seanaonaid Samsung le Wi-Fi tríd an bprótacal líonra — déan é seo uair amháin, go fisiciúil.\n\n**Rogha A — WPS (an ceann is éasca, molta)**\n1. Ar an gcianrialtán, **coinnigh `Settings` síos ar feadh 4 shoicind** (feidhm fholaithe: ní dhéanann an scáileán ach caochadh) chun WPS a thosú.\n2. Laistigh de 2 nóiméad, **brúigh an cnaipe WPS ar do ródaire**.\n3. Nuair a fhanann an LED Wi-Fi ar an modúl lasta go seasta, tá sé ceangailte.\n\n**Rogha B — ó ríomhaire (mura bhfuil cnaipe WPS ag do ródaire)**\n1. Suiteáil **Python 3** mura bhfuil sé agat ({python_url}), ansin **íoslódáil an script chúnta** (comhad amháin, gan aon suiteáil bhreise de dhíth): {script_url}\n2. Ar an gcianrialtán, **coinnigh `Timer` síos ar feadh 4 shoicind** chun an t-aonad a chur i mód AP; taispeánfar líonra Wi-Fi darb ainm **`SMARTAIRCON`**.\n3. **Ceangail an ríomhaire leis an líonra `SMARTAIRCON`** (pasfhocal **`1111122222`**).\n4. **Rith an script** — `python3 provision.py` — agus, nuair a iarrtar ort, cuir isteach ainm agus pasfhocal do Wi-Fi baile.\n5. Nuair a phriontálann sé **Done**, ceanglaíonn an t-aonad le do Wi-Fi; athcheangail an ríomhaire le do ghnáthlíonra.\n\nNuair atá an t-aonad ar do Wi-Fi, **dún an fhuinneog seo** agus oscail **Socruithe → Gairis agus Seirbhísí**: ba cheart go dtairgfí ann go huathoibríoch é (fionnachtain). Mura ndéantar, tosaigh á chur leis arís agus roghnaigh **Tá sé ar mo Wi-Fi cheana féin** chun a IP a chur isteach.\n\n_D'úsáideoirí ardleibhéil: liostálann `python3 provision.py --help` na roghanna chun é a rith gan na leideanna idirghníomhacha._"
+      },
+      "manual": {
+        "title": "Ceangail leis an aerchóiritheoir",
+        "description": "Cuir isteach seoladh IP an aonaid. Láimhseáiltear an comhartha ar an gcéad chéim eile.",
+        "data": {
+          "host": "Seoladh IP"
+        }
+      },
+      "token": {
+        "title": "Faigh an comhartha rochtana",
+        "description": "Ní eisíonn an t-aonad ag {host} comhartha ach nuair a chuirtear ar siúl é (céim chruthúnais rochtana fhisiciúil).\n\n1. **Múch an t-aerchóiritheoir** leis an gcianrialtán, má tá sé ar siúl.\n2. Brúigh **Cuir isteach** thíos (fág an réimse folamh).\n3. Laistigh de ~30 soicind, **cuir an t-aerchóiritheoir ar siúl** leis an gcianrialtán.\n\nGabhfar agus stórálfar an comhartha go huathoibríoch.\n\n**Mar mhalairt air sin**, má tá comhartha an aonaid seo agat cheana féin, cuir isteach thíos é agus brúigh Cuir isteach.",
+        "data": {
+          "token": "Comhartha (roghnach)"
+        }
+      },
+      "save_token": {
+        "title": "Comhartha faighte",
+        "description": "Déanta — fuarthas comhartha an aonaid ag {host} agus sábháladh san chomhtháthú seo é.\n\n💡 **Leid:** sábháil comhartha an ghairis seo ionas nach gá duit é a fháil arís amach anseo (is féidir leat é a ghreamú go díreach agus an t-aonad á chur leis):\n\n```\n{token}\n```\n\nBrúigh **Cuir isteach** chun críochnú."
+      },
+      "reauth_confirm": {
+        "title": "Athfhíordheimhnigh aerchóiritheoir Samsung",
+        "description": "Diúltaíodh comhartha an aonaid ag {host} (féadann sé athrú tar éis athshocraithe modúil). Faigh ceann nua: múch an t-aonad, cuir isteach (fág folamh), ansin cuir ar siúl é laistigh de ~30 soicind. Nó cuir isteach comhartha aitheanta thíos.",
+        "data": {
+          "token": "Comhartha (roghnach)"
+        }
+      },
+      "discovery_confirm": {
+        "title": "Aerchóiritheoir Samsung aimsithe",
+        "description": "Aimsíodh aerchóiritheoir Samsung ag {host}. É a shocrú anois? Sa chéad chéim eile gheobhaidh tú comhartha (cur ar siúl), mura bhfuil sé ar eolas agat cheana féin."
+      },
+      "reconfigure": {
+        "title": "Athraigh seoladh IP",
+        "description": "Cuir isteach an seoladh IP nua don aerchóiritheoir seo. Athúsáidtear an comhartha atá ann.",
+        "data": {
+          "host": "Seoladh IP"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Ní féidir ceangal. Seiceáil an seoladh IP agus go bhfuil an t-aonad ar an líonra.",
+      "auth": "Diúltaíodh an comhartha. Fág folamh é chun ceann nua a fháil.",
+      "no_token": "Níor fhaightear aon chomhartha. Cinntigh go raibh an t-aonad múchta, agus ansin curtha ar siúl laistigh den fhuinneog. Bain triail eile as."
+    },
+    "abort": {
+      "already_configured": "Tá an t-aerchóiritheoir seo cumraithe cheana féin.",
+      "not_samsung_ac": "Ní labhraíonn an gaireas seo prótacal Samsung DPLUG.",
+      "reauth_successful": "D'éirigh leis an athfhíordheimhniú.",
+      "onboard_finished": "Nuair atá an t-aerchóiritheoir ar do Wi-Fi, cuir leis é ó Socruithe → Gairis agus Seirbhísí — ba cheart go n-aimseofaí go huathoibríoch é, nó roghnaigh “Tá sé ar mo Wi-Fi cheana féin” chun a IP a chur isteach.",
+      "wrong_device": "Is aerchóiritheoir difriúil é an t-aonad ag an seoladh sin.",
+      "reconfigure_successful": "Nuashonraíodh an seoladh IP."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Roghanna Samsung AC",
+        "data": {
+          "live_updates": "Nuashonruithe beo (ceangal leanúnach)",
+          "scan_interval": "Eatramh athnuachana (soicindí)"
+        },
+        "data_description": {
+          "live_updates": "Coinnigh ceangal leanúnach amháin le haghaidh nuashonruithe brú láithreach. Má tá sé múchta, déanann an comhtháthú vótaíocht agus ní úsáideann sé ceangal leanúnach (níos teacht aniar).",
+          "scan_interval": "Eatramh vótaíochta nuair atá nuashonruithe beo múchta; vótaíocht chúltaca/keepalive nuair atá siad ar siúl."
+        }
+      }
+    }
+  },
+  "entity": {
+    "climate": {
+      "samsung_ac": {
+        "state_attributes": {
+          "preset_mode": {
+            "state": {
+              "none": "As",
+              "quiet": "Ciúin",
+              "fast_turbo": "Turbo Tapa",
+              "comfort": "Compord",
+              "dlight_cool": "d'light Cool",
+              "smart_saver": "Smart Saver",
+              "color_of_wind_alps": "Color of Wind: Alps",
+              "color_of_wind_florida": "Color of Wind: Florida",
+              "color_of_wind_savanna": "Color of Wind: Savanna"
+            }
+          },
+          "swing_mode": {
+            "state": {
+              "off": "As",
+              "vertical": "Ingearach",
+              "horizontal": "Cothrománach",
+              "both": "Araon",
+              "indirect": "Indíreach",
+              "direct": "Díreach",
+              "center": "Lár",
+              "wide": "Leathan",
+              "left": "Clé",
+              "right": "Deas",
+              "long": "Fada"
+            }
+          }
+        }
+      }
+    },
+    "sensor": {
+      "temperature": {
+        "name": "Teocht"
+      },
+      "humidity": {
+        "name": "Bogthaise"
+      },
+      "outdoor_temperature": {
+        "name": "Teocht lasmuigh"
+      },
+      "used_time": {
+        "name": "Am oibríochta"
+      },
+      "filter_use_time": {
+        "name": "Am úsáide an scagaire"
+      },
+      "filter_life": {
+        "name": "Saolré an scagaire"
+      },
+      "error": {
+        "name": "Cód earráide"
+      },
+      "device_clock": {
+        "name": "Clog an ghairis"
+      },
+      "schedules": {
+        "name": "Sceidil"
+      }
+    },
+    "switch": {
+      "purify": {
+        "name": "Purify (SPi)"
+      },
+      "auto_clean": {
+        "name": "Glanadh uathoibríoch"
+      },
+      "light": {
+        "name": "Solas an scáileáin"
+      },
+      "sterilize": {
+        "name": "Steiriliú"
+      },
+      "smart_on": {
+        "name": "Smart on"
+      },
+      "weather": {
+        "name": "Aimsir"
+      }
+    },
+    "number": {
+      "sleep_timer": {
+        "name": "Amadóir codlata"
+      },
+      "on_timer": {
+        "name": "Amadóir ar siúl"
+      },
+      "off_timer": {
+        "name": "Amadóir múchta"
+      },
+      "energy_target": {
+        "name": "Sprioc fuinnimh"
+      }
+    },
+    "select": {
+      "occupancy": {
+        "name": "Áitíocht",
+        "state": {
+          "single": "Singil",
+          "couple": "Lánúin",
+          "family": "Teaghlach"
+        }
+      },
+      "beep_volume": {
+        "name": "Airde an bhíp",
+        "state": {
+          "mute": "Balbh",
+          "33": "33%",
+          "66": "66%",
+          "100": "100%"
+        }
+      },
+      "panel": {
+        "name": "Painéal tosaigh",
+        "state": {
+          "open": "Oscail",
+          "close": "Dún"
+        }
+      },
+      "filter_clean_interval": {
+        "name": "Eatramh glanta an scagaire",
+        "state": {
+          "180": "180 h",
+          "300": "300 h",
+          "500": "500 h",
+          "700": "700 h"
+        }
+      }
+    }
+  },
+  "services": {
+    "get_schedules": {
+      "name": "Faigh sceidil",
+      "description": "Liostáil na sceidil atá stóráilte ar sceidealóir ionsuite an aonaid. Rialaíonn sé seo sceidealóir ionsuite an aerchóiritheora, a ritheann fiú nuair atá Home Assistant as líne agus nach ndéanann ach an t-aonad a chur ar siúl nó a mhúchadh ag am socraithe. Le haghaidh cásanna níos casta (teocht, mód, gaothrán…) úsáid uathoibrithe Home Assistant."
+    },
+    "set_schedule": {
+      "name": "Socraigh sceideal",
+      "description": "Cruthaigh nó cuir in eagar sceideal ar siúl/as. Rialaíonn sé seo sceidealóir ionsuite an aerchóiritheora, a ritheann fiú nuair atá Home Assistant as líne agus nach ndéanann ach an t-aonad a chur ar siúl nó a mhúchadh ag am socraithe. Le haghaidh cásanna níos casta (teocht, mód, gaothrán…) úsáid uathoibrithe Home Assistant.",
+      "fields": {
+        "time": {
+          "name": "Am",
+          "description": "Am áitiúil an lae nuair a thosaíonn an sceideal."
+        },
+        "power": {
+          "name": "Cumhacht",
+          "description": "Cé acu an gcasann an t-aonad ar siúl nó as."
+        },
+        "repeat": {
+          "name": "Minicíocht",
+          "description": "Cé chomh minic a ritheann sé: uair amháin, gach lá, nó go seachtainiúil ar na laethanta roghnaithe."
+        },
+        "days": {
+          "name": "Laethanta",
+          "description": "Cé na laethanta le rith orthu — riachtanach do 'Uair amháin' agus 'Seachtainiúil', neamhaird déanta de do 'Gach lá'."
+        },
+        "enabled": {
+          "name": "Cumasaithe",
+          "description": "Cé acu an bhfuil an sceideal gníomhach."
+        },
+        "schedule_id": {
+          "name": "Aitheantas sceidil",
+          "description": "Aitheantas sceidil atá ann le cur in eagar; fág folamh chun ceann nua a chruthú."
+        }
+      }
+    },
+    "delete_schedule": {
+      "name": "Scrios sceideal",
+      "description": "Scrios sceideal ó sceidealóir ionsuite an aonaid. Rialaíonn sé seo sceidealóir ionsuite an aerchóiritheora, a ritheann fiú nuair atá Home Assistant as líne agus nach ndéanann ach an t-aonad a chur ar siúl nó a mhúchadh ag am socraithe. Le haghaidh cásanna níos casta (teocht, mód, gaothrán…) úsáid uathoibrithe Home Assistant.",
+      "fields": {
+        "schedule_id": {
+          "name": "Aitheantas sceidil",
+          "description": "Aitheantas an sceidil le scriosadh (féach an braiteoir Sceidil nó get_schedules)."
+        }
+      }
+    },
+    "get_power_usage": {
+      "name": "Faigh úsáid chumhachta",
+      "description": "Aisghabh stair úsáide cumhachta an aerchóiritheora a taifeadadh thar thréimhse ama.",
+      "fields": {
+        "start": {
+          "name": "Tús",
+          "description": "Tús na tréimhse (am áitiúil)."
+        },
+        "end": {
+          "name": "Deireadh",
+          "description": "Deireadh na tréimhse (réamhshocraithe go dtí anois)."
+        },
+        "unit": {
+          "name": "Comhiomlánú",
+          "description": "Comhiomlánaigh an úsáid in aghaidh na huaire nó in aghaidh an lae."
+        }
+      }
+    },
+    "set_power_logging": {
+      "name": "Socraigh logáil chumhachta",
+      "description": "Cas logáil úsáide cumhachta an aonaid ar siúl nó as.",
+      "fields": {
+        "enable": {
+          "name": "Cumasaigh",
+          "description": "Cé acu an bhfuil logáil úsáide cumhachta ar siúl."
+        }
+      }
+    },
+    "reset_power_logging": {
+      "name": "Athshocraigh logáil chumhachta",
+      "description": "Glan stair úsáide cumhachta a taifeadadh ar an aonad."
+    },
+    "set_nickname": {
+      "name": "Socraigh leasainm",
+      "description": "Socraigh an leasainm atá stóráilte ar an aonad.",
+      "fields": {
+        "nickname": {
+          "name": "Leasainm",
+          "description": "An leasainm nua."
+        }
+      }
+    },
+    "get_region_code": {
+      "name": "Faigh cód réigiúin",
+      "description": "Léigh an cód réigiúin atá stóráilte ar an aonad."
+    },
+    "set_region_code": {
+      "name": "Socraigh cód réigiúin",
+      "description": "Socraigh an cód réigiúin atá stóráilte ar an aonad.",
+      "fields": {
+        "code": {
+          "name": "Cód",
+          "description": "An cód réigiúin."
+        }
+      }
+    }
+  },
+  "selector": {
+    "schedule_power": {
+      "options": {
+        "on": "Ar siúl",
+        "off": "As"
+      }
+    },
+    "schedule_repeat": {
+      "options": {
+        "once": "Uair amháin",
+        "daily": "Gach lá",
+        "weekly": "Seachtainiúil (laethanta roghnaithe)"
+      }
+    },
+    "schedule_days": {
+      "options": {
+        "mon": "Luan",
+        "tue": "Máirt",
+        "wed": "Céadaoin",
+        "thu": "Déardaoin",
+        "fri": "Aoine",
+        "sat": "Satharn",
+        "sun": "Domhnach"
+      }
+    },
+    "power_unit": {
+      "options": {
+        "hour": "In aghaidh na huaire",
+        "day": "In aghaidh an lae"
+      }
+    }
+  },
+  "exceptions": {
+    "command_failed": {
+      "message": "Theip ar ordú Samsung AC: {error}"
+    },
+    "schedule_needs_day": {
+      "message": "Roghnaigh lá amháin ar a laghad do sceidil 'Uair amháin' agus 'Seachtainiúil'."
+    }
+  }
+}

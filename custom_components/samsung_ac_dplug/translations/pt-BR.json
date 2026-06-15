@@ -1,0 +1,358 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Ar-condicionado Samsung (DPLUG / 2878)",
+        "description": "Como você quer configurar o seu ar-condicionado?",
+        "menu_options": {
+          "onboard": "Conectar uma nova unidade ao Wi-Fi (instruções)",
+          "manual": "Já está no meu Wi-Fi (inserir IP)"
+        }
+      },
+      "onboard": {
+        "title": "Conectar a unidade ao seu Wi-Fi",
+        "description": "As unidades Samsung antigas não se conectam ao Wi-Fi pelo protocolo de rede — é preciso fazer isso uma vez, fisicamente.\n\n**Opção A — WPS (a mais simples, recomendada)**\n1. No controle remoto, **mantenha `Settings` pressionado por 4 segundos** (função oculta: o visor apenas pisca) para iniciar o WPS.\n2. Em até 2 minutos, **pressione o botão WPS do seu roteador**.\n3. Quando o LED de Wi-Fi do módulo ficar aceso fixo, a unidade está conectada.\n\n**Opção B — a partir de um computador (se o seu roteador não tiver botão WPS)**\n1. Instale o **Python 3** se não tiver ({python_url}), depois **baixe o script auxiliar** (um único arquivo, nada mais para instalar): {script_url}\n2. No controle remoto, **mantenha `Timer` pressionado por 4 segundos** para colocar a unidade em modo AP; aparecerá uma rede Wi-Fi chamada **`SMARTAIRCON`**.\n3. **Conecte o computador à rede `SMARTAIRCON`** (senha **`1111122222`**).\n4. **Execute o script** — `python3 provision.py` — e, quando solicitado, informe o nome e a senha do seu Wi-Fi de casa.\n5. Quando exibir **Done**, a unidade se conecta ao seu Wi-Fi; reconecte o computador à sua rede normal.\n\nAssim que a unidade estiver no seu Wi-Fi, **feche esta janela** e abra **Configurações → Dispositivos e serviços**: ela deve ser oferecida ali automaticamente (descoberta). Se não aparecer, reinicie a adição e escolha **Já está no meu Wi-Fi** para inserir o IP.\n\n_Para usuários avançados: `python3 provision.py --help` lista as opções para executá-lo sem as perguntas interativas._"
+      },
+      "manual": {
+        "title": "Conectar ao ar-condicionado",
+        "description": "Insira o endereço IP da unidade. O token é tratado na próxima etapa.",
+        "data": {
+          "host": "Endereço IP"
+        }
+      },
+      "token": {
+        "title": "Obter o token de acesso",
+        "description": "A unidade em {host} só emite um token ao ser ligada (uma prova de acesso físico).\n\n1. **Desligue o ar-condicionado** com o controle remoto, se estiver ligado.\n2. Pressione **Enviar** abaixo (deixe o campo vazio).\n3. Em cerca de ~30 segundos, **ligue o ar-condicionado** com o controle remoto.\n\nO token será capturado e salvo automaticamente.\n\n**Como alternativa**, se você já tem o token desta unidade, insira-o abaixo e pressione Enviar.",
+        "data": {
+          "token": "Token (opcional)"
+        }
+      },
+      "save_token": {
+        "title": "Token obtido",
+        "description": "Pronto — o token da unidade em {host} foi obtido e salvo nesta integração.\n\n💡 **Dica:** salve o token deste dispositivo para não precisar obtê-lo novamente no futuro (você poderá colá-lo diretamente ao adicionar a unidade):\n\n```\n{token}\n```\n\nPressione **Enviar** para concluir."
+      },
+      "reauth_confirm": {
+        "title": "Reautenticar o ar-condicionado Samsung",
+        "description": "O token da unidade em {host} foi rejeitado (ele pode mudar após uma redefinição do módulo). Obtenha um novo: desligue a unidade, envie (deixe vazio) e depois ligue-a em cerca de ~30 s. Ou insira abaixo um token conhecido.",
+        "data": {
+          "token": "Token (opcional)"
+        }
+      },
+      "discovery_confirm": {
+        "title": "Ar-condicionado Samsung encontrado",
+        "description": "Um ar-condicionado Samsung foi descoberto em {host}. Configurar agora? Na próxima etapa você obterá um token (ao ligar), a menos que já o conheça."
+      },
+      "reconfigure": {
+        "title": "Alterar o endereço IP",
+        "description": "Insira o novo endereço IP deste ar-condicionado. O token existente é reutilizado.",
+        "data": {
+          "host": "Endereço IP"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Não foi possível conectar. Verifique o endereço IP e se a unidade está na rede.",
+      "auth": "O token foi rejeitado. Deixe-o vazio para obter um novo.",
+      "no_token": "Nenhum token recebido. Certifique-se de que a unidade estava desligada e depois foi ligada dentro do intervalo. Tente novamente."
+    },
+    "abort": {
+      "already_configured": "Este ar-condicionado já está configurado.",
+      "not_samsung_ac": "Este dispositivo não fala o protocolo Samsung DPLUG.",
+      "reauth_successful": "A reautenticação foi bem-sucedida.",
+      "onboard_finished": "Assim que o ar-condicionado estiver no seu Wi-Fi, adicione-o em Configurações → Dispositivos e serviços — ele deve ser descoberto automaticamente, ou escolha «Já está no meu Wi-Fi» para inserir o IP.",
+      "wrong_device": "A unidade nesse endereço é um ar-condicionado diferente.",
+      "reconfigure_successful": "O endereço IP foi atualizado."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Opções do Samsung AC",
+        "data": {
+          "live_updates": "Atualizações ao vivo (conexão persistente)",
+          "scan_interval": "Intervalo de atualização (segundos)"
+        },
+        "data_description": {
+          "live_updates": "Mantém uma conexão persistente para atualizações push instantâneas. Se desativado, a integração consulta a unidade sem conexão persistente (mais resiliente).",
+          "scan_interval": "Intervalo de consulta quando as atualizações ao vivo estão desativadas; consulta de fallback/keepalive quando estão ativadas."
+        }
+      }
+    }
+  },
+  "entity": {
+    "climate": {
+      "samsung_ac": {
+        "state_attributes": {
+          "preset_mode": {
+            "state": {
+              "none": "Desligado",
+              "quiet": "Silencioso",
+              "fast_turbo": "Turbo rápido",
+              "comfort": "Conforto",
+              "dlight_cool": "d'light Cool",
+              "smart_saver": "Smart Saver",
+              "color_of_wind_alps": "Color of Wind: Alps",
+              "color_of_wind_florida": "Color of Wind: Florida",
+              "color_of_wind_savanna": "Color of Wind: Savanna"
+            }
+          },
+          "swing_mode": {
+            "state": {
+              "off": "Desligado",
+              "vertical": "Vertical",
+              "horizontal": "Horizontal",
+              "both": "Ambos",
+              "indirect": "Indireto",
+              "direct": "Direto",
+              "center": "Centro",
+              "wide": "Amplo",
+              "left": "Esquerda",
+              "right": "Direita",
+              "long": "Longo"
+            }
+          }
+        }
+      }
+    },
+    "sensor": {
+      "temperature": {
+        "name": "Temperatura"
+      },
+      "humidity": {
+        "name": "Umidade"
+      },
+      "outdoor_temperature": {
+        "name": "Temperatura externa"
+      },
+      "used_time": {
+        "name": "Tempo de funcionamento"
+      },
+      "filter_use_time": {
+        "name": "Tempo de uso do filtro"
+      },
+      "filter_life": {
+        "name": "Vida útil do filtro"
+      },
+      "error": {
+        "name": "Código de erro"
+      },
+      "device_clock": {
+        "name": "Relógio do dispositivo"
+      },
+      "schedules": {
+        "name": "Programações"
+      }
+    },
+    "switch": {
+      "purify": {
+        "name": "Purify (SPi)"
+      },
+      "auto_clean": {
+        "name": "Limpeza automática"
+      },
+      "light": {
+        "name": "Luz do visor"
+      },
+      "sterilize": {
+        "name": "Esterilização"
+      },
+      "smart_on": {
+        "name": "Ligar inteligente"
+      },
+      "weather": {
+        "name": "Clima"
+      }
+    },
+    "number": {
+      "sleep_timer": {
+        "name": "Timer de soneca"
+      },
+      "on_timer": {
+        "name": "Timer de ligar"
+      },
+      "off_timer": {
+        "name": "Timer de desligar"
+      },
+      "energy_target": {
+        "name": "Meta de energia"
+      }
+    },
+    "select": {
+      "occupancy": {
+        "name": "Ocupação",
+        "state": {
+          "single": "Individual",
+          "couple": "Casal",
+          "family": "Família"
+        }
+      },
+      "beep_volume": {
+        "name": "Volume do bipe",
+        "state": {
+          "mute": "Sem som",
+          "33": "33%",
+          "66": "66%",
+          "100": "100%"
+        }
+      },
+      "panel": {
+        "name": "Painel frontal",
+        "state": {
+          "open": "Aberto",
+          "close": "Fechado"
+        }
+      },
+      "filter_clean_interval": {
+        "name": "Intervalo de limpeza do filtro",
+        "state": {
+          "180": "180 h",
+          "300": "300 h",
+          "500": "500 h",
+          "700": "700 h"
+        }
+      }
+    }
+  },
+  "services": {
+    "get_schedules": {
+      "name": "Ler programações",
+      "description": "Lista as programações salvas no agendador integrado da unidade. Isso controla o agendador integrado do ar-condicionado, que funciona mesmo quando o Home Assistant está offline e apenas liga ou desliga a unidade em um horário definido. Para cenários mais complexos (temperatura, modo, ventilação…) use as automações do Home Assistant."
+    },
+    "set_schedule": {
+      "name": "Definir programação",
+      "description": "Cria ou edita uma programação de liga/desliga. Isso controla o agendador integrado do ar-condicionado, que funciona mesmo quando o Home Assistant está offline e apenas liga ou desliga a unidade em um horário definido. Para cenários mais complexos (temperatura, modo, ventilação…) use as automações do Home Assistant.",
+      "fields": {
+        "time": {
+          "name": "Horário",
+          "description": "Horário local do dia em que a programação é acionada."
+        },
+        "power": {
+          "name": "Energia",
+          "description": "Se a unidade liga ou desliga."
+        },
+        "repeat": {
+          "name": "Frequência",
+          "description": "Com que frequência é executada: uma vez, todos os dias, ou semanalmente nos dias selecionados."
+        },
+        "days": {
+          "name": "Dias",
+          "description": "Em quais dias executar — obrigatório para «Uma vez» e «Semanal», ignorado para «Todos os dias»."
+        },
+        "enabled": {
+          "name": "Ativada",
+          "description": "Se a programação está ativa."
+        },
+        "schedule_id": {
+          "name": "ID da programação",
+          "description": "ID de uma programação existente para editar; deixe vazio para criar uma nova."
+        }
+      }
+    },
+    "delete_schedule": {
+      "name": "Excluir programação",
+      "description": "Exclui uma programação do agendador integrado da unidade. Isso controla o agendador integrado do ar-condicionado, que funciona mesmo quando o Home Assistant está offline e apenas liga ou desliga a unidade em um horário definido. Para cenários mais complexos (temperatura, modo, ventilação…) use as automações do Home Assistant.",
+      "fields": {
+        "schedule_id": {
+          "name": "ID da programação",
+          "description": "ID da programação a excluir (consulte o sensor Programações ou get_schedules)."
+        }
+      }
+    },
+    "get_power_usage": {
+      "name": "Ler consumo de energia",
+      "description": "Obtém o histórico de consumo de energia registrado pelo ar-condicionado em um intervalo de tempo.",
+      "fields": {
+        "start": {
+          "name": "Início",
+          "description": "Início do intervalo (horário local)."
+        },
+        "end": {
+          "name": "Fim",
+          "description": "Fim do intervalo (padrão: agora)."
+        },
+        "unit": {
+          "name": "Agregação",
+          "description": "Agregar o consumo por hora ou por dia."
+        }
+      }
+    },
+    "set_power_logging": {
+      "name": "Definir registro de consumo",
+      "description": "Ativa ou desativa o registro de consumo de energia na unidade.",
+      "fields": {
+        "enable": {
+          "name": "Ativar",
+          "description": "Se o registro de consumo de energia está ativo."
+        }
+      }
+    },
+    "reset_power_logging": {
+      "name": "Redefinir registro de consumo",
+      "description": "Limpa o histórico de consumo de energia registrado na unidade."
+    },
+    "set_nickname": {
+      "name": "Definir apelido",
+      "description": "Define o apelido salvo na unidade.",
+      "fields": {
+        "nickname": {
+          "name": "Apelido",
+          "description": "O novo apelido."
+        }
+      }
+    },
+    "get_region_code": {
+      "name": "Ler código de região",
+      "description": "Lê o código de região salvo na unidade."
+    },
+    "set_region_code": {
+      "name": "Definir código de região",
+      "description": "Define o código de região salvo na unidade.",
+      "fields": {
+        "code": {
+          "name": "Código",
+          "description": "O código de região."
+        }
+      }
+    }
+  },
+  "selector": {
+    "schedule_power": {
+      "options": {
+        "on": "Ligado",
+        "off": "Desligado"
+      }
+    },
+    "schedule_repeat": {
+      "options": {
+        "once": "Uma vez",
+        "daily": "Todos os dias",
+        "weekly": "Semanal (dias selecionados)"
+      }
+    },
+    "schedule_days": {
+      "options": {
+        "mon": "Segunda-feira",
+        "tue": "Terça-feira",
+        "wed": "Quarta-feira",
+        "thu": "Quinta-feira",
+        "fri": "Sexta-feira",
+        "sat": "Sábado",
+        "sun": "Domingo"
+      }
+    },
+    "power_unit": {
+      "options": {
+        "hour": "Por hora",
+        "day": "Por dia"
+      }
+    }
+  },
+  "exceptions": {
+    "command_failed": {
+      "message": "O comando do ar-condicionado Samsung falhou: {error}"
+    },
+    "schedule_needs_day": {
+      "message": "Selecione pelo menos um dia para as programações «Uma vez» e «Semanal»."
+    }
+  }
+}

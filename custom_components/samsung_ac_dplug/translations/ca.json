@@ -1,0 +1,358 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Aire condicionat Samsung (DPLUG / 2878)",
+        "description": "Com vols configurar l'aire condicionat?",
+        "menu_options": {
+          "onboard": "Connecta una unitat nova al Wi-Fi (instruccions)",
+          "manual": "Ja és a la meva Wi-Fi (introdueix la IP)"
+        }
+      },
+      "onboard": {
+        "title": "Connecta la unitat a la teva Wi-Fi",
+        "description": "Els aparells Samsung antics no es connecten a la Wi-Fi mitjançant el protocol de xarxa — s'ha de fer un cop, físicament.\n\n**Opció A — WPS (la més fàcil, recomanada)**\n1. Al comandament, **mantén premut `Settings` durant 4 segons** (funció oculta: la pantalla només parpelleja) per iniciar el WPS.\n2. En menys de 2 minuts, **prem el botó WPS del teu router**.\n3. Quan el LED de Wi-Fi del mòdul es quedi encès fix, vol dir que s'ha connectat.\n\n**Opció B — des d'un ordinador (si el teu router no té botó WPS)**\n1. Instal·la **Python 3** si no el tens ({python_url}), i després **descarrega l'script d'ajuda** (un sol fitxer, sense res més per instal·lar): {script_url}\n2. Al comandament, **mantén premut `Timer` durant 4 segons** per posar la unitat en mode AP; apareixerà una xarxa Wi-Fi anomenada **`SMARTAIRCON`**.\n3. **Connecta l'ordinador a la xarxa `SMARTAIRCON`** (contrasenya **`1111122222`**).\n4. **Executa l'script** — `python3 provision.py` — i, quan se't demani, introdueix el nom i la contrasenya de la teva Wi-Fi domèstica.\n5. Quan mostri **Done**, la unitat es connecta a la teva Wi-Fi; torna a connectar l'ordinador a la teva xarxa habitual.\n\nUn cop la unitat sigui a la teva Wi-Fi, **tanca aquesta finestra** i obre **Configuració → Dispositius i serveis**: hauria d'oferir-se allà automàticament (descobriment). Si no apareix, torna a començar a afegir-la i tria **Ja és a la meva Wi-Fi** per introduir-ne la IP.\n\n_Per a usuaris avançats: `python3 provision.py --help` mostra les opcions per executar-lo sense les indicacions interactives._"
+      },
+      "manual": {
+        "title": "Connecta't a l'aire condicionat",
+        "description": "Introdueix l'adreça IP de la unitat. El token es gestiona al pas següent.",
+        "data": {
+          "host": "Adreça IP"
+        }
+      },
+      "token": {
+        "title": "Obtén el token d'accés",
+        "description": "La unitat a {host} només emet un token en encendre's (un pas físic de prova d'accés).\n\n1. **Apaga l'aire condicionat** amb el comandament, si està encès.\n2. Prem **Envia** a sota (deixa el camp buit).\n3. En menys d'uns 30 segons, **encén l'aire condicionat** amb el comandament.\n\nEl token es capturarà i es desarà automàticament.\n\n**Com a alternativa**, si ja tens el token d'aquesta unitat, introdueix-lo a sota i prem Envia.",
+        "data": {
+          "token": "Token (opcional)"
+        }
+      },
+      "save_token": {
+        "title": "Token obtingut",
+        "description": "Fet — el token de la unitat a {host} s'ha obtingut i s'ha desat en aquesta integració.\n\n💡 **Consell:** desa el token d'aquest dispositiu perquè no l'hagis de tornar a obtenir en el futur (el pots enganxar directament en afegir la unitat):\n\n```\n{token}\n```\n\nPrem **Envia** per finalitzar."
+      },
+      "reauth_confirm": {
+        "title": "Torna a autenticar l'aire condicionat Samsung",
+        "description": "El token de la unitat a {host} s'ha rebutjat (pot canviar després de reiniciar el mòdul). Obtén-ne un de nou: apaga la unitat, envia (deixa-ho buit) i després encén-la en menys d'uns 30 s. O introdueix a sota un token conegut.",
+        "data": {
+          "token": "Token (opcional)"
+        }
+      },
+      "discovery_confirm": {
+        "title": "S'ha trobat un aire condicionat Samsung",
+        "description": "S'ha descobert un aire condicionat Samsung a {host}. El vols configurar ara? Al pas següent obtindràs un token (en encendre), tret que ja el coneguis."
+      },
+      "reconfigure": {
+        "title": "Canvia l'adreça IP",
+        "description": "Introdueix la nova adreça IP d'aquest aire condicionat. El token existent es reutilitza.",
+        "data": {
+          "host": "Adreça IP"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "No s'ha pogut connectar. Comprova l'adreça IP i que la unitat sigui a la xarxa.",
+      "auth": "El token s'ha rebutjat. Deixa'l buit per obtenir-ne un de nou.",
+      "no_token": "No s'ha rebut cap token. Assegura't que la unitat estava apagada i que s'ha encès dins de la finestra. Torna-ho a provar."
+    },
+    "abort": {
+      "already_configured": "Aquest aire condicionat ja està configurat.",
+      "not_samsung_ac": "Aquest dispositiu no parla el protocol Samsung DPLUG.",
+      "reauth_successful": "La reautenticació s'ha completat correctament.",
+      "onboard_finished": "Un cop l'aire condicionat sigui a la teva Wi-Fi, afegeix-lo des de Configuració → Dispositius i serveis — hauria de detectar-se automàticament, o tria «Ja és a la meva Wi-Fi» per introduir-ne la IP.",
+      "wrong_device": "La unitat d'aquesta adreça és un aire condicionat diferent.",
+      "reconfigure_successful": "L'adreça IP s'ha actualitzat."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Opcions de Samsung AC",
+        "data": {
+          "live_updates": "Actualitzacions en directe (connexió persistent)",
+          "scan_interval": "Interval d'actualització (segons)"
+        },
+        "data_description": {
+          "live_updates": "Mantén una connexió persistent per a actualitzacions push instantànies. Si està desactivat, la integració fa sondeig i no utilitza cap connexió persistent (més resilient).",
+          "scan_interval": "Interval de sondeig quan les actualitzacions en directe estan desactivades; sondeig de reserva/keepalive quan estan activades."
+        }
+      }
+    }
+  },
+  "entity": {
+    "climate": {
+      "samsung_ac": {
+        "state_attributes": {
+          "preset_mode": {
+            "state": {
+              "none": "Apagat",
+              "quiet": "Silenciós",
+              "fast_turbo": "Turbo ràpid",
+              "comfort": "Comfort",
+              "dlight_cool": "d'light Cool",
+              "smart_saver": "Smart Saver",
+              "color_of_wind_alps": "Color of Wind: Alps",
+              "color_of_wind_florida": "Color of Wind: Florida",
+              "color_of_wind_savanna": "Color of Wind: Savanna"
+            }
+          },
+          "swing_mode": {
+            "state": {
+              "off": "Apagat",
+              "vertical": "Vertical",
+              "horizontal": "Horitzontal",
+              "both": "Ambdós",
+              "indirect": "Indirecte",
+              "direct": "Directe",
+              "center": "Centre",
+              "wide": "Ampli",
+              "left": "Esquerra",
+              "right": "Dreta",
+              "long": "Llarg"
+            }
+          }
+        }
+      }
+    },
+    "sensor": {
+      "temperature": {
+        "name": "Temperatura"
+      },
+      "humidity": {
+        "name": "Humitat"
+      },
+      "outdoor_temperature": {
+        "name": "Temperatura exterior"
+      },
+      "used_time": {
+        "name": "Temps de funcionament"
+      },
+      "filter_use_time": {
+        "name": "Temps d'ús del filtre"
+      },
+      "filter_life": {
+        "name": "Vida del filtre"
+      },
+      "error": {
+        "name": "Codi d'error"
+      },
+      "device_clock": {
+        "name": "Rellotge del dispositiu"
+      },
+      "schedules": {
+        "name": "Programacions"
+      }
+    },
+    "switch": {
+      "purify": {
+        "name": "Purify (SPi)"
+      },
+      "auto_clean": {
+        "name": "Neteja automàtica"
+      },
+      "light": {
+        "name": "Llum de la pantalla"
+      },
+      "sterilize": {
+        "name": "Esterilització"
+      },
+      "smart_on": {
+        "name": "Encesa intel·ligent"
+      },
+      "weather": {
+        "name": "Meteorologia"
+      }
+    },
+    "number": {
+      "sleep_timer": {
+        "name": "Temporitzador de repòs"
+      },
+      "on_timer": {
+        "name": "Temporitzador d'encesa"
+      },
+      "off_timer": {
+        "name": "Temporitzador d'apagada"
+      },
+      "energy_target": {
+        "name": "Objectiu d'energia"
+      }
+    },
+    "select": {
+      "occupancy": {
+        "name": "Ocupació",
+        "state": {
+          "single": "Individual",
+          "couple": "Parella",
+          "family": "Família"
+        }
+      },
+      "beep_volume": {
+        "name": "Volum del so",
+        "state": {
+          "mute": "Silenci",
+          "33": "33%",
+          "66": "66%",
+          "100": "100%"
+        }
+      },
+      "panel": {
+        "name": "Panell frontal",
+        "state": {
+          "open": "Obert",
+          "close": "Tancat"
+        }
+      },
+      "filter_clean_interval": {
+        "name": "Interval de neteja del filtre",
+        "state": {
+          "180": "180 h",
+          "300": "300 h",
+          "500": "500 h",
+          "700": "700 h"
+        }
+      }
+    }
+  },
+  "services": {
+    "get_schedules": {
+      "name": "Obtén les programacions",
+      "description": "Llista les programacions desades al programador integrat de la unitat. Això controla el programador integrat de l'aire condicionat, que funciona fins i tot quan Home Assistant està fora de línia i només encén o apaga la unitat a una hora establerta. Per a escenaris més complexos (temperatura, mode, ventilador…) fes servir les automatitzacions de Home Assistant."
+    },
+    "set_schedule": {
+      "name": "Defineix una programació",
+      "description": "Crea o edita una programació d'encesa/apagada. Això controla el programador integrat de l'aire condicionat, que funciona fins i tot quan Home Assistant està fora de línia i només encén o apaga la unitat a una hora establerta. Per a escenaris més complexos (temperatura, mode, ventilador…) fes servir les automatitzacions de Home Assistant.",
+      "fields": {
+        "time": {
+          "name": "Hora",
+          "description": "Hora local del dia en què s'activa la programació."
+        },
+        "power": {
+          "name": "Encesa",
+          "description": "Si la unitat s'encén o s'apaga."
+        },
+        "repeat": {
+          "name": "Freqüència",
+          "description": "Amb quina freqüència s'executa: un cop, cada dia o setmanalment els dies seleccionats."
+        },
+        "days": {
+          "name": "Dies",
+          "description": "En quins dies s'executa — obligatori per a «Un cop» i «Setmanal», ignorat per a «Cada dia»."
+        },
+        "enabled": {
+          "name": "Activada",
+          "description": "Si la programació està activa."
+        },
+        "schedule_id": {
+          "name": "ID de la programació",
+          "description": "ID d'una programació existent per editar; deixa-ho buit per crear-ne una de nova."
+        }
+      }
+    },
+    "delete_schedule": {
+      "name": "Elimina una programació",
+      "description": "Elimina una programació del programador integrat de la unitat. Això controla el programador integrat de l'aire condicionat, que funciona fins i tot quan Home Assistant està fora de línia i només encén o apaga la unitat a una hora establerta. Per a escenaris més complexos (temperatura, mode, ventilador…) fes servir les automatitzacions de Home Assistant.",
+      "fields": {
+        "schedule_id": {
+          "name": "ID de la programació",
+          "description": "ID de la programació a eliminar (consulta el sensor Programacions o get_schedules)."
+        }
+      }
+    },
+    "get_power_usage": {
+      "name": "Obtén el consum d'energia",
+      "description": "Recupera l'historial de consum d'energia registrat per l'aire condicionat en un interval de temps.",
+      "fields": {
+        "start": {
+          "name": "Inici",
+          "description": "Inici de l'interval (hora local)."
+        },
+        "end": {
+          "name": "Fi",
+          "description": "Fi de l'interval (per defecte, ara)."
+        },
+        "unit": {
+          "name": "Agregació",
+          "description": "Agrega el consum per hora o per dia."
+        }
+      }
+    },
+    "set_power_logging": {
+      "name": "Defineix el registre de consum",
+      "description": "Activa o desactiva el registre del consum d'energia de la unitat.",
+      "fields": {
+        "enable": {
+          "name": "Activa",
+          "description": "Si el registre del consum d'energia està actiu."
+        }
+      }
+    },
+    "reset_power_logging": {
+      "name": "Restableix el registre de consum",
+      "description": "Esborra l'historial de consum d'energia registrat a la unitat."
+    },
+    "set_nickname": {
+      "name": "Defineix el sobrenom",
+      "description": "Defineix el sobrenom desat a la unitat.",
+      "fields": {
+        "nickname": {
+          "name": "Sobrenom",
+          "description": "El nou sobrenom."
+        }
+      }
+    },
+    "get_region_code": {
+      "name": "Obtén el codi de regió",
+      "description": "Llegeix el codi de regió desat a la unitat."
+    },
+    "set_region_code": {
+      "name": "Defineix el codi de regió",
+      "description": "Defineix el codi de regió desat a la unitat.",
+      "fields": {
+        "code": {
+          "name": "Codi",
+          "description": "El codi de regió."
+        }
+      }
+    }
+  },
+  "selector": {
+    "schedule_power": {
+      "options": {
+        "on": "Encès",
+        "off": "Apagat"
+      }
+    },
+    "schedule_repeat": {
+      "options": {
+        "once": "Un cop",
+        "daily": "Cada dia",
+        "weekly": "Setmanal (dies seleccionats)"
+      }
+    },
+    "schedule_days": {
+      "options": {
+        "mon": "Dilluns",
+        "tue": "Dimarts",
+        "wed": "Dimecres",
+        "thu": "Dijous",
+        "fri": "Divendres",
+        "sat": "Dissabte",
+        "sun": "Diumenge"
+      }
+    },
+    "power_unit": {
+      "options": {
+        "hour": "Per hora",
+        "day": "Per dia"
+      }
+    }
+  },
+  "exceptions": {
+    "command_failed": {
+      "message": "L'ordre a l'aire condicionat Samsung ha fallat: {error}"
+    },
+    "schedule_needs_day": {
+      "message": "Selecciona almenys un dia per a les programacions «Un cop» i «Setmanal»."
+    }
+  }
+}

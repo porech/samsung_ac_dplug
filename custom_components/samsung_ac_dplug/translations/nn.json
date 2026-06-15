@@ -1,0 +1,358 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Samsung-klimaanlegg (DPLUG / 2878)",
+        "description": "Korleis vil du setje opp klimaanlegget ditt?",
+        "menu_options": {
+          "onboard": "Kople ei ny eining til Wi-Fi (instruksjonar)",
+          "manual": "Det er allereie på Wi-Fi-et mitt (skriv inn IP)"
+        }
+      },
+      "onboard": {
+        "title": "Kople eininga til Wi-Fi-et ditt",
+        "description": "Gamle Samsung-einingar koplar seg ikkje til Wi-Fi via nettverksprotokollen — det må gjerast éin gong, fysisk.\n\n**Alternativ A — WPS (enklast, tilrådd)**\n1. På fjernkontrollen, **hald inne `Settings` i 4 sekund** (skjult funksjon: displayet berre blinkar) for å starte WPS.\n2. Innan 2 minutt, **trykk på WPS-knappen på ruteren din**.\n3. Når Wi-Fi-LED-en på modulen lyser fast, er ho tilkopla.\n\n**Alternativ B — frå ei datamaskin (om ruteren din manglar WPS-knapp)**\n1. Installer **Python 3** om du ikkje har det ({python_url}), og **last deretter ned hjelpeskriptet** (éi enkelt fil, ingenting ekstra å installere): {script_url}\n2. På fjernkontrollen, **hald inne `Timer` i 4 sekund** for å setje eininga i AP-modus; eit Wi-Fi-nettverk som heiter **`SMARTAIRCON`** vil dukke opp.\n3. **Kople datamaskina til nettverket `SMARTAIRCON`** (passord **`1111122222`**).\n4. **Køyr skriptet** — `python3 provision.py` — og skriv inn namnet og passordet til heime-Wi-Fi-et ditt når du blir spurd.\n5. Når det skriv **Done**, koplar eininga seg til Wi-Fi-et ditt; kople datamaskina til det vanlege nettverket ditt att.\n\nNår eininga er på Wi-Fi-et ditt, **lukk dette vindauget** og opne **Innstillingar → Einingar og tenester**: ho bør tilbydast der automatisk (oppdaging). Om ikkje, start tillegget på nytt og vel **Det er allereie på Wi-Fi-et mitt** for å skrive inn IP-en.\n\n_For avanserte brukarar: `python3 provision.py --help` listar alternativa for å køyre det utan dei interaktive spørsmåla._"
+      },
+      "manual": {
+        "title": "Kople til klimaanlegget",
+        "description": "Skriv inn IP-adressa til eininga. Token blir handtert i neste steg.",
+        "data": {
+          "host": "IP-adresse"
+        }
+      },
+      "token": {
+        "title": "Hent tilgangstoken",
+        "description": "Eininga på {host} utstedar berre ein token ved oppstart (eit fysisk bevis på tilgang).\n\n1. **Slå AV klimaanlegget** med fjernkontrollen om det er på.\n2. Trykk på **Send** nedanfor (lat feltet stå tomt).\n3. Innan ~30 sekund, **slå PÅ klimaanlegget** med fjernkontrollen.\n\nToken blir fanga opp automatisk og lagra.\n\n**Alternativt**, om du allereie har token til denne eininga, skriv han inn nedanfor og trykk på Send.",
+        "data": {
+          "token": "Token (valfritt)"
+        }
+      },
+      "save_token": {
+        "title": "Token henta",
+        "description": "Ferdig — token for eininga på {host} vart henta og lagra i denne integrasjonen.\n\n💡 **Tips:** lagre token til denne eininga så du slepp å hente han att seinare (du kan lime han inn direkte når du legg til eininga):\n\n```\n{token}\n```\n\nTrykk på **Send** for å fullføre."
+      },
+      "reauth_confirm": {
+        "title": "Autentiser Samsung-klimaanlegget på nytt",
+        "description": "Token for eininga på {host} vart avvist (han kan endre seg etter ei tilbakestilling av modulen). Hent ein ny: slå av eininga, send (lat feltet stå tomt), og slå ho deretter på innan ~30 s. Eller skriv inn ein kjend token nedanfor.",
+        "data": {
+          "token": "Token (valfritt)"
+        }
+      },
+      "discovery_confirm": {
+        "title": "Samsung-klimaanlegg funne",
+        "description": "Eit Samsung-klimaanlegg vart oppdaga på {host}. Vil du setje det opp no? I neste steg hentar du ein token (oppstart), med mindre du allereie kjenner han."
+      },
+      "reconfigure": {
+        "title": "Endre IP-adresse",
+        "description": "Skriv inn den nye IP-adressa for dette klimaanlegget. Den eksisterande token blir attbrukt.",
+        "data": {
+          "host": "IP-adresse"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Kan ikkje kople til. Sjekk IP-adressa og at eininga er på nettverket.",
+      "auth": "Token vart avvist. Lat han stå tom for å hente ein ny.",
+      "no_token": "Ingen token motteke. Sørg for at eininga var av og deretter vart slått på innan tidsvindauget. Prøv igjen."
+    },
+    "abort": {
+      "already_configured": "Dette klimaanlegget er allereie sett opp.",
+      "not_samsung_ac": "Denne eininga snakkar ikkje Samsung DPLUG-protokollen.",
+      "reauth_successful": "Ny autentisering var vellukka.",
+      "onboard_finished": "Når klimaanlegget er på Wi-Fi-et ditt, legg det til frå Innstillingar → Einingar og tenester — det bør oppdagast automatisk, eller vel “Det er allereie på Wi-Fi-et mitt” for å skrive inn IP-en.",
+      "wrong_device": "Eininga på den adressa er eit anna klimaanlegg.",
+      "reconfigure_successful": "IP-adressa vart oppdatert."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Samsung AC-alternativ",
+        "data": {
+          "live_updates": "Sanntidsoppdateringar (vedvarande tilkopling)",
+          "scan_interval": "Oppdateringsintervall (sekund)"
+        },
+        "data_description": {
+          "live_updates": "Behald éi vedvarande tilkopling for umiddelbare push-oppdateringar. Om av, pollar integrasjonen og brukar inga vedvarande tilkopling (meir robust).",
+          "scan_interval": "Pollingintervall når sanntidsoppdateringar er av; reserve-/keepalive-polling når dei er på."
+        }
+      }
+    }
+  },
+  "entity": {
+    "climate": {
+      "samsung_ac": {
+        "state_attributes": {
+          "preset_mode": {
+            "state": {
+              "none": "Av",
+              "quiet": "Stille",
+              "fast_turbo": "Rask turbo",
+              "comfort": "Komfort",
+              "dlight_cool": "d'light Cool",
+              "smart_saver": "Smart Saver",
+              "color_of_wind_alps": "Color of Wind: Alps",
+              "color_of_wind_florida": "Color of Wind: Florida",
+              "color_of_wind_savanna": "Color of Wind: Savanna"
+            }
+          },
+          "swing_mode": {
+            "state": {
+              "off": "Av",
+              "vertical": "Vertikal",
+              "horizontal": "Horisontal",
+              "both": "Begge",
+              "indirect": "Indirekte",
+              "direct": "Direkte",
+              "center": "Midten",
+              "wide": "Brei",
+              "left": "Venstre",
+              "right": "Høgre",
+              "long": "Lang"
+            }
+          }
+        }
+      }
+    },
+    "sensor": {
+      "temperature": {
+        "name": "Temperatur"
+      },
+      "humidity": {
+        "name": "Luftfukt"
+      },
+      "outdoor_temperature": {
+        "name": "Utetemperatur"
+      },
+      "used_time": {
+        "name": "Driftstid"
+      },
+      "filter_use_time": {
+        "name": "Filterbrukstid"
+      },
+      "filter_life": {
+        "name": "Filterlevetid"
+      },
+      "error": {
+        "name": "Feilkode"
+      },
+      "device_clock": {
+        "name": "Einingsklokke"
+      },
+      "schedules": {
+        "name": "Tidsplanar"
+      }
+    },
+    "switch": {
+      "purify": {
+        "name": "Purify (SPi)"
+      },
+      "auto_clean": {
+        "name": "Automatisk reingjering"
+      },
+      "light": {
+        "name": "Displaylys"
+      },
+      "sterilize": {
+        "name": "Sterilisering"
+      },
+      "smart_on": {
+        "name": "Smart på"
+      },
+      "weather": {
+        "name": "Vêr"
+      }
+    },
+    "number": {
+      "sleep_timer": {
+        "name": "Søvtimer"
+      },
+      "on_timer": {
+        "name": "På-timer"
+      },
+      "off_timer": {
+        "name": "Av-timer"
+      },
+      "energy_target": {
+        "name": "Energimål"
+      }
+    },
+    "select": {
+      "occupancy": {
+        "name": "Belegg",
+        "state": {
+          "single": "Enkelt",
+          "couple": "Par",
+          "family": "Familie"
+        }
+      },
+      "beep_volume": {
+        "name": "Pipevolum",
+        "state": {
+          "mute": "Lyd av",
+          "33": "33%",
+          "66": "66%",
+          "100": "100%"
+        }
+      },
+      "panel": {
+        "name": "Frontpanel",
+        "state": {
+          "open": "Opne",
+          "close": "Lukk"
+        }
+      },
+      "filter_clean_interval": {
+        "name": "Intervall for filterreingjering",
+        "state": {
+          "180": "180 h",
+          "300": "300 h",
+          "500": "500 h",
+          "700": "700 h"
+        }
+      }
+    }
+  },
+  "services": {
+    "get_schedules": {
+      "name": "Hent tidsplanar",
+      "description": "List opp tidsplanane som er lagra i den innebygde planleggjaren til eininga. Dette styrer den innebygde planleggjaren til klimaanlegget, som køyrer sjølv når Home Assistant er fråkopla og berre slår eininga på eller av til eit fastsett tidspunkt. For meir komplekse scenario (temperatur, modus, vifte…) bruk Home Assistant-automasjonar."
+    },
+    "set_schedule": {
+      "name": "Set tidsplan",
+      "description": "Opprett eller rediger ein på/av-tidsplan. Dette styrer den innebygde planleggjaren til klimaanlegget, som køyrer sjølv når Home Assistant er fråkopla og berre slår eininga på eller av til eit fastsett tidspunkt. For meir komplekse scenario (temperatur, modus, vifte…) bruk Home Assistant-automasjonar.",
+      "fields": {
+        "time": {
+          "name": "Tid",
+          "description": "Lokalt klokkeslett på dagen når tidsplanen blir utløyst."
+        },
+        "power": {
+          "name": "På/av",
+          "description": "Om eininga blir slått på eller av."
+        },
+        "repeat": {
+          "name": "Frekvens",
+          "description": "Kor ofte han køyrer: éin gong, kvar dag eller vekevis på dei valde dagane."
+        },
+        "days": {
+          "name": "Dagar",
+          "description": "Kva dagar han skal køyre på — påkravd for 'Éin gong' og 'Vekevis', ignorert for 'Kvar dag'."
+        },
+        "enabled": {
+          "name": "Aktivert",
+          "description": "Om tidsplanen er aktiv."
+        },
+        "schedule_id": {
+          "name": "Tidsplan-ID",
+          "description": "ID for ein eksisterande tidsplan som skal redigerast; lat stå tomt for å opprette ein ny."
+        }
+      }
+    },
+    "delete_schedule": {
+      "name": "Slett tidsplan",
+      "description": "Slett ein tidsplan frå den innebygde planleggjaren til eininga. Dette styrer den innebygde planleggjaren til klimaanlegget, som køyrer sjølv når Home Assistant er fråkopla og berre slår eininga på eller av til eit fastsett tidspunkt. For meir komplekse scenario (temperatur, modus, vifte…) bruk Home Assistant-automasjonar.",
+      "fields": {
+        "schedule_id": {
+          "name": "Tidsplan-ID",
+          "description": "ID for tidsplanen som skal slettast (sjå sensoren Tidsplanar eller get_schedules)."
+        }
+      }
+    },
+    "get_power_usage": {
+      "name": "Hent straumforbruk",
+      "description": "Hent den registrerte straumforbrukshistorikken til klimaanlegget over eit tidsrom.",
+      "fields": {
+        "start": {
+          "name": "Start",
+          "description": "Starten på tidsrommet (lokal tid)."
+        },
+        "end": {
+          "name": "Slutt",
+          "description": "Slutten på tidsrommet (standard er no)."
+        },
+        "unit": {
+          "name": "Aggregering",
+          "description": "Aggreger forbruket per time eller per dag."
+        }
+      }
+    },
+    "set_power_logging": {
+      "name": "Set straumlogging",
+      "description": "Slå straumforbrukslogginga til eininga på eller av.",
+      "fields": {
+        "enable": {
+          "name": "Aktiver",
+          "description": "Om straumforbruksloggning er på."
+        }
+      }
+    },
+    "reset_power_logging": {
+      "name": "Nullstill straumlogging",
+      "description": "Tøm straumforbrukshistorikken som er registrert på eininga."
+    },
+    "set_nickname": {
+      "name": "Set kallenamn",
+      "description": "Set kallenamnet som er lagra på eininga.",
+      "fields": {
+        "nickname": {
+          "name": "Kallenamn",
+          "description": "Det nye kallenamnet."
+        }
+      }
+    },
+    "get_region_code": {
+      "name": "Hent regionkode",
+      "description": "Les regionkoden som er lagra på eininga."
+    },
+    "set_region_code": {
+      "name": "Set regionkode",
+      "description": "Set regionkoden som er lagra på eininga.",
+      "fields": {
+        "code": {
+          "name": "Kode",
+          "description": "Regionkoden."
+        }
+      }
+    }
+  },
+  "selector": {
+    "schedule_power": {
+      "options": {
+        "on": "På",
+        "off": "Av"
+      }
+    },
+    "schedule_repeat": {
+      "options": {
+        "once": "Éin gong",
+        "daily": "Kvar dag",
+        "weekly": "Vekevis (valde dagar)"
+      }
+    },
+    "schedule_days": {
+      "options": {
+        "mon": "Måndag",
+        "tue": "Tysdag",
+        "wed": "Onsdag",
+        "thu": "Torsdag",
+        "fri": "Fredag",
+        "sat": "Laurdag",
+        "sun": "Søndag"
+      }
+    },
+    "power_unit": {
+      "options": {
+        "hour": "Per time",
+        "day": "Per dag"
+      }
+    }
+  },
+  "exceptions": {
+    "command_failed": {
+      "message": "Samsung AC-kommando mislukkast: {error}"
+    },
+    "schedule_needs_day": {
+      "message": "Vel minst éin dag for tidsplanane 'Éin gong' og 'Vekevis'."
+    }
+  }
+}

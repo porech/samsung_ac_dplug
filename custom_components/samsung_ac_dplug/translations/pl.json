@@ -1,0 +1,358 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Klimatyzator Samsung (DPLUG / 2878)",
+        "description": "Jak chcesz skonfigurować klimatyzator?",
+        "menu_options": {
+          "onboard": "Podłącz nowe urządzenie do Wi-Fi (instrukcja)",
+          "manual": "Jest już w mojej sieci Wi-Fi (podaj IP)"
+        }
+      },
+      "onboard": {
+        "title": "Podłącz urządzenie do Wi-Fi",
+        "description": "Starsze urządzenia Samsung nie łączą się z Wi-Fi przez protokół sieciowy — trzeba to zrobić raz, fizycznie.\n\n**Opcja A — WPS (najprostsza, zalecana)**\n1. Na pilocie **przytrzymaj `Settings` przez 4 sekundy** (funkcja ukryta: na wyświetlaczu tylko mignie), aby uruchomić WPS.\n2. W ciągu 2 minut **naciśnij przycisk WPS na routerze**.\n3. Gdy dioda Wi-Fi na module świeci się ciągle, urządzenie się połączyło.\n\n**Opcja B — z komputera (jeśli router nie ma przycisku WPS)**\n1. Zainstaluj **Python 3**, jeśli go nie masz ({python_url}), a następnie **pobierz skrypt pomocniczy** (pojedynczy plik, nic więcej nie trzeba instalować): {script_url}\n2. Na pilocie **przytrzymaj `Timer` przez 4 sekundy**, aby przełączyć urządzenie w tryb AP; pojawi się sieć Wi-Fi o nazwie **`SMARTAIRCON`**.\n3. **Podłącz komputer do sieci `SMARTAIRCON`** (hasło **`1111122222`**).\n4. **Uruchom skrypt** — `python3 provision.py` — a po wyświetleniu monitu wpisz nazwę i hasło swojej domowej sieci Wi-Fi.\n5. Gdy wyświetli się **Done**, urządzenie połączy się z Twoim Wi-Fi; podłącz komputer z powrotem do zwykłej sieci.\n\nGdy urządzenie jest już w Twojej sieci Wi-Fi, **zamknij to okno** i otwórz **Ustawienia → Urządzenia i usługi**: powinno zostać zaproponowane tam automatycznie (wykrywanie). Jeśli nie, ponownie rozpocznij dodawanie i wybierz **Jest już w mojej sieci Wi-Fi**, aby podać jego adres IP.\n\n_Dla zaawansowanych użytkowników: `python3 provision.py --help` wyświetla opcje uruchomienia go bez interaktywnych monitów._"
+      },
+      "manual": {
+        "title": "Połączenie z klimatyzatorem",
+        "description": "Wprowadź adres IP urządzenia. Token zostanie obsłużony w następnym kroku.",
+        "data": {
+          "host": "Adres IP"
+        }
+      },
+      "token": {
+        "title": "Pobranie tokenu dostępu",
+        "description": "Urządzenie pod adresem {host} wydaje token tylko przy włączeniu (fizyczny dowód dostępu).\n\n1. **Wyłącz klimatyzator** pilotem, jeśli jest włączony.\n2. Naciśnij poniżej **Wyślij** (pozostaw pole puste).\n3. W ciągu ~30 sekund **włącz klimatyzator** pilotem.\n\nToken zostanie automatycznie przechwycony i zapisany.\n\n**Alternatywnie**, jeśli masz już token tego urządzenia, wpisz go poniżej i naciśnij Wyślij.",
+        "data": {
+          "token": "Token (opcjonalnie)"
+        }
+      },
+      "save_token": {
+        "title": "Token pobrany",
+        "description": "Gotowe — token urządzenia pod adresem {host} został pobrany i zapisany w tej integracji.\n\n💡 **Wskazówka:** zapisz token tego urządzenia, aby nie trzeba go było ponownie pobierać w przyszłości (możesz go wkleić bezpośrednio podczas dodawania urządzenia):\n\n```\n{token}\n```\n\nNaciśnij **Wyślij**, aby zakończyć."
+      },
+      "reauth_confirm": {
+        "title": "Ponowne uwierzytelnienie klimatyzatora Samsung",
+        "description": "Token urządzenia pod adresem {host} został odrzucony (może się zmienić po zresetowaniu modułu). Pobierz nowy: wyłącz urządzenie, wyślij (pozostaw puste), a następnie włącz je w ciągu ~30 s. Albo wpisz poniżej znany token.",
+        "data": {
+          "token": "Token (opcjonalnie)"
+        }
+      },
+      "discovery_confirm": {
+        "title": "Znaleziono klimatyzator Samsung",
+        "description": "Pod adresem {host} wykryto klimatyzator Samsung. Skonfigurować go teraz? W następnym kroku pobierzesz token (przez włączenie), o ile już go nie znasz."
+      },
+      "reconfigure": {
+        "title": "Zmień adres IP",
+        "description": "Wprowadź nowy adres IP tego klimatyzatora. Istniejący token zostanie użyty ponownie.",
+        "data": {
+          "host": "Adres IP"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Nie można się połączyć. Sprawdź adres IP oraz czy urządzenie jest w sieci.",
+      "auth": "Token został odrzucony. Pozostaw puste, aby pobrać nowy.",
+      "no_token": "Nie otrzymano tokenu. Upewnij się, że urządzenie było wyłączone, a następnie włączone w wyznaczonym oknie. Spróbuj ponownie."
+    },
+    "abort": {
+      "already_configured": "Ten klimatyzator jest już skonfigurowany.",
+      "not_samsung_ac": "To urządzenie nie obsługuje protokołu Samsung DPLUG.",
+      "reauth_successful": "Ponowne uwierzytelnienie powiodło się.",
+      "onboard_finished": "Gdy klimatyzator jest już w Twojej sieci Wi-Fi, dodaj go z Ustawienia → Urządzenia i usługi — powinien zostać wykryty automatycznie, albo wybierz „Jest już w mojej sieci Wi-Fi”, aby podać jego adres IP.",
+      "wrong_device": "Pod podanym adresem znajduje się inny klimatyzator.",
+      "reconfigure_successful": "Adres IP został zaktualizowany."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Opcje Samsung AC",
+        "data": {
+          "live_updates": "Aktualizacje na żywo (trwałe połączenie)",
+          "scan_interval": "Interwał odświeżania (sekundy)"
+        },
+        "data_description": {
+          "live_updates": "Utrzymuje jedno trwałe połączenie dla natychmiastowych aktualizacji push. Jeśli wyłączone, integracja odpytuje (polling) i nie używa trwałego połączenia (bardziej odporne).",
+          "scan_interval": "Interwał odpytywania, gdy aktualizacje na żywo są wyłączone; zapasowe/keepalive odpytanie, gdy są włączone."
+        }
+      }
+    }
+  },
+  "entity": {
+    "climate": {
+      "samsung_ac": {
+        "state_attributes": {
+          "preset_mode": {
+            "state": {
+              "none": "Wyłączone",
+              "quiet": "Cichy",
+              "fast_turbo": "Fast Turbo",
+              "comfort": "Komfort",
+              "dlight_cool": "d'light Cool",
+              "smart_saver": "Smart Saver",
+              "color_of_wind_alps": "Color of Wind: Alps",
+              "color_of_wind_florida": "Color of Wind: Florida",
+              "color_of_wind_savanna": "Color of Wind: Savanna"
+            }
+          },
+          "swing_mode": {
+            "state": {
+              "off": "Wyłączone",
+              "vertical": "Pionowo",
+              "horizontal": "Poziomo",
+              "both": "Oba",
+              "indirect": "Pośrednio",
+              "direct": "Bezpośrednio",
+              "center": "Środek",
+              "wide": "Szeroko",
+              "left": "Lewo",
+              "right": "Prawo",
+              "long": "Długo"
+            }
+          }
+        }
+      }
+    },
+    "sensor": {
+      "temperature": {
+        "name": "Temperatura"
+      },
+      "humidity": {
+        "name": "Wilgotność"
+      },
+      "outdoor_temperature": {
+        "name": "Temperatura zewnętrzna"
+      },
+      "used_time": {
+        "name": "Czas pracy"
+      },
+      "filter_use_time": {
+        "name": "Czas używania filtra"
+      },
+      "filter_life": {
+        "name": "Żywotność filtra"
+      },
+      "error": {
+        "name": "Kod błędu"
+      },
+      "device_clock": {
+        "name": "Zegar urządzenia"
+      },
+      "schedules": {
+        "name": "Harmonogramy"
+      }
+    },
+    "switch": {
+      "purify": {
+        "name": "Purify (SPi)"
+      },
+      "auto_clean": {
+        "name": "Automatyczne czyszczenie"
+      },
+      "light": {
+        "name": "Podświetlenie wyświetlacza"
+      },
+      "sterilize": {
+        "name": "Sterylizacja"
+      },
+      "smart_on": {
+        "name": "Inteligentne włączanie"
+      },
+      "weather": {
+        "name": "Pogoda"
+      }
+    },
+    "number": {
+      "sleep_timer": {
+        "name": "Wyłącznik czasowy snu"
+      },
+      "on_timer": {
+        "name": "Programator włączenia"
+      },
+      "off_timer": {
+        "name": "Programator wyłączenia"
+      },
+      "energy_target": {
+        "name": "Cel zużycia energii"
+      }
+    },
+    "select": {
+      "occupancy": {
+        "name": "Liczba osób",
+        "state": {
+          "single": "Pojedyncza",
+          "couple": "Para",
+          "family": "Rodzina"
+        }
+      },
+      "beep_volume": {
+        "name": "Głośność sygnału",
+        "state": {
+          "mute": "Wyciszone",
+          "33": "33%",
+          "66": "66%",
+          "100": "100%"
+        }
+      },
+      "panel": {
+        "name": "Panel przedni",
+        "state": {
+          "open": "Otwórz",
+          "close": "Zamknij"
+        }
+      },
+      "filter_clean_interval": {
+        "name": "Interwał czyszczenia filtra",
+        "state": {
+          "180": "180 h",
+          "300": "300 h",
+          "500": "500 h",
+          "700": "700 h"
+        }
+      }
+    }
+  },
+  "services": {
+    "get_schedules": {
+      "name": "Pobierz harmonogramy",
+      "description": "Wyświetla harmonogramy zapisane we wbudowanym harmonogramie urządzenia. Steruje wbudowanym harmonogramem klimatyzatora, który działa nawet gdy Home Assistant jest offline i tylko włącza lub wyłącza urządzenie o ustalonej godzinie. Do bardziej złożonych scenariuszy (temperatura, tryb, wentylator…) użyj automatyzacji Home Assistant."
+    },
+    "set_schedule": {
+      "name": "Ustaw harmonogram",
+      "description": "Tworzy lub edytuje harmonogram włączania/wyłączania. Steruje wbudowanym harmonogramem klimatyzatora, który działa nawet gdy Home Assistant jest offline i tylko włącza lub wyłącza urządzenie o ustalonej godzinie. Do bardziej złożonych scenariuszy (temperatura, tryb, wentylator…) użyj automatyzacji Home Assistant.",
+      "fields": {
+        "time": {
+          "name": "Godzina",
+          "description": "Lokalna godzina dnia, o której uruchamia się harmonogram."
+        },
+        "power": {
+          "name": "Zasilanie",
+          "description": "Czy urządzenie się włącza, czy wyłącza."
+        },
+        "repeat": {
+          "name": "Częstotliwość",
+          "description": "Jak często jest uruchamiany: raz, codziennie lub co tydzień w wybrane dni."
+        },
+        "days": {
+          "name": "Dni",
+          "description": "W które dni uruchamiać — wymagane dla „Raz” i „Co tydzień”, ignorowane dla „Codziennie”."
+        },
+        "enabled": {
+          "name": "Włączony",
+          "description": "Czy harmonogram jest aktywny."
+        },
+        "schedule_id": {
+          "name": "ID harmonogramu",
+          "description": "ID istniejącego harmonogramu do edycji; pozostaw puste, aby utworzyć nowy."
+        }
+      }
+    },
+    "delete_schedule": {
+      "name": "Usuń harmonogram",
+      "description": "Usuwa harmonogram z wbudowanego harmonogramu urządzenia. Steruje wbudowanym harmonogramem klimatyzatora, który działa nawet gdy Home Assistant jest offline i tylko włącza lub wyłącza urządzenie o ustalonej godzinie. Do bardziej złożonych scenariuszy (temperatura, tryb, wentylator…) użyj automatyzacji Home Assistant.",
+      "fields": {
+        "schedule_id": {
+          "name": "ID harmonogramu",
+          "description": "ID harmonogramu do usunięcia (zobacz sensor Harmonogramy lub get_schedules)."
+        }
+      }
+    },
+    "get_power_usage": {
+      "name": "Pobierz zużycie energii",
+      "description": "Pobiera historię zarejestrowanego zużycia energii klimatyzatora w danym zakresie czasu.",
+      "fields": {
+        "start": {
+          "name": "Początek",
+          "description": "Początek zakresu (czas lokalny)."
+        },
+        "end": {
+          "name": "Koniec",
+          "description": "Koniec zakresu (domyślnie: teraz)."
+        },
+        "unit": {
+          "name": "Agregacja",
+          "description": "Agreguj zużycie na godzinę lub na dzień."
+        }
+      }
+    },
+    "set_power_logging": {
+      "name": "Ustaw rejestrowanie zużycia",
+      "description": "Włącza lub wyłącza rejestrowanie zużycia energii na urządzeniu.",
+      "fields": {
+        "enable": {
+          "name": "Włącz",
+          "description": "Czy rejestrowanie zużycia energii jest włączone."
+        }
+      }
+    },
+    "reset_power_logging": {
+      "name": "Wyzeruj rejestrowanie zużycia",
+      "description": "Czyści historię zużycia energii zarejestrowaną na urządzeniu."
+    },
+    "set_nickname": {
+      "name": "Ustaw pseudonim",
+      "description": "Ustawia pseudonim zapisany na urządzeniu.",
+      "fields": {
+        "nickname": {
+          "name": "Pseudonim",
+          "description": "Nowy pseudonim."
+        }
+      }
+    },
+    "get_region_code": {
+      "name": "Pobierz kod regionu",
+      "description": "Odczytuje kod regionu zapisany na urządzeniu."
+    },
+    "set_region_code": {
+      "name": "Ustaw kod regionu",
+      "description": "Ustawia kod regionu zapisany na urządzeniu.",
+      "fields": {
+        "code": {
+          "name": "Kod",
+          "description": "Kod regionu."
+        }
+      }
+    }
+  },
+  "selector": {
+    "schedule_power": {
+      "options": {
+        "on": "Włączony",
+        "off": "Wyłączony"
+      }
+    },
+    "schedule_repeat": {
+      "options": {
+        "once": "Raz",
+        "daily": "Codziennie",
+        "weekly": "Co tydzień (wybrane dni)"
+      }
+    },
+    "schedule_days": {
+      "options": {
+        "mon": "Poniedziałek",
+        "tue": "Wtorek",
+        "wed": "Środa",
+        "thu": "Czwartek",
+        "fri": "Piątek",
+        "sat": "Sobota",
+        "sun": "Niedziela"
+      }
+    },
+    "power_unit": {
+      "options": {
+        "hour": "Na godzinę",
+        "day": "Na dzień"
+      }
+    }
+  },
+  "exceptions": {
+    "command_failed": {
+      "message": "Polecenie klimatyzatora Samsung nie powiodło się: {error}"
+    },
+    "schedule_needs_day": {
+      "message": "Wybierz co najmniej jeden dzień dla harmonogramów „Raz” i „Co tydzień”."
+    }
+  }
+}

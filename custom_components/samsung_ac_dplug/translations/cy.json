@@ -1,0 +1,358 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Aerdymheru Samsung (DPLUG / 2878)",
+        "description": "Sut hoffech chi osod eich aerdymheru?",
+        "menu_options": {
+          "onboard": "Cysylltu uned newydd â Wi-Fi (cyfarwyddiadau)",
+          "manual": "Mae eisoes ar fy Wi-Fi (rhowch IP)"
+        }
+      },
+      "onboard": {
+        "title": "Cysylltu'r uned â'ch Wi-Fi",
+        "description": "Nid yw hen unedau Samsung yn ymuno â Wi-Fi dros y protocol rhwydwaith — gwnewch hyn unwaith, yn gorfforol.\n\n**Opsiwn A — WPS (hawsaf, argymhellir)**\n1. Ar y teclyn rheoli, **daliwch `Settings` am 4 eiliad** (swyddogaeth gudd: dim ond fflachio mae'r sgrin) i ddechrau WPS.\n2. O fewn 2 funud, **pwyswch y botwm WPS ar eich llwybrydd**.\n3. Pan fydd y golau LED Wi-Fi ar y modiwl yn aros yn solet, mae wedi ymuno.\n\n**Opsiwn B — o gyfrifiadur (os nad oes botwm WPS gan eich llwybrydd)**\n1. Gosodwch **Python 3** os nad yw gennych ({python_url}), yna **lawrlwythwch y sgript gymorth** (un ffeil, dim angen gosod dim byd ychwanegol): {script_url}\n2. Ar y teclyn rheoli, **daliwch `Timer` am 4 eiliad** i roi'r uned ym modd AP; bydd rhwydwaith Wi-Fi o'r enw **`SMARTAIRCON`** yn ymddangos.\n3. **Cysylltwch y cyfrifiadur â'r rhwydwaith `SMARTAIRCON`** (cyfrinair **`1111122222`**).\n4. **Rhedwch y sgript** — `python3 provision.py` — a, phan ofynnir, rhowch enw a chyfrinair eich Wi-Fi cartref.\n5. Pan fydd yn argraffu **Done**, mae'r uned yn ymuno â'ch Wi-Fi; ailgysylltwch y cyfrifiadur â'ch rhwydwaith arferol.\n\nUnwaith y bydd yr uned ar eich Wi-Fi, **caewch y ffenestr hon** ac agorwch **Gosodiadau → Dyfeisiau a Gwasanaethau**: dylai gael ei gynnig yno'n awtomatig (darganfod). Os na, dechreuwch ei ychwanegu eto a dewiswch **Mae eisoes ar fy Wi-Fi** i roi ei IP.\n\n_I ddefnyddwyr uwch: mae `python3 provision.py --help` yn rhestru'r opsiynau i'w rhedeg heb yr awgrymiadau rhyngweithiol._"
+      },
+      "manual": {
+        "title": "Cysylltu â'r aerdymheru",
+        "description": "Rhowch gyfeiriad IP yr uned. Mae'r tocyn yn cael ei drin yn y cam nesaf.",
+        "data": {
+          "host": "Cyfeiriad IP"
+        }
+      },
+      "token": {
+        "title": "Cael y tocyn mynediad",
+        "description": "Dim ond pan gaiff ei droi ymlaen y mae'r uned ar {host} yn rhoi tocyn (cam prawf mynediad corfforol).\n\n1. **Diffoddwch yr aerdymheru** gyda'r teclyn rheoli, os yw ymlaen.\n2. Pwyswch **Cyflwyno** isod (gadewch y maes yn wag).\n3. O fewn ~30 eiliad, **trowch yr aerdymheru ymlaen** gyda'r teclyn rheoli.\n\nBydd y tocyn yn cael ei ddal a'i storio'n awtomatig.\n\n**Fel arall**, os oes gennych docyn yr uned hon eisoes, rhowch ef isod a phwyswch Cyflwyno.",
+        "data": {
+          "token": "Tocyn (dewisol)"
+        }
+      },
+      "save_token": {
+        "title": "Tocyn wedi'i gael",
+        "description": "Wedi'i wneud — cafodd y tocyn ar gyfer yr uned ar {host} ei gael a'i gadw yn yr integreiddiad hwn.\n\n💡 **Awgrym:** cadwch docyn y ddyfais hon fel nad oes rhaid i chi ei gael eto yn y dyfodol (gallwch ei ludo'n uniongyrchol wrth ychwanegu'r uned):\n\n```\n{token}\n```\n\nPwyswch **Cyflwyno** i orffen."
+      },
+      "reauth_confirm": {
+        "title": "Ail-ddilysu aerdymheru Samsung",
+        "description": "Gwrthodwyd y tocyn ar gyfer yr uned ar {host} (gall newid ar ôl ailosod y modiwl). Cael un newydd: diffoddwch yr uned, cyflwynwch (gadewch yn wag), yna trowch ymlaen o fewn ~30 eiliad. Neu rhowch docyn hysbys isod.",
+        "data": {
+          "token": "Tocyn (dewisol)"
+        }
+      },
+      "discovery_confirm": {
+        "title": "Aerdymheru Samsung wedi'i ganfod",
+        "description": "Canfuwyd aerdymheru Samsung ar {host}. Ei osod nawr? Yn y cam nesaf byddwch yn cael tocyn (troi ymlaen), oni bai eich bod yn ei wybod eisoes."
+      },
+      "reconfigure": {
+        "title": "Newid cyfeiriad IP",
+        "description": "Rhowch gyfeiriad IP newydd ar gyfer yr aerdymheru hwn. Caiff y tocyn presennol ei ailddefnyddio.",
+        "data": {
+          "host": "Cyfeiriad IP"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Methu cysylltu. Gwiriwch y cyfeiriad IP a bod yr uned ar y rhwydwaith.",
+      "auth": "Gwrthodwyd y tocyn. Gadewch yn wag i gael un newydd.",
+      "no_token": "Ni dderbyniwyd tocyn. Sicrhewch fod yr uned wedi'i diffodd, yna ei throi ymlaen o fewn y ffenestr amser. Ceisiwch eto."
+    },
+    "abort": {
+      "already_configured": "Mae'r aerdymheru hwn eisoes wedi'i ffurfweddu.",
+      "not_samsung_ac": "Nid yw'r ddyfais hon yn siarad protocol Samsung DPLUG.",
+      "reauth_successful": "Roedd yr ail-ddilysu yn llwyddiannus.",
+      "onboard_finished": "Unwaith y bydd yr aerdymheru ar eich Wi-Fi, ychwanegwch ef o Gosodiadau → Dyfeisiau a Gwasanaethau — dylai gael ei ganfod yn awtomatig, neu dewiswch “Mae eisoes ar fy Wi-Fi” i roi ei IP.",
+      "wrong_device": "Mae'r uned ar y cyfeiriad hwnnw'n aerdymheru gwahanol.",
+      "reconfigure_successful": "Diweddarwyd y cyfeiriad IP."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Opsiynau Samsung AC",
+        "data": {
+          "live_updates": "Diweddariadau byw (cysylltiad parhaus)",
+          "scan_interval": "Cyfwng adnewyddu (eiliadau)"
+        },
+        "data_description": {
+          "live_updates": "Cadw un cysylltiad parhaus ar gyfer diweddariadau gwthio ar unwaith. Os yw i ffwrdd, mae'r integreiddiad yn pôlio ac nid yw'n defnyddio cysylltiad parhaus (mwy gwydn).",
+          "scan_interval": "Cyfwng pôlio pan fo diweddariadau byw i ffwrdd; pôl wrth gefn/keepalive pan fyddant ymlaen."
+        }
+      }
+    }
+  },
+  "entity": {
+    "climate": {
+      "samsung_ac": {
+        "state_attributes": {
+          "preset_mode": {
+            "state": {
+              "none": "I ffwrdd",
+              "quiet": "Tawel",
+              "fast_turbo": "Twrbo Cyflym",
+              "comfort": "Cysur",
+              "dlight_cool": "d'light Cool",
+              "smart_saver": "Smart Saver",
+              "color_of_wind_alps": "Color of Wind: Alps",
+              "color_of_wind_florida": "Color of Wind: Florida",
+              "color_of_wind_savanna": "Color of Wind: Savanna"
+            }
+          },
+          "swing_mode": {
+            "state": {
+              "off": "I ffwrdd",
+              "vertical": "Fertigol",
+              "horizontal": "Llorweddol",
+              "both": "Y ddau",
+              "indirect": "Anuniongyrchol",
+              "direct": "Uniongyrchol",
+              "center": "Canol",
+              "wide": "Llydan",
+              "left": "Chwith",
+              "right": "De",
+              "long": "Hir"
+            }
+          }
+        }
+      }
+    },
+    "sensor": {
+      "temperature": {
+        "name": "Tymheredd"
+      },
+      "humidity": {
+        "name": "Lleithder"
+      },
+      "outdoor_temperature": {
+        "name": "Tymheredd awyr agored"
+      },
+      "used_time": {
+        "name": "Amser gweithredu"
+      },
+      "filter_use_time": {
+        "name": "Amser defnyddio'r hidlydd"
+      },
+      "filter_life": {
+        "name": "Oes yr hidlydd"
+      },
+      "error": {
+        "name": "Cod gwall"
+      },
+      "device_clock": {
+        "name": "Cloc y ddyfais"
+      },
+      "schedules": {
+        "name": "Amserlenni"
+      }
+    },
+    "switch": {
+      "purify": {
+        "name": "Purify (SPi)"
+      },
+      "auto_clean": {
+        "name": "Glanhau awtomatig"
+      },
+      "light": {
+        "name": "Golau'r sgrin"
+      },
+      "sterilize": {
+        "name": "Diheintio"
+      },
+      "smart_on": {
+        "name": "Smart on"
+      },
+      "weather": {
+        "name": "Tywydd"
+      }
+    },
+    "number": {
+      "sleep_timer": {
+        "name": "Amserydd cysgu"
+      },
+      "on_timer": {
+        "name": "Amserydd ymlaen"
+      },
+      "off_timer": {
+        "name": "Amserydd diffodd"
+      },
+      "energy_target": {
+        "name": "Targed ynni"
+      }
+    },
+    "select": {
+      "occupancy": {
+        "name": "Defnydd",
+        "state": {
+          "single": "Sengl",
+          "couple": "Cwpwl",
+          "family": "Teulu"
+        }
+      },
+      "beep_volume": {
+        "name": "Lefel sain bîp",
+        "state": {
+          "mute": "Distaw",
+          "33": "33%",
+          "66": "66%",
+          "100": "100%"
+        }
+      },
+      "panel": {
+        "name": "Panel blaen",
+        "state": {
+          "open": "Agor",
+          "close": "Cau"
+        }
+      },
+      "filter_clean_interval": {
+        "name": "Cyfwng glanhau'r hidlydd",
+        "state": {
+          "180": "180 h",
+          "300": "300 h",
+          "500": "500 h",
+          "700": "700 h"
+        }
+      }
+    }
+  },
+  "services": {
+    "get_schedules": {
+      "name": "Cael amserlenni",
+      "description": "Rhestru'r amserlenni sydd wedi'u storio ar amserydd mewnol yr uned. Mae hyn yn rheoli amserydd mewnol yr aerdymheru, sy'n rhedeg hyd yn oed pan fo Home Assistant all-lein, ac sy'n troi'r uned ymlaen neu i ffwrdd ar amser penodol yn unig. Ar gyfer senarios mwy cymhleth (tymheredd, modd, gwyntyll…) defnyddiwch awtomeiddiadau Home Assistant."
+    },
+    "set_schedule": {
+      "name": "Gosod amserlen",
+      "description": "Creu neu olygu amserlen ymlaen/i ffwrdd. Mae hyn yn rheoli amserydd mewnol yr aerdymheru, sy'n rhedeg hyd yn oed pan fo Home Assistant all-lein, ac sy'n troi'r uned ymlaen neu i ffwrdd ar amser penodol yn unig. Ar gyfer senarios mwy cymhleth (tymheredd, modd, gwyntyll…) defnyddiwch awtomeiddiadau Home Assistant.",
+      "fields": {
+        "time": {
+          "name": "Amser",
+          "description": "Amser lleol y dydd pan fydd yr amserlen yn tanio."
+        },
+        "power": {
+          "name": "Pŵer",
+          "description": "Pa un a yw'r uned yn troi ymlaen neu i ffwrdd."
+        },
+        "repeat": {
+          "name": "Amlder",
+          "description": "Pa mor aml y mae'n rhedeg: unwaith, bob dydd, neu'n wythnosol ar y dyddiau a ddewiswyd."
+        },
+        "days": {
+          "name": "Dyddiau",
+          "description": "Pa ddyddiau i redeg arnynt — gofynnol ar gyfer 'Unwaith' a 'Wythnosol', anwybyddir ar gyfer 'Bob dydd'."
+        },
+        "enabled": {
+          "name": "Wedi'i alluogi",
+          "description": "Pa un a yw'r amserlen yn weithredol."
+        },
+        "schedule_id": {
+          "name": "ID amserlen",
+          "description": "ID amserlen sy'n bodoli i'w golygu; gadewch yn wag i greu un newydd."
+        }
+      }
+    },
+    "delete_schedule": {
+      "name": "Dileu amserlen",
+      "description": "Dileu amserlen o amserydd mewnol yr uned. Mae hyn yn rheoli amserydd mewnol yr aerdymheru, sy'n rhedeg hyd yn oed pan fo Home Assistant all-lein, ac sy'n troi'r uned ymlaen neu i ffwrdd ar amser penodol yn unig. Ar gyfer senarios mwy cymhleth (tymheredd, modd, gwyntyll…) defnyddiwch awtomeiddiadau Home Assistant.",
+      "fields": {
+        "schedule_id": {
+          "name": "ID amserlen",
+          "description": "ID yr amserlen i'w dileu (gweler y synhwyrydd Amserlenni neu get_schedules)."
+        }
+      }
+    },
+    "get_power_usage": {
+      "name": "Cael defnydd pŵer",
+      "description": "Adfer hanes defnydd pŵer yr aerdymheru a gofnodwyd dros gyfnod o amser.",
+      "fields": {
+        "start": {
+          "name": "Dechrau",
+          "description": "Dechrau'r cyfnod (amser lleol)."
+        },
+        "end": {
+          "name": "Diwedd",
+          "description": "Diwedd y cyfnod (rhagosodir i nawr)."
+        },
+        "unit": {
+          "name": "Crynhoad",
+          "description": "Crynhoi'r defnydd fesul awr neu fesul dydd."
+        }
+      }
+    },
+    "set_power_logging": {
+      "name": "Gosod cofnodi pŵer",
+      "description": "Troi cofnodi defnydd pŵer yr uned ymlaen neu i ffwrdd.",
+      "fields": {
+        "enable": {
+          "name": "Galluogi",
+          "description": "Pa un a yw cofnodi defnydd pŵer ymlaen."
+        }
+      }
+    },
+    "reset_power_logging": {
+      "name": "Ailosod cofnodi pŵer",
+      "description": "Clirio'r hanes defnydd pŵer a gofnodwyd ar yr uned."
+    },
+    "set_nickname": {
+      "name": "Gosod llysenw",
+      "description": "Gosod y llysenw sydd wedi'i storio ar yr uned.",
+      "fields": {
+        "nickname": {
+          "name": "Llysenw",
+          "description": "Y llysenw newydd."
+        }
+      }
+    },
+    "get_region_code": {
+      "name": "Cael cod rhanbarth",
+      "description": "Darllen y cod rhanbarth sydd wedi'i storio ar yr uned."
+    },
+    "set_region_code": {
+      "name": "Gosod cod rhanbarth",
+      "description": "Gosod y cod rhanbarth sydd wedi'i storio ar yr uned.",
+      "fields": {
+        "code": {
+          "name": "Cod",
+          "description": "Y cod rhanbarth."
+        }
+      }
+    }
+  },
+  "selector": {
+    "schedule_power": {
+      "options": {
+        "on": "Ymlaen",
+        "off": "I ffwrdd"
+      }
+    },
+    "schedule_repeat": {
+      "options": {
+        "once": "Unwaith",
+        "daily": "Bob dydd",
+        "weekly": "Wythnosol (dyddiau a ddewiswyd)"
+      }
+    },
+    "schedule_days": {
+      "options": {
+        "mon": "Llun",
+        "tue": "Mawrth",
+        "wed": "Mercher",
+        "thu": "Iau",
+        "fri": "Gwener",
+        "sat": "Sadwrn",
+        "sun": "Sul"
+      }
+    },
+    "power_unit": {
+      "options": {
+        "hour": "Fesul awr",
+        "day": "Fesul dydd"
+      }
+    }
+  },
+  "exceptions": {
+    "command_failed": {
+      "message": "Methodd gorchymyn Samsung AC: {error}"
+    },
+    "schedule_needs_day": {
+      "message": "Dewiswch o leiaf un diwrnod ar gyfer amserlenni 'Unwaith' a 'Wythnosol'."
+    }
+  }
+}

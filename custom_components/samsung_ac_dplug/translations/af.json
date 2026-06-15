@@ -1,0 +1,358 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Samsung-lugreëlaar (DPLUG / 2878)",
+        "description": "Hoe wil jy jou lugreëlaar opstel?",
+        "menu_options": {
+          "onboard": "Verbind 'n nuwe eenheid met Wi-Fi (instruksies)",
+          "manual": "Dit is reeds op my Wi-Fi (voer IP in)"
+        }
+      },
+      "onboard": {
+        "title": "Verbind die eenheid met jou Wi-Fi",
+        "description": "Ou Samsung-eenhede word nie oor die netwerkprotokol met Wi-Fi verbind nie — dit moet een keer fisies gedoen word.\n\n**Opsie A — WPS (eenvoudigste, aanbeveel)**\n1. Hou op die afstandsbeheer **`Settings` 4 sekondes lank in** (versteekte funksie: die skerm flikker net) om WPS te begin.\n2. **Druk binne 2 minute die WPS-knoppie op jou roeteerder**.\n3. Wanneer die Wi-Fi-LED op die module aanhoudend brand, is dit verbind.\n\n**Opsie B — vanaf 'n rekenaar (as jou roeteerder nie 'n WPS-knoppie het nie)**\n1. Installeer **Python 3** as jy dit nie het nie ({python_url}), en **laai dan die hulpskrip af** (een enkele lêer, geen ekstra installasies nodig nie): {script_url}\n2. Hou op die afstandsbeheer **`Timer` 4 sekondes lank in** om die eenheid in AP-modus te plaas; 'n Wi-Fi-netwerk met die naam **`SMARTAIRCON`** sal verskyn.\n3. **Verbind die rekenaar met die netwerk `SMARTAIRCON`** (wagwoord **`1111122222`**).\n4. **Voer die skrip uit** — `python3 provision.py` — en voer, wanneer dit gevra word, die naam en wagwoord van jou tuis-Wi-Fi in.\n5. Wanneer **Done** verskyn, verbind die eenheid met jou Wi-Fi; verbind die rekenaar weer met jou gewone netwerk.\n\nSodra die eenheid op jou Wi-Fi is, **maak hierdie venster toe** en open **Instellings → Toestelle en dienste**: dit behoort daar outomaties aangebied te word (ontdekking). Indien nie, begin die byvoeging weer en kies **Dit is reeds op my Wi-Fi** om die IP in te voer.\n\n_Vir gevorderde gebruikers: `python3 provision.py --help` lys die opsies om dit sonder die interaktiewe vrae uit te voer._"
+      },
+      "manual": {
+        "title": "Verbind met die lugreëlaar",
+        "description": "Voer die eenheid se IP-adres in. Die token word in die volgende stap hanteer.",
+        "data": {
+          "host": "IP-adres"
+        }
+      },
+      "token": {
+        "title": "Verkry die toegangstoken",
+        "description": "Die eenheid by {host} reik slegs met aanskakeling 'n token uit ('n fisiese toegangsbewys-stap).\n\n1. **Skakel die lugreëlaar AF** met die afstandsbeheer, as dit aan is.\n2. Druk **Dien in** hieronder (laat die veld leeg).\n3. Skakel die lugreëlaar binne ~30 sekondes **AAN** met die afstandsbeheer.\n\nDie token word outomaties vasgevang en gestoor.\n\n**Alternatiewelik**, as jy hierdie eenheid se token reeds het, voer dit hieronder in en druk Dien in.",
+        "data": {
+          "token": "Token (opsioneel)"
+        }
+      },
+      "save_token": {
+        "title": "Token verkry",
+        "description": "Klaar — die token vir die eenheid by {host} is verkry en in hierdie integrasie gestoor.\n\n💡 **Wenk:** stoor hierdie toestel se token sodat jy dit nie in die toekoms weer hoef te verkry nie (jy kan dit direk plak wanneer jy die eenheid byvoeg):\n\n```\n{token}\n```\n\nDruk **Dien in** om te voltooi."
+      },
+      "reauth_confirm": {
+        "title": "Verifieer Samsung-lugreëlaar weer",
+        "description": "Die token vir die eenheid by {host} is verwerp (dit kan verander ná 'n module-terugstelling). Verkry 'n nuwe een: skakel die eenheid AF, dien in (laat leeg) en skakel dit dan binne ~30s AAN. Of voer 'n bekende token hieronder in.",
+        "data": {
+          "token": "Token (opsioneel)"
+        }
+      },
+      "discovery_confirm": {
+        "title": "Samsung-lugreëlaar gevind",
+        "description": "'n Samsung-lugreëlaar is by {host} ontdek. Nou opstel? In die volgende stap sal jy 'n token verkry (deur aan te skakel), tensy jy dit reeds ken."
+      },
+      "reconfigure": {
+        "title": "Verander IP-adres",
+        "description": "Voer die nuwe IP-adres vir hierdie lugreëlaar in. Die bestaande token word hergebruik.",
+        "data": {
+          "host": "IP-adres"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Kan nie verbind nie. Kontroleer die IP-adres en dat die eenheid op die netwerk is.",
+      "auth": "Die token is verwerp. Laat dit leeg om 'n nuwe een te verkry.",
+      "no_token": "Geen token ontvang nie. Maak seker die eenheid was AF en is dan binne die venster AAN geskakel. Probeer weer."
+    },
+    "abort": {
+      "already_configured": "Hierdie lugreëlaar is reeds gekonfigureer.",
+      "not_samsung_ac": "Hierdie toestel praat nie die Samsung-DPLUG-protokol nie.",
+      "reauth_successful": "Herverifikasie was suksesvol.",
+      "onboard_finished": "Sodra die lugreëlaar op jou Wi-Fi is, voeg dit by vanaf Instellings → Toestelle en dienste — dit behoort outomaties ontdek te word, of kies “Dit is reeds op my Wi-Fi” om die IP in te voer.",
+      "wrong_device": "Die eenheid by daardie adres is 'n ander lugreëlaar.",
+      "reconfigure_successful": "Die IP-adres is opgedateer."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Samsung AC-opsies",
+        "data": {
+          "live_updates": "Lewende opdaterings (volgehoue verbinding)",
+          "scan_interval": "Verfris-interval (sekondes)"
+        },
+        "data_description": {
+          "live_updates": "Hou een volgehoue verbinding vir onmiddellike stoot-opdaterings. As dit af is, doen die integrasie peiling en gebruik geen volgehoue verbinding nie (meer veerkragtig).",
+          "scan_interval": "Peiling-interval wanneer lewende opdaterings af is; terugval-/lewendhou-peiling wanneer hulle aan is."
+        }
+      }
+    }
+  },
+  "entity": {
+    "climate": {
+      "samsung_ac": {
+        "state_attributes": {
+          "preset_mode": {
+            "state": {
+              "none": "Af",
+              "quiet": "Stil",
+              "fast_turbo": "Vinnige turbo",
+              "comfort": "Gemak",
+              "dlight_cool": "d'light Cool",
+              "smart_saver": "Smart Saver",
+              "color_of_wind_alps": "Color of Wind: Alps",
+              "color_of_wind_florida": "Color of Wind: Florida",
+              "color_of_wind_savanna": "Color of Wind: Savanna"
+            }
+          },
+          "swing_mode": {
+            "state": {
+              "off": "Af",
+              "vertical": "Vertikaal",
+              "horizontal": "Horisontaal",
+              "both": "Albei",
+              "indirect": "Indirek",
+              "direct": "Direk",
+              "center": "Middel",
+              "wide": "Wyd",
+              "left": "Links",
+              "right": "Regs",
+              "long": "Lank"
+            }
+          }
+        }
+      }
+    },
+    "sensor": {
+      "temperature": {
+        "name": "Temperatuur"
+      },
+      "humidity": {
+        "name": "Humiditeit"
+      },
+      "outdoor_temperature": {
+        "name": "Buitetemperatuur"
+      },
+      "used_time": {
+        "name": "Bedryfstyd"
+      },
+      "filter_use_time": {
+        "name": "Filtergebruikstyd"
+      },
+      "filter_life": {
+        "name": "Filterleeftyd"
+      },
+      "error": {
+        "name": "Foutkode"
+      },
+      "device_clock": {
+        "name": "Toestelhorlosie"
+      },
+      "schedules": {
+        "name": "Skedules"
+      }
+    },
+    "switch": {
+      "purify": {
+        "name": "Purify (SPi)"
+      },
+      "auto_clean": {
+        "name": "Outomatiese skoonmaak"
+      },
+      "light": {
+        "name": "Skermlig"
+      },
+      "sterilize": {
+        "name": "Steriliseer"
+      },
+      "smart_on": {
+        "name": "Slim aanskakel"
+      },
+      "weather": {
+        "name": "Weer"
+      }
+    },
+    "number": {
+      "sleep_timer": {
+        "name": "Slaaptydhouer"
+      },
+      "on_timer": {
+        "name": "Aan-tydhouer"
+      },
+      "off_timer": {
+        "name": "Af-tydhouer"
+      },
+      "energy_target": {
+        "name": "Energie-teiken"
+      }
+    },
+    "select": {
+      "occupancy": {
+        "name": "Besetting",
+        "state": {
+          "single": "Enkel",
+          "couple": "Paar",
+          "family": "Gesin"
+        }
+      },
+      "beep_volume": {
+        "name": "Biep-volume",
+        "state": {
+          "mute": "Stom",
+          "33": "33%",
+          "66": "66%",
+          "100": "100%"
+        }
+      },
+      "panel": {
+        "name": "Voorpaneel",
+        "state": {
+          "open": "Oop",
+          "close": "Toe"
+        }
+      },
+      "filter_clean_interval": {
+        "name": "Filterskoonmaak-interval",
+        "state": {
+          "180": "180 h",
+          "300": "300 h",
+          "500": "500 h",
+          "700": "700 h"
+        }
+      }
+    }
+  },
+  "services": {
+    "get_schedules": {
+      "name": "Kry skedules",
+      "description": "Lys die skedules wat op die eenheid se ingeboude skeduleerder gestoor is. Dit beheer die lugreëlaar se ingeboude skeduleerder, wat selfs loop wanneer Home Assistant vanlyn is en die eenheid net op 'n vasgestelde tyd aan- of afskakel. Vir meer komplekse scenario's (temperatuur, modus, waaier…) gebruik Home Assistant-outomatiserings."
+    },
+    "set_schedule": {
+      "name": "Stel skedule",
+      "description": "Skep of wysig 'n aan/af-skedule. Dit beheer die lugreëlaar se ingeboude skeduleerder, wat selfs loop wanneer Home Assistant vanlyn is en die eenheid net op 'n vasgestelde tyd aan- of afskakel. Vir meer komplekse scenario's (temperatuur, modus, waaier…) gebruik Home Assistant-outomatiserings.",
+      "fields": {
+        "time": {
+          "name": "Tyd",
+          "description": "Plaaslike tyd van die dag wanneer die skedule afgaan."
+        },
+        "power": {
+          "name": "Krag",
+          "description": "Of die eenheid aan- of afskakel."
+        },
+        "repeat": {
+          "name": "Frekwensie",
+          "description": "Hoe gereeld dit loop: een keer, elke dag, of weekliks op die gekose dae."
+        },
+        "days": {
+          "name": "Dae",
+          "description": "Op watter dae om te loop — vereis vir 'Een keer' en 'Weekliks', geïgnoreer vir 'Elke dag'."
+        },
+        "enabled": {
+          "name": "Geaktiveer",
+          "description": "Of die skedule aktief is."
+        },
+        "schedule_id": {
+          "name": "Skedule-ID",
+          "description": "ID van 'n bestaande skedule om te wysig; laat leeg om 'n nuwe een te skep."
+        }
+      }
+    },
+    "delete_schedule": {
+      "name": "Skrap skedule",
+      "description": "Skrap 'n skedule van die eenheid se ingeboude skeduleerder. Dit beheer die lugreëlaar se ingeboude skeduleerder, wat selfs loop wanneer Home Assistant vanlyn is en die eenheid net op 'n vasgestelde tyd aan- of afskakel. Vir meer komplekse scenario's (temperatuur, modus, waaier…) gebruik Home Assistant-outomatiserings.",
+      "fields": {
+        "schedule_id": {
+          "name": "Skedule-ID",
+          "description": "ID van die skedule om te skrap (sien die Skedules-sensor of get_schedules)."
+        }
+      }
+    },
+    "get_power_usage": {
+      "name": "Kry kragverbruik",
+      "description": "Haal die lugreëlaar se aangetekende kragverbruikgeskiedenis oor 'n tydperk op.",
+      "fields": {
+        "start": {
+          "name": "Begin",
+          "description": "Begin van die tydperk (plaaslike tyd)."
+        },
+        "end": {
+          "name": "Einde",
+          "description": "Einde van die tydperk (verstek: nou)."
+        },
+        "unit": {
+          "name": "Samevoeging",
+          "description": "Voeg die verbruik per uur of per dag saam."
+        }
+      }
+    },
+    "set_power_logging": {
+      "name": "Stel kragaantekening",
+      "description": "Skakel die eenheid se kragverbruikaantekening aan of af.",
+      "fields": {
+        "enable": {
+          "name": "Aktiveer",
+          "description": "Of kragverbruikaantekening aan is."
+        }
+      }
+    },
+    "reset_power_logging": {
+      "name": "Stel kragaantekening terug",
+      "description": "Vee die kragverbruikgeskiedenis uit wat op die eenheid aangeteken is."
+    },
+    "set_nickname": {
+      "name": "Stel bynaam",
+      "description": "Stel die bynaam wat op die eenheid gestoor is.",
+      "fields": {
+        "nickname": {
+          "name": "Bynaam",
+          "description": "Die nuwe bynaam."
+        }
+      }
+    },
+    "get_region_code": {
+      "name": "Kry streekkode",
+      "description": "Lees die streekkode wat op die eenheid gestoor is."
+    },
+    "set_region_code": {
+      "name": "Stel streekkode",
+      "description": "Stel die streekkode wat op die eenheid gestoor is.",
+      "fields": {
+        "code": {
+          "name": "Kode",
+          "description": "Die streekkode."
+        }
+      }
+    }
+  },
+  "selector": {
+    "schedule_power": {
+      "options": {
+        "on": "Aan",
+        "off": "Af"
+      }
+    },
+    "schedule_repeat": {
+      "options": {
+        "once": "Een keer",
+        "daily": "Elke dag",
+        "weekly": "Weekliks (gekose dae)"
+      }
+    },
+    "schedule_days": {
+      "options": {
+        "mon": "Maandag",
+        "tue": "Dinsdag",
+        "wed": "Woensdag",
+        "thu": "Donderdag",
+        "fri": "Vrydag",
+        "sat": "Saterdag",
+        "sun": "Sondag"
+      }
+    },
+    "power_unit": {
+      "options": {
+        "hour": "Per uur",
+        "day": "Per dag"
+      }
+    }
+  },
+  "exceptions": {
+    "command_failed": {
+      "message": "Samsung AC-opdrag het misluk: {error}"
+    },
+    "schedule_needs_day": {
+      "message": "Kies ten minste een dag vir 'Een keer'- en 'Weekliks'-skedules."
+    }
+  }
+}

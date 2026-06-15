@@ -1,0 +1,358 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Pendingin Udara Samsung (DPLUG / 2878)",
+        "description": "Bagaimana Anda ingin menyiapkan pendingin udara Anda?",
+        "menu_options": {
+          "onboard": "Hubungkan unit baru ke Wi-Fi (petunjuk)",
+          "manual": "Sudah ada di Wi-Fi saya (masukkan IP)"
+        }
+      },
+      "onboard": {
+        "title": "Hubungkan unit ke Wi-Fi Anda",
+        "description": "Unit Samsung lama tidak bergabung ke Wi-Fi melalui protokol jaringan — lakukan sekali saja, secara fisik.\n\n**Opsi A — WPS (paling mudah, disarankan)**\n1. Pada remote, **tahan `Settings` selama 4 detik** (fungsi tersembunyi: layar hanya berkedip) untuk memulai WPS.\n2. Dalam 2 menit, **tekan tombol WPS pada router Anda**.\n3. Ketika LED Wi-Fi pada modul menyala stabil, unit telah bergabung.\n\n**Opsi B — dari komputer (jika router Anda tidak memiliki tombol WPS)**\n1. Pasang **Python 3** jika belum ada ({python_url}), lalu **unduh skrip bantuan** (satu berkas saja, tanpa instalasi tambahan): {script_url}\n2. Pada remote, **tahan `Timer` selama 4 detik** untuk menempatkan unit dalam mode AP; jaringan Wi-Fi bernama **`SMARTAIRCON`** akan muncul.\n3. **Hubungkan komputer ke jaringan `SMARTAIRCON`** (kata sandi **`1111122222`**).\n4. **Jalankan skrip** — `python3 provision.py` — dan, saat diminta, masukkan nama dan kata sandi Wi-Fi rumah Anda.\n5. Ketika muncul **Done**, unit bergabung ke Wi-Fi Anda; sambungkan kembali komputer ke jaringan normal Anda.\n\nSetelah unit berada di Wi-Fi Anda, **tutup jendela ini** dan buka **Pengaturan → Perangkat & Layanan**: unit seharusnya ditawarkan di sana secara otomatis (penemuan). Jika tidak, mulai lagi proses penambahan dan pilih **Sudah ada di Wi-Fi saya** untuk memasukkan IP-nya.\n\n_Untuk pengguna mahir: `python3 provision.py --help` menampilkan opsi untuk menjalankannya tanpa permintaan interaktif._"
+      },
+      "manual": {
+        "title": "Hubungkan ke pendingin udara",
+        "description": "Masukkan alamat IP unit. Token ditangani pada langkah berikutnya.",
+        "data": {
+          "host": "Alamat IP"
+        }
+      },
+      "token": {
+        "title": "Peroleh token akses",
+        "description": "Unit di {host} hanya mengeluarkan token saat dinyalakan (langkah bukti akses fisik).\n\n1. **Matikan pendingin udara** dengan remote, jika sedang menyala.\n2. Tekan **Kirim** di bawah (biarkan kolom kosong).\n3. Dalam ~30 detik, **nyalakan pendingin udara** dengan remote.\n\nToken akan ditangkap dan disimpan secara otomatis.\n\n**Alternatifnya**, jika Anda sudah memiliki token unit ini, masukkan di bawah lalu tekan Kirim.",
+        "data": {
+          "token": "Token (opsional)"
+        }
+      },
+      "save_token": {
+        "title": "Token diperoleh",
+        "description": "Selesai — token untuk unit di {host} telah diperoleh dan disimpan dalam integrasi ini.\n\n💡 **Tips:** simpan token perangkat ini agar Anda tidak perlu memperolehnya lagi di kemudian hari (Anda dapat menempelkannya langsung saat menambahkan unit):\n\n```\n{token}\n```\n\nTekan **Kirim** untuk menyelesaikan."
+      },
+      "reauth_confirm": {
+        "title": "Autentikasi ulang pendingin udara Samsung",
+        "description": "Token untuk unit di {host} ditolak (token dapat berubah setelah reset modul). Peroleh yang baru: matikan unit, kirim (biarkan kosong), lalu nyalakan dalam ~30 detik. Atau masukkan token yang sudah diketahui di bawah.",
+        "data": {
+          "token": "Token (opsional)"
+        }
+      },
+      "discovery_confirm": {
+        "title": "Pendingin udara Samsung ditemukan",
+        "description": "Sebuah pendingin udara Samsung ditemukan di {host}. Siapkan sekarang? Pada langkah berikutnya Anda akan memperoleh token (saat dinyalakan), kecuali Anda sudah mengetahuinya."
+      },
+      "reconfigure": {
+        "title": "Ubah alamat IP",
+        "description": "Masukkan alamat IP baru untuk pendingin udara ini. Token yang ada akan digunakan kembali.",
+        "data": {
+          "host": "Alamat IP"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Tidak dapat terhubung. Periksa alamat IP dan pastikan unit berada di jaringan.",
+      "auth": "Token ditolak. Biarkan kosong untuk memperoleh yang baru.",
+      "no_token": "Tidak ada token diterima. Pastikan unit dalam keadaan mati, lalu dinyalakan dalam jangka waktu yang diberikan. Coba lagi."
+    },
+    "abort": {
+      "already_configured": "Pendingin udara ini sudah dikonfigurasi.",
+      "not_samsung_ac": "Perangkat ini tidak menggunakan protokol Samsung DPLUG.",
+      "reauth_successful": "Autentikasi ulang berhasil.",
+      "onboard_finished": "Setelah pendingin udara berada di Wi-Fi Anda, tambahkan dari Pengaturan → Perangkat & Layanan — unit seharusnya ditemukan secara otomatis, atau pilih “Sudah ada di Wi-Fi saya” untuk memasukkan IP-nya.",
+      "wrong_device": "Unit di alamat tersebut adalah pendingin udara yang berbeda.",
+      "reconfigure_successful": "Alamat IP telah diperbarui."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Opsi Samsung AC",
+        "data": {
+          "live_updates": "Pembaruan langsung (koneksi persisten)",
+          "scan_interval": "Interval penyegaran (detik)"
+        },
+        "data_description": {
+          "live_updates": "Pertahankan satu koneksi persisten untuk pembaruan push instan. Jika nonaktif, integrasi melakukan polling dan tidak menggunakan koneksi persisten (lebih tahan banting).",
+          "scan_interval": "Interval polling saat pembaruan langsung nonaktif; polling cadangan/keepalive saat aktif."
+        }
+      }
+    }
+  },
+  "entity": {
+    "climate": {
+      "samsung_ac": {
+        "state_attributes": {
+          "preset_mode": {
+            "state": {
+              "none": "Mati",
+              "quiet": "Senyap",
+              "fast_turbo": "Turbo Cepat",
+              "comfort": "Nyaman",
+              "dlight_cool": "d'light Cool",
+              "smart_saver": "Smart Saver",
+              "color_of_wind_alps": "Color of Wind: Alps",
+              "color_of_wind_florida": "Color of Wind: Florida",
+              "color_of_wind_savanna": "Color of Wind: Savanna"
+            }
+          },
+          "swing_mode": {
+            "state": {
+              "off": "Mati",
+              "vertical": "Vertikal",
+              "horizontal": "Horizontal",
+              "both": "Keduanya",
+              "indirect": "Tidak langsung",
+              "direct": "Langsung",
+              "center": "Tengah",
+              "wide": "Lebar",
+              "left": "Kiri",
+              "right": "Kanan",
+              "long": "Panjang"
+            }
+          }
+        }
+      }
+    },
+    "sensor": {
+      "temperature": {
+        "name": "Suhu"
+      },
+      "humidity": {
+        "name": "Kelembapan"
+      },
+      "outdoor_temperature": {
+        "name": "Suhu luar ruangan"
+      },
+      "used_time": {
+        "name": "Waktu operasi"
+      },
+      "filter_use_time": {
+        "name": "Waktu penggunaan filter"
+      },
+      "filter_life": {
+        "name": "Masa pakai filter"
+      },
+      "error": {
+        "name": "Kode kesalahan"
+      },
+      "device_clock": {
+        "name": "Jam perangkat"
+      },
+      "schedules": {
+        "name": "Jadwal"
+      }
+    },
+    "switch": {
+      "purify": {
+        "name": "Purify (SPi)"
+      },
+      "auto_clean": {
+        "name": "Pembersihan otomatis"
+      },
+      "light": {
+        "name": "Lampu layar"
+      },
+      "sterilize": {
+        "name": "Sterilisasi"
+      },
+      "smart_on": {
+        "name": "Smart on"
+      },
+      "weather": {
+        "name": "Cuaca"
+      }
+    },
+    "number": {
+      "sleep_timer": {
+        "name": "Timer tidur"
+      },
+      "on_timer": {
+        "name": "Timer nyala"
+      },
+      "off_timer": {
+        "name": "Timer mati"
+      },
+      "energy_target": {
+        "name": "Target energi"
+      }
+    },
+    "select": {
+      "occupancy": {
+        "name": "Hunian",
+        "state": {
+          "single": "Lajang",
+          "couple": "Pasangan",
+          "family": "Keluarga"
+        }
+      },
+      "beep_volume": {
+        "name": "Volume bunyi bip",
+        "state": {
+          "mute": "Senyap",
+          "33": "33%",
+          "66": "66%",
+          "100": "100%"
+        }
+      },
+      "panel": {
+        "name": "Panel depan",
+        "state": {
+          "open": "Buka",
+          "close": "Tutup"
+        }
+      },
+      "filter_clean_interval": {
+        "name": "Interval pembersihan filter",
+        "state": {
+          "180": "180 h",
+          "300": "300 h",
+          "500": "500 h",
+          "700": "700 h"
+        }
+      }
+    }
+  },
+  "services": {
+    "get_schedules": {
+      "name": "Dapatkan jadwal",
+      "description": "Daftar jadwal yang tersimpan pada penjadwal bawaan unit. Ini mengendalikan penjadwal bawaan pendingin udara, yang berjalan bahkan saat Home Assistant offline dan hanya menyalakan atau mematikan unit pada waktu yang ditentukan. Untuk skenario yang lebih kompleks (suhu, mode, kipas…) gunakan otomasi Home Assistant."
+    },
+    "set_schedule": {
+      "name": "Atur jadwal",
+      "description": "Buat atau ubah jadwal nyala/mati. Ini mengendalikan penjadwal bawaan pendingin udara, yang berjalan bahkan saat Home Assistant offline dan hanya menyalakan atau mematikan unit pada waktu yang ditentukan. Untuk skenario yang lebih kompleks (suhu, mode, kipas…) gunakan otomasi Home Assistant.",
+      "fields": {
+        "time": {
+          "name": "Waktu",
+          "description": "Waktu lokal dalam sehari saat jadwal dijalankan."
+        },
+        "power": {
+          "name": "Daya",
+          "description": "Apakah unit menyala atau mati."
+        },
+        "repeat": {
+          "name": "Frekuensi",
+          "description": "Seberapa sering dijalankan: sekali, setiap hari, atau mingguan pada hari yang dipilih."
+        },
+        "days": {
+          "name": "Hari",
+          "description": "Pada hari apa dijalankan — diperlukan untuk 'Sekali' dan 'Mingguan', diabaikan untuk 'Setiap hari'."
+        },
+        "enabled": {
+          "name": "Diaktifkan",
+          "description": "Apakah jadwal aktif."
+        },
+        "schedule_id": {
+          "name": "ID jadwal",
+          "description": "ID jadwal yang sudah ada untuk diubah; biarkan kosong untuk membuat yang baru."
+        }
+      }
+    },
+    "delete_schedule": {
+      "name": "Hapus jadwal",
+      "description": "Hapus jadwal dari penjadwal bawaan unit. Ini mengendalikan penjadwal bawaan pendingin udara, yang berjalan bahkan saat Home Assistant offline dan hanya menyalakan atau mematikan unit pada waktu yang ditentukan. Untuk skenario yang lebih kompleks (suhu, mode, kipas…) gunakan otomasi Home Assistant.",
+      "fields": {
+        "schedule_id": {
+          "name": "ID jadwal",
+          "description": "ID jadwal yang akan dihapus (lihat sensor Jadwal atau get_schedules)."
+        }
+      }
+    },
+    "get_power_usage": {
+      "name": "Dapatkan penggunaan daya",
+      "description": "Ambil riwayat penggunaan daya pendingin udara yang tercatat dalam rentang waktu.",
+      "fields": {
+        "start": {
+          "name": "Mulai",
+          "description": "Awal rentang (waktu lokal)."
+        },
+        "end": {
+          "name": "Selesai",
+          "description": "Akhir rentang (default: sekarang)."
+        },
+        "unit": {
+          "name": "Agregasi",
+          "description": "Agregasikan penggunaan per jam atau per hari."
+        }
+      }
+    },
+    "set_power_logging": {
+      "name": "Atur pencatatan daya",
+      "description": "Aktifkan atau nonaktifkan pencatatan penggunaan daya pada unit.",
+      "fields": {
+        "enable": {
+          "name": "Aktifkan",
+          "description": "Apakah pencatatan penggunaan daya aktif."
+        }
+      }
+    },
+    "reset_power_logging": {
+      "name": "Atur ulang pencatatan daya",
+      "description": "Hapus riwayat penggunaan daya yang tercatat pada unit."
+    },
+    "set_nickname": {
+      "name": "Atur nama panggilan",
+      "description": "Atur nama panggilan yang tersimpan pada unit.",
+      "fields": {
+        "nickname": {
+          "name": "Nama panggilan",
+          "description": "Nama panggilan baru."
+        }
+      }
+    },
+    "get_region_code": {
+      "name": "Dapatkan kode wilayah",
+      "description": "Baca kode wilayah yang tersimpan pada unit."
+    },
+    "set_region_code": {
+      "name": "Atur kode wilayah",
+      "description": "Atur kode wilayah yang tersimpan pada unit.",
+      "fields": {
+        "code": {
+          "name": "Kode",
+          "description": "Kode wilayah."
+        }
+      }
+    }
+  },
+  "selector": {
+    "schedule_power": {
+      "options": {
+        "on": "Nyala",
+        "off": "Mati"
+      }
+    },
+    "schedule_repeat": {
+      "options": {
+        "once": "Sekali",
+        "daily": "Setiap hari",
+        "weekly": "Mingguan (hari yang dipilih)"
+      }
+    },
+    "schedule_days": {
+      "options": {
+        "mon": "Senin",
+        "tue": "Selasa",
+        "wed": "Rabu",
+        "thu": "Kamis",
+        "fri": "Jumat",
+        "sat": "Sabtu",
+        "sun": "Minggu"
+      }
+    },
+    "power_unit": {
+      "options": {
+        "hour": "Per jam",
+        "day": "Per hari"
+      }
+    }
+  },
+  "exceptions": {
+    "command_failed": {
+      "message": "Perintah Samsung AC gagal: {error}"
+    },
+    "schedule_needs_day": {
+      "message": "Pilih setidaknya satu hari untuk jadwal 'Sekali' dan 'Mingguan'."
+    }
+  }
+}

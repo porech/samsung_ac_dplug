@@ -1,0 +1,358 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Samsung-airco (DPLUG / 2878)",
+        "description": "Hoe wolle jo jo airco ynstelle?",
+        "menu_options": {
+          "onboard": "In nij apparaat mei wifi ferbine (ynstruksjes)",
+          "manual": "It stiet al op myn wifi (IP ynfiere)"
+        }
+      },
+      "onboard": {
+        "title": "Ferbyn it apparaat mei jo wifi",
+        "description": "Alde Samsung-apparaten wurde net fia it netwurkprotokol mei wifi ferbûn — dat moat ien kear fysyk barre.\n\n**Opsje A — WPS (ienfâldichst, oanrikkemandearre)**\n1. Hâld op de ôfstânsbetsjinning **`Settings` 4 sekonden yndrukt** (ferburgen funksje: it skerm knipperet allinne) om WPS te starten.\n2. **Druk binnen 2 minuten op de WPS-knop fan jo router**.\n3. As de wifi-led op de module trochrint, is de ferbining makke.\n\n**Opsje B — fan in kompjûter ôf (as jo router gjin WPS-knop hat)**\n1. Ynstallearje **Python 3** as jo dat noch net hawwe ({python_url}) en **download dêrnei it helpskript** (ien inkeld bestân, gjin ekstra ynstallaasjes nedich): {script_url}\n2. Hâld op de ôfstânsbetsjinning **`Timer` 4 sekonden yndrukt** om it apparaat yn AP-modus te setten; der ferskynt in wifi-netwurk mei de namme **`SMARTAIRCON`**.\n3. **Ferbyn de kompjûter mei it netwurk `SMARTAIRCON`** (wachtwurd **`1111122222`**).\n4. **Fier it skript út** — `python3 provision.py` — en fier, as dêrom frege wurdt, de namme en it wachtwurd fan jo thús-wifi yn.\n5. As **Done** ferskynt, ferbynt it apparaat him mei jo wifi; ferbyn de kompjûter wer mei jo gewoane netwurk.\n\nSadree't it apparaat op jo wifi stiet, **slút dit finster** en iepenje **Ynstellings → Apparaten en tsjinsten**: it soe dêr automatysk oanbean wurde moatte (deteksje). Sa net, start it tafoegjen dan opnij en kies **It stiet al op myn wifi** om it IP-adres yn te fieren.\n\n_Foar avansearre brûkers: `python3 provision.py --help` lit de opsjes sjen om it út te fieren sûnder de ynteraktive fragen._"
+      },
+      "manual": {
+        "title": "Ferbine mei de airco",
+        "description": "Fier it IP-adres fan it apparaat yn. It token wurdt yn de folgjende stap ôfhannele.",
+        "data": {
+          "host": "IP-adres"
+        }
+      },
+      "token": {
+        "title": "It tagongstoken ophelje",
+        "description": "It apparaat op {host} jout allinne by it ynskeakeljen in token ôf (in fysyke tagongskontrôle).\n\n1. **Skeakelje de airco ÚT** mei de ôfstânsbetsjinning, as er oan stiet.\n2. Druk hjirûnder op **Ferstjoere** (lit it fjild leech).\n3. Skeakelje de airco binnen ~30 sekonden **OAN** mei de ôfstânsbetsjinning.\n\nIt token wurdt automatysk fêstlein en bewarre.\n\n**Oars**, as jo it token fan dit apparaat al hawwe, fier it hjirûnder yn en druk op Ferstjoere.",
+        "data": {
+          "token": "Token (opsjoneel)"
+        }
+      },
+      "save_token": {
+        "title": "Token ophelle",
+        "description": "Klear — it token foar it apparaat op {host} is ophelle en yn dizze yntegraasje bewarre.\n\n💡 **Tip:** bewarje it token fan dit apparaat sadat jo it yn 'e takomst net opnij ophelje hoege (jo kinne it streekrjocht plakke by it tafoegjen fan it apparaat):\n\n```\n{token}\n```\n\nDruk op **Ferstjoere** om ôf te ronden."
+      },
+      "reauth_confirm": {
+        "title": "Samsung-airco opnij ferifiearje",
+        "description": "It token foar it apparaat op {host} is wegere (it kin feroarje nei in module-reset). Helje in nij token op: skeakelje it apparaat ÚT, ferstjoer (lit leech) en skeakelje it dêrnei binnen ~30s OAN. Of fier hjirûnder in bekend token yn.",
+        "data": {
+          "token": "Token (opsjoneel)"
+        }
+      },
+      "discovery_confirm": {
+        "title": "Samsung-airco fûn",
+        "description": "Der is in Samsung-airco fûn op {host}. No ynstelle? Yn de folgjende stap helje jo in token op (by it ynskeakeljen), útsein jo it al kenne."
+      },
+      "reconfigure": {
+        "title": "IP-adres wizigje",
+        "description": "Fier it nije IP-adres foar dizze airco yn. It besteande token wurdt opnij brûkt.",
+        "data": {
+          "host": "IP-adres"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Kin gjin ferbining meitsje. Kontrolearje it IP-adres en oft it apparaat op it netwurk stiet.",
+      "auth": "It token is wegere. Lit it leech om in nij token op te heljen.",
+      "no_token": "Gjin token ûntfongen. Soargje derfoar dat it apparaat ÚT stie en binnen it tiidfinster OANset waard. Probearje it opnij."
+    },
+    "abort": {
+      "already_configured": "Dizze airco is al konfigurearre.",
+      "not_samsung_ac": "Dit apparaat sprekt it Samsung-DPLUG-protokol net.",
+      "reauth_successful": "De ferifikaasje is slagge.",
+      "onboard_finished": "Sadree't de airco op jo wifi stiet, foegje him ta fia Ynstellings → Apparaten en tsjinsten — hy soe automatysk fûn wurde moatte, of kies “It stiet al op myn wifi” om it IP-adres yn te fieren.",
+      "wrong_device": "Op dat adres stiet in oare airco.",
+      "reconfigure_successful": "It IP-adres is bywurke."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Samsung AC-opsjes",
+        "data": {
+          "live_updates": "Live-updates (permaninte ferbining)",
+          "scan_interval": "Fernijingsinterfal (sekonden)"
+        },
+        "data_description": {
+          "live_updates": "Hâldt ien permaninte ferbining iepen foar daliks push-updates. As út, docht de yntegraasje polling en brûkt gjin permaninte ferbining (robúster).",
+          "scan_interval": "Polling-interfal as live-updates út binne; fallback-/keepalive-polling as se oan binne."
+        }
+      }
+    }
+  },
+  "entity": {
+    "climate": {
+      "samsung_ac": {
+        "state_attributes": {
+          "preset_mode": {
+            "state": {
+              "none": "Út",
+              "quiet": "Stil",
+              "fast_turbo": "Flugge turbo",
+              "comfort": "Komfort",
+              "dlight_cool": "d'light Cool",
+              "smart_saver": "Smart Saver",
+              "color_of_wind_alps": "Color of Wind: Alps",
+              "color_of_wind_florida": "Color of Wind: Florida",
+              "color_of_wind_savanna": "Color of Wind: Savanna"
+            }
+          },
+          "swing_mode": {
+            "state": {
+              "off": "Út",
+              "vertical": "Fertikaal",
+              "horizontal": "Horizontaal",
+              "both": "Beide",
+              "indirect": "Yndirekt",
+              "direct": "Direkt",
+              "center": "Midden",
+              "wide": "Breed",
+              "left": "Lofts",
+              "right": "Rjochts",
+              "long": "Lang"
+            }
+          }
+        }
+      }
+    },
+    "sensor": {
+      "temperature": {
+        "name": "Temperatuer"
+      },
+      "humidity": {
+        "name": "Luchtfochtigens"
+      },
+      "outdoor_temperature": {
+        "name": "Bûtentemperatuer"
+      },
+      "used_time": {
+        "name": "Bedriuwstiid"
+      },
+      "filter_use_time": {
+        "name": "Filtergebrûkstiid"
+      },
+      "filter_life": {
+        "name": "Filterlibbensdoer"
+      },
+      "error": {
+        "name": "Flaterkoade"
+      },
+      "device_clock": {
+        "name": "Apparaatklok"
+      },
+      "schedules": {
+        "name": "Skema's"
+      }
+    },
+    "switch": {
+      "purify": {
+        "name": "Purify (SPi)"
+      },
+      "auto_clean": {
+        "name": "Automatysk skjinmeitsje"
+      },
+      "light": {
+        "name": "Skermferljochting"
+      },
+      "sterilize": {
+        "name": "Sterilisearje"
+      },
+      "smart_on": {
+        "name": "Tûk ynskeakelje"
+      },
+      "weather": {
+        "name": "Waar"
+      }
+    },
+    "number": {
+      "sleep_timer": {
+        "name": "Sliepetimer"
+      },
+      "on_timer": {
+        "name": "Oan-timer"
+      },
+      "off_timer": {
+        "name": "Út-timer"
+      },
+      "energy_target": {
+        "name": "Enerzjydoel"
+      }
+    },
+    "select": {
+      "occupancy": {
+        "name": "Beset",
+        "state": {
+          "single": "Ien persoan",
+          "couple": "Pear",
+          "family": "Gesin"
+        }
+      },
+      "beep_volume": {
+        "name": "Pieptoanfolume",
+        "state": {
+          "mute": "Dimpe",
+          "33": "33%",
+          "66": "66%",
+          "100": "100%"
+        }
+      },
+      "panel": {
+        "name": "Foarpaniel",
+        "state": {
+          "open": "Iepen",
+          "close": "Ticht"
+        }
+      },
+      "filter_clean_interval": {
+        "name": "Filterskjinmeitsynterfal",
+        "state": {
+          "180": "180 h",
+          "300": "300 h",
+          "500": "500 h",
+          "700": "700 h"
+        }
+      }
+    }
+  },
+  "services": {
+    "get_schedules": {
+      "name": "Skema's ophelje",
+      "description": "Lit de skema's sjen dy't yn de ynboude planner fan it apparaat bewarre binne. Dit bestjoert de ynboude planner fan de airco, dy't ek draait as Home Assistant offline is en it apparaat allinne op in ynstelde tiid yn- of útskeakelet. Brûk foar yngewikkeldere senario's (temperatuer, modus, fentilator…) Home Assistant-automatisearrings."
+    },
+    "set_schedule": {
+      "name": "Skema ynstelle",
+      "description": "Makket of bewurket in oan/út-skema. Dit bestjoert de ynboude planner fan de airco, dy't ek draait as Home Assistant offline is en it apparaat allinne op in ynstelde tiid yn- of útskeakelet. Brûk foar yngewikkeldere senario's (temperatuer, modus, fentilator…) Home Assistant-automatisearrings.",
+      "fields": {
+        "time": {
+          "name": "Tiid",
+          "description": "Lokale tiid fan de dei wêrop it skema aktivearre wurdt."
+        },
+        "power": {
+          "name": "Oan/út",
+          "description": "Oft it apparaat yn- of útskeakelet."
+        },
+        "repeat": {
+          "name": "Frekwinsje",
+          "description": "Hoe faak it útfierd wurdt: ien kear, eltse dei of wykliks op de selektearre dagen."
+        },
+        "days": {
+          "name": "Dagen",
+          "description": "Op hokker dagen it útfierd wurdt — fereaske foar 'Ien kear' en 'Wykliks', negearre by 'Eltse dei'."
+        },
+        "enabled": {
+          "name": "Ynskeakele",
+          "description": "Oft it skema aktyf is."
+        },
+        "schedule_id": {
+          "name": "Skema-ID",
+          "description": "ID fan in besteand skema om te bewurkjen; lit leech om in nij skema te meitsjen."
+        }
+      }
+    },
+    "delete_schedule": {
+      "name": "Skema fuortsmite",
+      "description": "Smyt in skema út de ynboude planner fan it apparaat. Dit bestjoert de ynboude planner fan de airco, dy't ek draait as Home Assistant offline is en it apparaat allinne op in ynstelde tiid yn- of útskeakelet. Brûk foar yngewikkeldere senario's (temperatuer, modus, fentilator…) Home Assistant-automatisearrings.",
+      "fields": {
+        "schedule_id": {
+          "name": "Skema-ID",
+          "description": "ID fan it fuort te smiten skema (sjoch de sensor Skema's of get_schedules)."
+        }
+      }
+    },
+    "get_power_usage": {
+      "name": "Streamferbrûk ophelje",
+      "description": "Hellet de registrearre skiednis fan it streamferbrûk fan de airco oer in tiidsperioade op.",
+      "fields": {
+        "start": {
+          "name": "Begjin",
+          "description": "Begjin fan de perioade (lokale tiid)."
+        },
+        "end": {
+          "name": "Ein",
+          "description": "Ein fan de perioade (standert: no)."
+        },
+        "unit": {
+          "name": "Aggregaasje",
+          "description": "It ferbrûk per oere of per dei aggregearje."
+        }
+      }
+    },
+    "set_power_logging": {
+      "name": "Ferbrûksregistraasje ynstelle",
+      "description": "Skeakelet de streamferbrûksregistraasje fan it apparaat yn of út.",
+      "fields": {
+        "enable": {
+          "name": "Ynskeakelje",
+          "description": "Oft de streamferbrûksregistraasje oan is."
+        }
+      }
+    },
+    "reset_power_logging": {
+      "name": "Ferbrûksregistraasje resette",
+      "description": "Wisket de op it apparaat registrearre skiednis fan it streamferbrûk."
+    },
+    "set_nickname": {
+      "name": "Bynamme ynstelle",
+      "description": "Stelt de op it apparaat bewarre bynamme yn.",
+      "fields": {
+        "nickname": {
+          "name": "Bynamme",
+          "description": "De nije bynamme."
+        }
+      }
+    },
+    "get_region_code": {
+      "name": "Regiokoade ophelje",
+      "description": "Lêst de op it apparaat bewarre regiokoade."
+    },
+    "set_region_code": {
+      "name": "Regiokoade ynstelle",
+      "description": "Stelt de op it apparaat bewarre regiokoade yn.",
+      "fields": {
+        "code": {
+          "name": "Koade",
+          "description": "De regiokoade."
+        }
+      }
+    }
+  },
+  "selector": {
+    "schedule_power": {
+      "options": {
+        "on": "Oan",
+        "off": "Út"
+      }
+    },
+    "schedule_repeat": {
+      "options": {
+        "once": "Ien kear",
+        "daily": "Eltse dei",
+        "weekly": "Wykliks (selektearre dagen)"
+      }
+    },
+    "schedule_days": {
+      "options": {
+        "mon": "Moandei",
+        "tue": "Tiisdei",
+        "wed": "Woansdei",
+        "thu": "Tongersdei",
+        "fri": "Freed",
+        "sat": "Sneon",
+        "sun": "Snein"
+      }
+    },
+    "power_unit": {
+      "options": {
+        "hour": "Per oere",
+        "day": "Per dei"
+      }
+    }
+  },
+  "exceptions": {
+    "command_failed": {
+      "message": "Samsung AC-kommando mislearre: {error}"
+    },
+    "schedule_needs_day": {
+      "message": "Selektearje op syn minst ien dei foar de skema's 'Ien kear' en 'Wykliks'."
+    }
+  }
+}

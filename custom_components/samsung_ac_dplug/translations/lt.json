@@ -1,0 +1,358 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "„Samsung“ oro kondicionierius (DPLUG / 2878)",
+        "description": "Kaip norėtumėte nustatyti savo oro kondicionierių?",
+        "menu_options": {
+          "onboard": "Prijungti naują įrenginį prie „Wi-Fi“ (instrukcijos)",
+          "manual": "Jis jau yra mano „Wi-Fi“ tinkle (įveskite IP)"
+        }
+      },
+      "onboard": {
+        "title": "Prijunkite įrenginį prie savo „Wi-Fi“",
+        "description": "Seni „Samsung“ įrenginiai prie „Wi-Fi“ neprisijungia per tinklo protokolą — tai reikia padaryti vieną kartą, fiziškai.\n\n**A variantas — WPS (lengviausias, rekomenduojamas)**\n1. Nuotolinio valdymo pulte **4 sekundes palaikykite `Settings`** (paslėpta funkcija: ekranas tik mirksi), kad paleistumėte WPS.\n2. Per 2 minutes **paspauskite WPS mygtuką maršrutizatoriuje**.\n3. Kai modulio „Wi-Fi“ lemputė šviečia nepertraukiamai, prisijungta.\n\n**B variantas — iš kompiuterio (jei maršrutizatorius neturi WPS mygtuko)**\n1. Įdiekite **Python 3**, jei jo neturite ({python_url}), tada **atsisiųskite pagalbinį skriptą** (vienas failas, papildomų diegimų nereikia): {script_url}\n2. Nuotolinio valdymo pulte **4 sekundes palaikykite `Timer`**, kad įrenginį perjungtumėte į AP režimą; atsiras „Wi-Fi“ tinklas pavadinimu **`SMARTAIRCON`**.\n3. **Prijunkite kompiuterį prie `SMARTAIRCON` tinklo** (slaptažodis **`1111122222`**).\n4. **Paleiskite skriptą** — `python3 provision.py` — ir, kai bus paprašyta, įveskite savo namų „Wi-Fi“ pavadinimą ir slaptažodį.\n5. Kai pasirodys **Done**, įrenginys prisijungia prie jūsų „Wi-Fi“; vėl prijunkite kompiuterį prie įprasto tinklo.\n\nKai įrenginys bus jūsų „Wi-Fi“ tinkle, **uždarykite šį langą** ir atidarykite **Nustatymai → Įrenginiai ir paslaugos**: jis turėtų būti pasiūlytas ten automatiškai (aptikimas). Jei ne, pradėkite pridėjimą iš naujo ir pasirinkite **Jis jau yra mano „Wi-Fi“ tinkle**, kad įvestumėte jo IP.\n\n_Pažengusiems vartotojams: `python3 provision.py --help` išvardija parinktis, kaip jį paleisti be interaktyvių užklausų._"
+      },
+      "manual": {
+        "title": "Prisijungti prie oro kondicionieriaus",
+        "description": "Įveskite įrenginio IP adresą. Prieigos raktas tvarkomas kitame žingsnyje.",
+        "data": {
+          "host": "IP adresas"
+        }
+      },
+      "token": {
+        "title": "Gauti prieigos raktą",
+        "description": "Įrenginys adresu {host} prieigos raktą išduoda tik įsijungimo metu (fizinis prieigos patvirtinimo žingsnis).\n\n1. **Išjunkite oro kondicionierių** nuotolinio valdymo pultu, jei jis įjungtas.\n2. Paspauskite **Pateikti** žemiau (palikite lauką tuščią).\n3. Per ~30 sekundžių **įjunkite oro kondicionierių** nuotolinio valdymo pultu.\n\nPrieigos raktas bus užfiksuotas ir išsaugotas automatiškai.\n\n**Arba**, jei jau turite šio įrenginio prieigos raktą, įveskite jį žemiau ir paspauskite Pateikti.",
+        "data": {
+          "token": "Prieigos raktas (neprivaloma)"
+        }
+      },
+      "save_token": {
+        "title": "Prieigos raktas gautas",
+        "description": "Atlikta — įrenginio {host} prieigos raktas gautas ir išsaugotas šioje integracijoje.\n\n💡 **Patarimas:** išsaugokite šio įrenginio prieigos raktą, kad ateityje nereikėtų jo gauti iš naujo (galite jį įklijuoti tiesiogiai pridėdami įrenginį):\n\n```\n{token}\n```\n\nNorėdami užbaigti, paspauskite **Pateikti**."
+      },
+      "reauth_confirm": {
+        "title": "„Samsung“ oro kondicionieriaus pakartotinis tapatumo nustatymas",
+        "description": "Įrenginio {host} prieigos raktas buvo atmestas (jis gali pasikeisti po modulio atstatymo). Gaukite naują: išjunkite įrenginį, pateikite (palikite tuščią), tada per ~30 s jį įjunkite. Arba įveskite žinomą prieigos raktą žemiau.",
+        "data": {
+          "token": "Prieigos raktas (neprivaloma)"
+        }
+      },
+      "discovery_confirm": {
+        "title": "Rastas „Samsung“ oro kondicionierius",
+        "description": "Adresu {host} aptiktas „Samsung“ oro kondicionierius. Nustatyti jį dabar? Kitame žingsnyje gausite prieigos raktą (įsijungimu), nebent jau jį žinote."
+      },
+      "reconfigure": {
+        "title": "Keisti IP adresą",
+        "description": "Įveskite naują šio oro kondicionieriaus IP adresą. Esamas prieigos raktas naudojamas pakartotinai.",
+        "data": {
+          "host": "IP adresas"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Nepavyksta prisijungti. Patikrinkite IP adresą ir ar įrenginys yra tinkle.",
+      "auth": "Prieigos raktas atmestas. Palikite jį tuščią, kad gautumėte naują.",
+      "no_token": "Prieigos raktas negautas. Įsitikinkite, kad įrenginys buvo išjungtas, o tada įjungtas per nurodytą laiko langą. Bandykite dar kartą."
+    },
+    "abort": {
+      "already_configured": "Šis oro kondicionierius jau sukonfigūruotas.",
+      "not_samsung_ac": "Šis įrenginys nepalaiko „Samsung“ DPLUG protokolo.",
+      "reauth_successful": "Pakartotinis tapatumo nustatymas pavyko.",
+      "onboard_finished": "Kai oro kondicionierius bus jūsų „Wi-Fi“ tinkle, pridėkite jį iš Nustatymai → Įrenginiai ir paslaugos — jis turėtų būti aptiktas automatiškai, arba pasirinkite „Jis jau yra mano „Wi-Fi“ tinkle“, kad įvestumėte jo IP.",
+      "wrong_device": "Nurodytu adresu yra kitas oro kondicionierius.",
+      "reconfigure_successful": "IP adresas atnaujintas."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "„Samsung AC“ parinktys",
+        "data": {
+          "live_updates": "Tiesioginiai atnaujinimai (nuolatinis ryšys)",
+          "scan_interval": "Atnaujinimo intervalas (sekundėmis)"
+        },
+        "data_description": {
+          "live_updates": "Palaiko vieną nuolatinį ryšį momentiniams „push“ atnaujinimams. Jei išjungta, integracija atlieka apklausą ir nenaudoja nuolatinio ryšio (atsparesnis).",
+          "scan_interval": "Apklausos intervalas, kai tiesioginiai atnaujinimai išjungti; atsarginė / keepalive apklausa, kai jie įjungti."
+        }
+      }
+    }
+  },
+  "entity": {
+    "climate": {
+      "samsung_ac": {
+        "state_attributes": {
+          "preset_mode": {
+            "state": {
+              "none": "Išjungta",
+              "quiet": "Tylus",
+              "fast_turbo": "Fast Turbo",
+              "comfort": "Komfortas",
+              "dlight_cool": "d'light Cool",
+              "smart_saver": "Smart Saver",
+              "color_of_wind_alps": "Color of Wind: Alps",
+              "color_of_wind_florida": "Color of Wind: Florida",
+              "color_of_wind_savanna": "Color of Wind: Savanna"
+            }
+          },
+          "swing_mode": {
+            "state": {
+              "off": "Išjungta",
+              "vertical": "Vertikaliai",
+              "horizontal": "Horizontaliai",
+              "both": "Abu",
+              "indirect": "Netiesioginis",
+              "direct": "Tiesioginis",
+              "center": "Centras",
+              "wide": "Platus",
+              "left": "Kairė",
+              "right": "Dešinė",
+              "long": "Ilgas"
+            }
+          }
+        }
+      }
+    },
+    "sensor": {
+      "temperature": {
+        "name": "Temperatūra"
+      },
+      "humidity": {
+        "name": "Drėgmė"
+      },
+      "outdoor_temperature": {
+        "name": "Lauko temperatūra"
+      },
+      "used_time": {
+        "name": "Veikimo laikas"
+      },
+      "filter_use_time": {
+        "name": "Filtro naudojimo laikas"
+      },
+      "filter_life": {
+        "name": "Filtro tarnavimo laikas"
+      },
+      "error": {
+        "name": "Klaidos kodas"
+      },
+      "device_clock": {
+        "name": "Įrenginio laikrodis"
+      },
+      "schedules": {
+        "name": "Tvarkaraščiai"
+      }
+    },
+    "switch": {
+      "purify": {
+        "name": "Purify (SPi)"
+      },
+      "auto_clean": {
+        "name": "Automatinis valymas"
+      },
+      "light": {
+        "name": "Ekrano apšvietimas"
+      },
+      "sterilize": {
+        "name": "Sterilizavimas"
+      },
+      "smart_on": {
+        "name": "Išmanusis įjungimas"
+      },
+      "weather": {
+        "name": "Orai"
+      }
+    },
+    "number": {
+      "sleep_timer": {
+        "name": "Miego laikmatis"
+      },
+      "on_timer": {
+        "name": "Įjungimo laikmatis"
+      },
+      "off_timer": {
+        "name": "Išjungimo laikmatis"
+      },
+      "energy_target": {
+        "name": "Energijos tikslas"
+      }
+    },
+    "select": {
+      "occupancy": {
+        "name": "Užimtumas",
+        "state": {
+          "single": "Vienas",
+          "couple": "Pora",
+          "family": "Šeima"
+        }
+      },
+      "beep_volume": {
+        "name": "Pyptelėjimo garsumas",
+        "state": {
+          "mute": "Nutildyti",
+          "33": "33%",
+          "66": "66%",
+          "100": "100%"
+        }
+      },
+      "panel": {
+        "name": "Priekinis skydelis",
+        "state": {
+          "open": "Atidaryti",
+          "close": "Uždaryti"
+        }
+      },
+      "filter_clean_interval": {
+        "name": "Filtro valymo intervalas",
+        "state": {
+          "180": "180 h",
+          "300": "300 h",
+          "500": "500 h",
+          "700": "700 h"
+        }
+      }
+    }
+  },
+  "services": {
+    "get_schedules": {
+      "name": "Gauti tvarkaraščius",
+      "description": "Pateikia tvarkaraščius, saugomus įrenginio integruotame planuoklyje. Tai valdo oro kondicionieriaus integruotą planuoklį, kuris veikia net tada, kai „Home Assistant“ neprisijungęs, ir tik įjungia arba išjungia įrenginį nustatytu laiku. Sudėtingesniems scenarijams (temperatūra, režimas, ventiliatorius…) naudokite „Home Assistant“ automatizavimus."
+    },
+    "set_schedule": {
+      "name": "Nustatyti tvarkaraštį",
+      "description": "Sukurti arba redaguoti įjungimo / išjungimo tvarkaraštį. Tai valdo oro kondicionieriaus integruotą planuoklį, kuris veikia net tada, kai „Home Assistant“ neprisijungęs, ir tik įjungia arba išjungia įrenginį nustatytu laiku. Sudėtingesniems scenarijams (temperatūra, režimas, ventiliatorius…) naudokite „Home Assistant“ automatizavimus.",
+      "fields": {
+        "time": {
+          "name": "Laikas",
+          "description": "Vietos paros laikas, kuriuo suveikia tvarkaraštis."
+        },
+        "power": {
+          "name": "Maitinimas",
+          "description": "Ar įrenginys įsijungia, ar išsijungia."
+        },
+        "repeat": {
+          "name": "Dažnumas",
+          "description": "Kaip dažnai vykdoma: vieną kartą, kasdien arba kas savaitę pasirinktomis dienomis."
+        },
+        "days": {
+          "name": "Dienos",
+          "description": "Kuriomis dienomis vykdyti — privaloma „Vieną kartą“ ir „Kas savaitę“ atvejais, ignoruojama „Kasdien“ atveju."
+        },
+        "enabled": {
+          "name": "Įjungta",
+          "description": "Ar tvarkaraštis aktyvus."
+        },
+        "schedule_id": {
+          "name": "Tvarkaraščio ID",
+          "description": "Redaguojamo esamo tvarkaraščio ID; palikite tuščią, kad sukurtumėte naują."
+        }
+      }
+    },
+    "delete_schedule": {
+      "name": "Ištrinti tvarkaraštį",
+      "description": "Ištrina tvarkaraštį iš įrenginio integruoto planuoklio. Tai valdo oro kondicionieriaus integruotą planuoklį, kuris veikia net tada, kai „Home Assistant“ neprisijungęs, ir tik įjungia arba išjungia įrenginį nustatytu laiku. Sudėtingesniems scenarijams (temperatūra, režimas, ventiliatorius…) naudokite „Home Assistant“ automatizavimus.",
+      "fields": {
+        "schedule_id": {
+          "name": "Tvarkaraščio ID",
+          "description": "Ištrinamo tvarkaraščio ID (žr. Tvarkaraščiai jutiklį arba get_schedules)."
+        }
+      }
+    },
+    "get_power_usage": {
+      "name": "Gauti energijos suvartojimą",
+      "description": "Gauna oro kondicionieriaus užregistruotą energijos suvartojimo istoriją per laiko intervalą.",
+      "fields": {
+        "start": {
+          "name": "Pradžia",
+          "description": "Intervalo pradžia (vietos laikas)."
+        },
+        "end": {
+          "name": "Pabaiga",
+          "description": "Intervalo pabaiga (numatytoji: dabar)."
+        },
+        "unit": {
+          "name": "Agregavimas",
+          "description": "Apibendrinti suvartojimą per valandą arba per dieną."
+        }
+      }
+    },
+    "set_power_logging": {
+      "name": "Nustatyti energijos registravimą",
+      "description": "Įjungia arba išjungia įrenginio energijos suvartojimo registravimą.",
+      "fields": {
+        "enable": {
+          "name": "Įjungti",
+          "description": "Ar energijos suvartojimo registravimas įjungtas."
+        }
+      }
+    },
+    "reset_power_logging": {
+      "name": "Atstatyti energijos registravimą",
+      "description": "Išvalo įrenginyje užregistruotą energijos suvartojimo istoriją."
+    },
+    "set_nickname": {
+      "name": "Nustatyti slapyvardį",
+      "description": "Nustato įrenginyje saugomą slapyvardį.",
+      "fields": {
+        "nickname": {
+          "name": "Slapyvardis",
+          "description": "Naujas slapyvardis."
+        }
+      }
+    },
+    "get_region_code": {
+      "name": "Gauti regiono kodą",
+      "description": "Nuskaito įrenginyje saugomą regiono kodą."
+    },
+    "set_region_code": {
+      "name": "Nustatyti regiono kodą",
+      "description": "Nustato įrenginyje saugomą regiono kodą.",
+      "fields": {
+        "code": {
+          "name": "Kodas",
+          "description": "Regiono kodas."
+        }
+      }
+    }
+  },
+  "selector": {
+    "schedule_power": {
+      "options": {
+        "on": "Įjungta",
+        "off": "Išjungta"
+      }
+    },
+    "schedule_repeat": {
+      "options": {
+        "once": "Vieną kartą",
+        "daily": "Kasdien",
+        "weekly": "Kas savaitę (pasirinktos dienos)"
+      }
+    },
+    "schedule_days": {
+      "options": {
+        "mon": "Pirmadienis",
+        "tue": "Antradienis",
+        "wed": "Trečiadienis",
+        "thu": "Ketvirtadienis",
+        "fri": "Penktadienis",
+        "sat": "Šeštadienis",
+        "sun": "Sekmadienis"
+      }
+    },
+    "power_unit": {
+      "options": {
+        "hour": "Per valandą",
+        "day": "Per dieną"
+      }
+    }
+  },
+  "exceptions": {
+    "command_failed": {
+      "message": "„Samsung AC“ komanda nepavyko: {error}"
+    },
+    "schedule_needs_day": {
+      "message": "Pasirinkite bent vieną dieną „Vieną kartą“ ir „Kas savaitę“ tvarkaraščiams."
+    }
+  }
+}
