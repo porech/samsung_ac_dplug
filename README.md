@@ -10,14 +10,34 @@ Protocol layer: [`pysamsung-dplug`](https://github.com/porech/pysamsung-dplug).
 ## Features
 
 - **Climate** entity: power, HVAC modes (cool/heat/dry/fan/auto), target & current
-  temperature, fan speed, swing, presets (Quiet/Sleep/Smart/…).
-- **Sensors**: outdoor temperature, operating time, filter use time, error code.
-- **Switches**: Purify (SPi), Auto-clean.
-- **Number**: Sleep timer.
+  temperature, fan speed, swing, and presets (Quiet, Fast Turbo, Comfort, d'light
+  Cool, Smart Saver, Color of Wind). Controls and presets are offered only when the
+  unit actually supports them (decoded from its capability code).
+- **Sensors**: indoor & outdoor temperature, humidity, operating time, filter use
+  time, filter life %, error code, device clock, and a schedules overview.
+- **Switches**: Purify (SPi), Auto-clean, Display light, Sterilize, Smart on, Weather.
+- **Numbers**: Sleep / On / Off timers, Energy target.
+- **Selects**: Occupancy, Beep volume, Front panel, Filter cleaning interval.
+- **On-device scheduler** (services): read, create/edit and delete the unit's built-in
+  on/off schedules — they run off the module's own clock, even while HA is offline.
+- **Live push updates** with auto-reconnect (toggleable; falls back to polling).
 - **Guided config flow** with on-screen instructions for getting the unit onto Wi-Fi
-  (WPS) and for acquiring the token.
-- **Automatic discovery** via DHCP when a unit joins the network.
+  (WPS) and for acquiring (and saving) the token; **DHCP discovery**.
 - 100% local, no cloud.
+
+## Scheduler services
+
+The integration exposes the air conditioner's **built-in** scheduler — it runs off the
+module's own clock and fires even when Home Assistant is offline, and it only switches
+the unit **on or off** at a set time. For richer scenarios (temperature, mode, fan, …)
+use Home Assistant automations.
+
+- `samsung_ac_dplug.get_schedules` — list the schedules stored on the unit (returns data).
+- `samsung_ac_dplug.set_schedule` — create or edit an on/off schedule (time, power,
+  repeat once/daily/weekly, days, enabled). Times are entered in your local timezone.
+- `samsung_ac_dplug.delete_schedule` — delete a schedule by id.
+
+The current schedules are also shown by the **Schedules** diagnostic sensor.
 
 ## Install (HACS)
 
@@ -50,8 +70,7 @@ The device id (DUID) and capabilities are discovered automatically.
 ## Credits
 
 Reverse-engineered from the official *Smart Air Conditioner* app and live devices.
-See the library repo for the protocol write-up (including the undocumented
-`APConnectionConfig` Wi-Fi provisioning command).
+See the library repo for the protocol write-up.
 
 ## License
 
