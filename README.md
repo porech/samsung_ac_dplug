@@ -25,12 +25,21 @@ Protocol layer: [`pysamsung-dplug`](https://github.com/porech/pysamsung-dplug).
   (WPS) and for acquiring (and saving) the token; **DHCP discovery**.
 - 100% local, no cloud.
 
-## Scheduler services
+## Supported devices
 
-The integration exposes the air conditioner's **built-in** scheduler — it runs off the
-module's own clock and fires even when Home Assistant is offline, and it only switches
-the unit **on or off** at a set time. For richer scenarios (temperature, mode, fan, …)
-use Home Assistant automations.
+Old Samsung split air conditioners with a `SWL-Bxxx` Wi-Fi module that speak the
+DPLUG / AC14K protocol on TCP port 2878 (AR\*\*HSFS generation, roughly 2013–2015),
+e.g. AR09/12HSFS. The exact controls offered depend on the unit's capability code,
+which the integration reads automatically. Newer SmartThings-based models are not
+supported (they use a different protocol).
+
+## Services
+
+These are exposed as actions targeting the climate entity.
+
+**Built-in scheduler** — runs off the module's own clock and fires even when Home
+Assistant is offline; it only switches the unit **on or off** at a set time. For richer
+scenarios (temperature, mode, fan, …) use Home Assistant automations.
 
 - `samsung_ac_dplug.get_schedules` — list the schedules stored on the unit (returns data).
 - `samsung_ac_dplug.set_schedule` — create or edit an on/off schedule (time, power,
@@ -38,6 +47,35 @@ use Home Assistant automations.
 - `samsung_ac_dplug.delete_schedule` — delete a schedule by id.
 
 The current schedules are also shown by the **Schedules** diagnostic sensor.
+
+**Other device actions** (offered by the protocol; availability depends on the unit):
+
+- `samsung_ac_dplug.get_power_usage` — return recorded power-usage history for a range
+  (hourly/daily); requires the unit's power logging.
+- `samsung_ac_dplug.set_power_logging` / `reset_power_logging` — turn usage logging on/off
+  or clear it.
+- `samsung_ac_dplug.set_nickname` — set the nickname stored on the unit.
+- `samsung_ac_dplug.get_region_code` / `set_region_code` — read or set the region code.
+
+### Example automation
+
+```yaml
+# Turn the living-room AC on at 07:00 on weekdays, on the unit's own scheduler.
+automation:
+  - alias: AC on at 7 on weekdays
+    triggers:
+      - trigger: homeassistant
+        event: start
+    actions:
+      - action: samsung_ac_dplug.set_schedule
+        target:
+          entity_id: climate.ac_soggiorno
+        data:
+          time: "07:00:00"
+          power: "on"
+          repeat: weekly
+          days: [mon, tue, wed, thu, fri]
+```
 
 ## Install (HACS)
 
@@ -63,6 +101,38 @@ The config flow walks you through everything:
    no way around it).
 
 The device id (DUID) and capabilities are discovered automatically.
+
+## Options
+
+*Settings → Devices & Services → Samsung AC → Configure*:
+
+- **Live updates** (default on): keep one persistent connection for instant push
+  updates. When off, the integration polls instead (no persistent connection — more
+  resilient on flaky networks).
+- **Refresh interval** (seconds): the polling interval when live updates are off, or the
+  keepalive/fallback poll interval when they are on.
+
+## Removing the integration
+
+*Settings → Devices & Services → Samsung AC → ⋮ → Delete*. No changes are made on the
+unit, so it keeps working with the remote; the token stays valid if you add it back later.
+
+## Known limitations
+
+- Only **power on/off** can be scheduled on the unit's built-in scheduler (matching the
+  official app); use Home Assistant automations for anything richer.
+- Some functions are purely local on the remote (e.g. beep, display, filter-counter reset)
+  and have no representation in the protocol, so they cannot be controlled or read.
+- Power usage, nickname and region-code actions exist in the protocol but are not
+  available on every unit.
+
+## Troubleshooting
+
+- **Can't connect / "unable to install"**: the unit accepts a single connection at a
+  time, and after a library update PyPI can take a minute to propagate — a second restart
+  usually resolves it.
+- **Token rejected** after a module reset: the integration will start a re-authentication
+  flow; acquire a new token (unit OFF → submit → ON within ~30 s).
 
 ## Notes
 

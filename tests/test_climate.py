@@ -80,6 +80,26 @@ async def test_set_nickname_service(hass):
     client.async_set_nickname.assert_awaited_once_with("Studio")
 
 
+async def test_service_wraps_device_error(hass):
+    from homeassistant.exceptions import HomeAssistantError
+    from samsung_dplug import SamsungAcError
+
+    _, client = await setup_polling(hass)
+    client.async_set_nickname.side_effect = SamsungAcError("device said no")
+    raised = False
+    try:
+        await hass.services.async_call(
+            DOMAIN,
+            "set_nickname",
+            {ATTR_ENTITY_ID: await _climate_id(hass), "nickname": "X"},
+            blocking=True,
+        )
+    except HomeAssistantError as err:
+        raised = True
+        assert "Samsung AC command failed" in str(err)
+    assert raised
+
+
 async def test_set_schedule_weekly_requires_days(hass):
     from homeassistant.exceptions import HomeAssistantError
 

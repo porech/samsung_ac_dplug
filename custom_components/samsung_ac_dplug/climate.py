@@ -1,6 +1,8 @@
 """Climate platform for Samsung AC (DPLUG/2878)."""
 from __future__ import annotations
 
+import functools
+
 from homeassistant.components.climate import (
     ClimateEntity,
     ClimateEntityFeature,
@@ -9,9 +11,25 @@ from homeassistant.components.climate import (
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import ATTR_TEMPERATURE, UnitOfTemperature
 from homeassistant.core import HomeAssistant, ServiceResponse, SupportsResponse
+from homeassistant.exceptions import HomeAssistantError
 from homeassistant.helpers import entity_platform
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.util import dt as dt_util
+from samsung_dplug import SamsungAcError
+
+
+def _service(func):
+    """Surface device/communication failures in a service action as a clean
+    HomeAssistantError (ServiceValidationError from input checks passes through)."""
+
+    @functools.wraps(func)
+    async def wrapper(self, *args, **kwargs):
+        try:
+            return await func(self, *args, **kwargs)
+        except SamsungAcError as err:
+            raise HomeAssistantError(f"Samsung AC command failed: {err}") from err
+
+    return wrapper
 
 from .const import (
     ATTR_COMODE,
@@ -260,20 +278,24 @@ class SamsungAcClimate(SamsungAcEntity, ClimateEntity):
         await self.coordinator.async_set(ATTR_COMODE, PRESET_TO_DEVICE[preset_mode])
 
     # -- on-device scheduler services ---------------------------------------
+    @_service
     async def async_get_schedules_service(self, **kwargs) -> ServiceResponse:
         """Return the schedules stored on the unit (built-in scheduler)."""
         schedules = await self.coordinator.async_refresh_schedules()
         return {"schedules": [schedule_to_dict(s) for s in schedules]}
 
+    @_service
     async def async_set_schedule_service(self, **kwargs) -> None:
         """Create or edit an on-device on/off schedule."""
         await self.coordinator.async_set_schedule(schedule_from_call(kwargs))
 
+    @_service
     async def async_delete_schedule_service(self, **kwargs) -> None:
         """Delete an on-device schedule by id."""
         await self.coordinator.async_delete_schedule(kwargs[ATTR_SCHEDULE_ID])
 
     # -- extra device commands ----------------------------------------------
+    @_service
     async def async_get_power_usage_service(self, **kwargs) -> ServiceResponse:
         """Return the unit's recorded power-usage history."""
         end = kwargs.get(ATTR_END) or dt_util.now()
@@ -282,17 +304,22 @@ class SamsungAcClimate(SamsungAcEntity, ClimateEntity):
         )
         return {"usage": [power_usage_to_dict(e) for e in entries]}
 
+    @_service
     async def async_set_power_logging_service(self, **kwargs) -> None:
         await self.coordinator.async_set_power_logging(kwargs[ATTR_ENABLE])
 
+    @_service
     async def async_reset_power_logging_service(self, **kwargs) -> None:
         await self.coordinator.async_reset_power_logging()
 
+    @_service
     async def async_set_nickname_service(self, **kwargs) -> None:
         await self.coordinator.async_set_nickname(kwargs[ATTR_NICKNAME])
 
+    @_service
     async def async_get_region_code_service(self, **kwargs) -> ServiceResponse:
         return {"code": await self.coordinator.async_get_region_code()}
 
+    @_service
     async def async_set_region_code_service(self, **kwargs) -> None:
         await self.coordinator.async_set_region_code(kwargs[ATTR_CODE])

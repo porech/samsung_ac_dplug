@@ -1,0 +1,94 @@
+# Integration Quality Scale self-assessment.
+# This is a custom (HACS) integration, so hassfest does not validate this file;
+# it documents how the integration measures up and what is left. The only thing
+# between it and the full Bronze tier is `brands` (logo/icon submission).
+rules:
+  # --- Bronze ---
+  action-setup:
+    status: exempt
+    comment: |
+      The integration's actions are entity services registered on the climate
+      platform, not standalone integration-level services.
+  appropriate-polling: done
+  brands:
+    status: todo
+    comment: Brand assets not yet submitted to the home-assistant/brands repository.
+  common-modules: done
+  config-flow: done
+  config-flow-test-coverage: done
+  dependency-transparency: done
+  docs-actions: done
+  docs-high-level-description: done
+  docs-installation-instructions: done
+  docs-removal-instructions: done
+  entity-event-setup: done
+  entity-unique-id: done
+  has-entity-name: done
+  runtime-data: done
+  test-before-configure: done
+  test-before-setup: done
+  unique-config-entry: done
+
+  # --- Silver ---
+  action-exceptions: done
+  config-entry-unloading: done
+  docs-configuration-parameters: done
+  docs-installation-parameters: done
+  entity-unavailable:
+    status: todo
+    comment: |
+      Polling mode marks entities unavailable on failure (coordinator). In live
+      (push) mode entities do not yet go unavailable when the stream disconnects.
+  integration-owner: done
+  log-when-unavailable:
+    status: todo
+    comment: Connection loss is logged at debug; not yet a single info-level "unavailable" log.
+  parallel-updates: done
+  reauthentication-flow: done
+  test-coverage: done
+
+  # --- Gold ---
+  devices: done
+  diagnostics: done
+  discovery: done
+  discovery-update-info: done
+  docs-data-update: done
+  docs-examples: done
+  docs-known-limitations: done
+  docs-supported-devices: done
+  docs-supported-functions: done
+  docs-troubleshooting: done
+  docs-use-cases: done
+  dynamic-devices:
+    status: exempt
+    comment: A config entry maps to exactly one air conditioner; no devices are added dynamically.
+  entity-category: done
+  entity-device-class: done
+  entity-disabled-by-default:
+    status: exempt
+    comment: All entities are generally useful; none are noisy enough to disable by default.
+  entity-translations: done
+  exception-translations:
+    status: todo
+    comment: Error messages are plain strings, not yet translation keys.
+  icon-translations:
+    status: todo
+    comment: No icons.json yet; entities use device-class/default icons.
+  reconfiguration-flow:
+    status: todo
+    comment: No reconfigure step yet; the host is kept current by DHCP discovery.
+  repair-issues:
+    status: exempt
+    comment: The only actionable condition (a rejected token) is handled by the reauth flow.
+  stale-devices:
+    status: exempt
+    comment: One device per entry; it is removed together with the entry.
+
+  # --- Platinum ---
+  async-dependency: done
+  inject-websession:
+    status: exempt
+    comment: The device speaks a raw mutual-TLS socket protocol, not HTTP; there is no web session to inject.
+  strict-typing:
+    status: todo
+    comment: The integration is typed but not yet verified under Home Assistant's strict-typing checks.
