@@ -7,12 +7,15 @@ from homeassistant.const import EntityCategory, UnitOfTime
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
-from .const import ATTR_SLEEP, DOMAIN
+from .const import ATTR_SLEEP
 from .entity import SamsungAcEntity
 
 
+PARALLEL_UPDATES = 0
+
+
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_entities: AddEntitiesCallback) -> None:
-    coordinator = hass.data[DOMAIN][entry.entry_id]
+    coordinator = entry.runtime_data
     if ATTR_SLEEP in (coordinator.data or {}):
         async_add_entities([SamsungAcSleep(coordinator)])
 

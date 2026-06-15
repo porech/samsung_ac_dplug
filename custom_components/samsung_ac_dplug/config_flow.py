@@ -96,6 +96,38 @@ class SamsungAcConfigFlow(ConfigFlow, domain=DOMAIN):
             last_step=True,
         )
 
+    # ---- reauth -------------------------------------------------------
+    async def async_step_reauth(self, entry_data) -> ConfigFlowResult:
+        self._host = entry_data[CONF_HOST]
+        self._duid = entry_data.get(CONF_DUID)
+        return await self.async_step_reauth_confirm()
+
+    async def async_step_reauth_confirm(self, user_input=None) -> ConfigFlowResult:
+        errors: dict[str, str] = {}
+        if user_input is not None:
+            manual = (user_input.get(CONF_TOKEN) or "").strip()
+            try:
+                if manual:
+                    self._token = manual
+                else:
+                    client = SamsungAcClient(self._host, ssl_context=await self._ssl_ctx())
+                    self._token = await client.async_get_token(power_on_timeout=40)
+                await self._discover()  # validates the new token
+            except AuthError:
+                errors["base"] = "auth"
+            except (SamsungAcError, asyncio.TimeoutError):
+                errors["base"] = "no_token"
+            else:
+                return self.async_update_reload_and_abort(
+                    self._get_reauth_entry(), data_updates={CONF_TOKEN: self._token}
+                )
+        return self.async_show_form(
+            step_id="reauth_confirm",
+            data_schema=vol.Schema({vol.Optional(CONF_TOKEN): str}),
+            errors=errors,
+            description_placeholders={"host": self._host or ""},
+        )
+
     # ---- discovery ----------------------------------------------------
     async def async_step_dhcp(self, discovery_info: DhcpServiceInfo) -> ConfigFlowResult:
         self._host = discovery_info.ip

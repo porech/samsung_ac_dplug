@@ -27,6 +27,13 @@
           "token": "Token (optional)"
         }
       },
+      "reauth_confirm": {
+        "title": "Re-authenticate Samsung air conditioner",
+        "description": "The token for the unit at {host} was rejected (it can change after a module reset). Acquire a new one: turn the unit OFF, submit (leave empty), then turn it ON within ~30s. Or enter a known token below.",
+        "data": {
+          "token": "Token (optional)"
+        }
+      },
       "discovery_confirm": {
         "title": "Samsung air conditioner found",
         "description": "A Samsung air conditioner was discovered at {host}. Set it up now? In the next step you will acquire a token (power-on), unless you already know it."
@@ -39,7 +46,8 @@
     },
     "abort": {
       "already_configured": "This air conditioner is already configured.",
-      "not_samsung_ac": "This device does not speak the Samsung DPLUG protocol."
+      "not_samsung_ac": "This device does not speak the Samsung DPLUG protocol.",
+      "reauth_successful": "Re-authentication was successful."
     }
   },
   "options": {

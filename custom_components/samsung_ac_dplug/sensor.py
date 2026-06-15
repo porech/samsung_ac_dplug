@@ -21,7 +21,6 @@ from .const import (
     ATTR_OUTDOOR_TEMP,
     ATTR_TEMPNOW,
     ATTR_USED_TIME,
-    DOMAIN,
 )
 from .entity import SamsungAcEntity
 
@@ -94,8 +93,11 @@ SENSORS: tuple[AcSensor, ...] = (
 )
 
 
+PARALLEL_UPDATES = 0
+
+
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_entities: AddEntitiesCallback) -> None:
-    coordinator = hass.data[DOMAIN][entry.entry_id]
+    coordinator = entry.runtime_data
     state = coordinator.data or {}
     async_add_entities(
         SamsungAcSensor(coordinator, desc) for desc in SENSORS if desc.attr in state

@@ -13,12 +13,15 @@ from datetime import timedelta
 
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant, callback
+from homeassistant.exceptions import ConfigEntryAuthFailed
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
-from samsung_dplug import SamsungAcClient, SamsungAcError, SamsungAcStream
+from samsung_dplug import AuthError, SamsungAcClient, SamsungAcError, SamsungAcStream
 
 from .const import DOMAIN
 
 _LOGGER = logging.getLogger(__name__)
+
+type SamsungAcConfigEntry = ConfigEntry[SamsungAcCoordinator]
 
 
 class SamsungAcCoordinator(DataUpdateCoordinator[dict]):
@@ -49,6 +52,8 @@ class SamsungAcCoordinator(DataUpdateCoordinator[dict]):
             return self.data or self.stream.state
         try:
             return await self.client.async_get_state()
+        except AuthError as err:
+            raise ConfigEntryAuthFailed(str(err)) from err
         except SamsungAcError as err:
             raise UpdateFailed(str(err)) from err
 

@@ -27,6 +27,13 @@
           "token": "Token (opzionale)"
         }
       },
+      "reauth_confirm": {
+        "title": "Ri-autenticazione condizionatore Samsung",
+        "description": "Il token dell'unità a {host} è stato rifiutato (può cambiare dopo un reset del modulo). Ottienine uno nuovo: spegni l'unità, invia (lascia vuoto), poi accendila entro ~30s. Oppure inserisci qui un token noto.",
+        "data": {
+          "token": "Token (opzionale)"
+        }
+      },
       "discovery_confirm": {
         "title": "Condizionatore Samsung trovato",
         "description": "Trovato un condizionatore Samsung a {host}. Vuoi configurarlo ora? Nel passo successivo dovrai acquisire il token (accensione), se non lo conosci già."
@@ -39,7 +46,8 @@
     },
     "abort": {
       "already_configured": "Questo condizionatore è già configurato.",
-      "not_samsung_ac": "Questo dispositivo non parla il protocollo Samsung DPLUG."
+      "not_samsung_ac": "Questo dispositivo non parla il protocollo Samsung DPLUG.",
+      "reauth_successful": "Ri-autenticazione completata."
     }
   },
   "options": {

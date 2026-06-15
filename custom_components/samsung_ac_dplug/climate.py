@@ -23,7 +23,6 @@ from .const import (
     DEVICE_TO_FAN,
     DEVICE_TO_HVAC,
     DEVICE_TO_SWING,
-    DOMAIN,
     FAN_TO_DEVICE,
     HVAC_TO_DEVICE,
     MAX_TEMP,
@@ -33,8 +32,11 @@ from .const import (
 from .entity import SamsungAcEntity
 
 
+PARALLEL_UPDATES = 0
+
+
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_entities: AddEntitiesCallback) -> None:
-    async_add_entities([SamsungAcClimate(hass.data[DOMAIN][entry.entry_id])])
+    async_add_entities([SamsungAcClimate(entry.runtime_data)])
 
 
 class SamsungAcClimate(SamsungAcEntity, ClimateEntity):
