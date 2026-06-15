@@ -60,14 +60,19 @@ class SamsungAcConfigFlow(ConfigFlow, domain=DOMAIN):
         return self.async_show_menu(step_id="user", menu_options=["onboard", "manual"])
 
     async def async_step_onboard(self, user_input=None) -> ConfigFlowResult:
-        """Informational: how to get the unit onto the home Wi-Fi."""
+        """Informational only: how to get the unit onto the home Wi-Fi.
+
+        We don't chain into IP entry here — once the unit joins Wi-Fi it is
+        normally offered automatically via discovery; the user can also re-enter
+        the flow and pick the manual option. So this step just ends.
+        """
         if user_input is not None:
-            return await self.async_step_manual()
+            return self.async_abort(reason="onboard_finished")
         # URLs are passed as placeholders: translation strings may not contain URLs.
         return self.async_show_form(
             step_id="onboard",
             data_schema=vol.Schema({}),
-            last_step=False,
+            last_step=True,
             description_placeholders={
                 "python_url": "https://www.python.org/downloads/",
                 "script_url": "https://github.com/porech/samsung_ac_dplug/raw/main/scripts/provision.py",

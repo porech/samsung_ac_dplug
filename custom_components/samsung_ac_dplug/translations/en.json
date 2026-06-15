@@ -11,7 +11,7 @@
       },
       "onboard": {
         "title": "Connect the unit to your Wi-Fi",
-        "description": "Old Samsung units are not joined to Wi-Fi over the network protocol — do it once, physically.\n\n**Option A — WPS (easiest, recommended)**\n1. On the remote, **hold `Settings` for 4 seconds** (hidden function: the display only blinks) to start WPS.\n2. Within 2 minutes, **press the WPS button on your router**.\n3. When the Wi-Fi LED on the module stays solid, it has joined.\n\n**Option B — from a computer (if your router has no WPS button)**\n1. Install **Python 3** if you don't have it ({python_url}), then **download the helper script** (a single file, no extra installs needed): {script_url}\n2. On the remote, **hold `Timer` for 4 seconds** to put the unit in AP mode; a Wi-Fi network named **`SMARTAIRCON`** will appear.\n3. **Connect the computer to the `SMARTAIRCON` network** (password **`1111122222`**).\n4. **Run the script** — `python3 provision.py` — and, when prompted, enter your home Wi-Fi name and password.\n5. When it prints **Done**, the unit joins your Wi-Fi; reconnect the computer to your normal network.\n\nWhen the unit is on your Wi-Fi, press **Submit**. If you enabled DHCP discovery it may already have been found automatically; otherwise enter its IP on the next screen.\n\n_For advanced users: `python3 provision.py --help` lists the options to run it without the interactive prompts._"
+        "description": "Old Samsung units are not joined to Wi-Fi over the network protocol — do it once, physically.\n\n**Option A — WPS (easiest, recommended)**\n1. On the remote, **hold `Settings` for 4 seconds** (hidden function: the display only blinks) to start WPS.\n2. Within 2 minutes, **press the WPS button on your router**.\n3. When the Wi-Fi LED on the module stays solid, it has joined.\n\n**Option B — from a computer (if your router has no WPS button)**\n1. Install **Python 3** if you don't have it ({python_url}), then **download the helper script** (a single file, no extra installs needed): {script_url}\n2. On the remote, **hold `Timer` for 4 seconds** to put the unit in AP mode; a Wi-Fi network named **`SMARTAIRCON`** will appear.\n3. **Connect the computer to the `SMARTAIRCON` network** (password **`1111122222`**).\n4. **Run the script** — `python3 provision.py` — and, when prompted, enter your home Wi-Fi name and password.\n5. When it prints **Done**, the unit joins your Wi-Fi; reconnect the computer to your normal network.\n\nOnce the unit is on your Wi-Fi, **close this window** and open **Settings → Devices & Services**: it should be offered there automatically (discovery). If it isn't, start adding it again and choose **It's already on my Wi-Fi** to enter its IP.\n\n_For advanced users: `python3 provision.py --help` lists the options to run it without the interactive prompts._"
       },
       "manual": {
         "title": "Connect to the air conditioner",
@@ -51,7 +51,8 @@
     "abort": {
       "already_configured": "This air conditioner is already configured.",
       "not_samsung_ac": "This device does not speak the Samsung DPLUG protocol.",
-      "reauth_successful": "Re-authentication was successful."
+      "reauth_successful": "Re-authentication was successful.",
+      "onboard_finished": "Once the air conditioner is on your Wi-Fi, add it from Settings → Devices & Services — it should be discovered automatically, or choose “It's already on my Wi-Fi” to enter its IP."
     }
   },
   "options": {
