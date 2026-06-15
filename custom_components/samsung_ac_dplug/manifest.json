@@ -1,19 +1,19 @@
 {
   "domain": "samsung_ac_dplug",
   "name": "Samsung AC (DPLUG / 2878)",
-  "version": "0.1.0",
-  "config_flow": true,
-  "documentation": "https://github.com/porech/samsung_ac_dplug",
-  "issue_tracker": "https://github.com/porech/samsung_ac_dplug/issues",
   "codeowners": ["@porech"],
-  "iot_class": "local_polling",
-  "integration_type": "device",
-  "requirements": ["pysamsung-dplug==0.5.0"],
+  "config_flow": true,
   "dependencies": [],
   "dhcp": [
     { "macaddress": "F8042E*" },
     { "macaddress": "F47B5E*" },
     { "macaddress": "8425DB*" },
     { "macaddress": "5CF6DC*" }
-  ]
+  ],
+  "documentation": "https://github.com/porech/samsung_ac_dplug",
+  "integration_type": "device",
+  "iot_class": "local_push",
+  "issue_tracker": "https://github.com/porech/samsung_ac_dplug/issues",
+  "requirements": ["pysamsung-dplug==0.5.0"],
+  "version": "0.5.0"
 }
