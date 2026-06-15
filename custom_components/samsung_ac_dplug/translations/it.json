@@ -27,6 +27,10 @@
           "token": "Token (opzionale)"
         }
       },
+      "save_token": {
+        "title": "Token acquisito",
+        "description": "Fatto — il token dell'unità a {host} è stato acquisito e salvato in questa integrazione.\n\n💡 **Suggerimento:** salva il token di questo dispositivo per evitare di doverlo recuperare in futuro (potrai incollarlo direttamente quando aggiungi l'unità):\n\n```\n{token}\n```\n\nPremi **Invia** per concludere."
+      },
       "reauth_confirm": {
         "title": "Ri-autenticazione condizionatore Samsung",
         "description": "Il token dell'unità a {host} è stato rifiutato (può cambiare dopo un reset del modulo). Ottienine uno nuovo: spegni l'unità, invia (lascia vuoto), poi accendila entro ~30s. Oppure inserisci qui un token noto.",
@@ -101,28 +105,67 @@
       }
     },
     "sensor": {
-      "temperature": { "name": "Temperatura" },
-      "humidity": { "name": "Umidità" },
-      "outdoor_temperature": { "name": "Temperatura esterna" },
-      "used_time": { "name": "Tempo di funzionamento" },
-      "filter_use_time": { "name": "Ore filtro" },
-      "filter_life": { "name": "Vita filtro" },
-      "error": { "name": "Codice errore" },
-      "device_clock": { "name": "Orologio dispositivo" }
+      "temperature": {
+        "name": "Temperatura"
+      },
+      "humidity": {
+        "name": "Umidità"
+      },
+      "outdoor_temperature": {
+        "name": "Temperatura esterna"
+      },
+      "used_time": {
+        "name": "Tempo di funzionamento"
+      },
+      "filter_use_time": {
+        "name": "Ore filtro"
+      },
+      "filter_life": {
+        "name": "Vita filtro"
+      },
+      "error": {
+        "name": "Codice errore"
+      },
+      "device_clock": {
+        "name": "Orologio dispositivo"
+      },
+      "schedules": {
+        "name": "Programmazioni"
+      }
     },
     "switch": {
-      "purify": { "name": "Purify (SPi)" },
-      "auto_clean": { "name": "Auto-pulizia" },
-      "light": { "name": "Luce display" },
-      "sterilize": { "name": "Sterilizzazione" },
-      "smart_on": { "name": "Accensione smart" },
-      "weather": { "name": "Meteo" }
+      "purify": {
+        "name": "Purify (SPi)"
+      },
+      "auto_clean": {
+        "name": "Auto-pulizia"
+      },
+      "light": {
+        "name": "Luce display"
+      },
+      "sterilize": {
+        "name": "Sterilizzazione"
+      },
+      "smart_on": {
+        "name": "Accensione smart"
+      },
+      "weather": {
+        "name": "Meteo"
+      }
     },
     "number": {
-      "sleep_timer": { "name": "Timer sleep" },
-      "on_timer": { "name": "Timer accensione" },
-      "off_timer": { "name": "Timer spegnimento" },
-      "energy_target": { "name": "Obiettivo energia" }
+      "sleep_timer": {
+        "name": "Timer sleep"
+      },
+      "on_timer": {
+        "name": "Timer accensione"
+      },
+      "off_timer": {
+        "name": "Timer spegnimento"
+      },
+      "energy_target": {
+        "name": "Obiettivo energia"
+      }
     },
     "select": {
       "occupancy": {
@@ -157,6 +200,78 @@
           "500": "500 h",
           "700": "700 h"
         }
+      }
+    }
+  },
+  "services": {
+    "get_schedules": {
+      "name": "Leggi programmazioni",
+      "description": "Elenca le programmazioni salvate nello scheduler integrato dell'unità. Gestisce lo scheduler integrato del condizionatore: funziona anche quando Home Assistant è spento e si limita ad accendere o spegnere l'unità a un orario prestabilito. Per scenari più complessi (temperatura, modalità, ventola…) usa le automazioni di Home Assistant."
+    },
+    "set_schedule": {
+      "name": "Imposta programmazione",
+      "description": "Crea o modifica una programmazione di accensione/spegnimento. Gestisce lo scheduler integrato del condizionatore: funziona anche quando Home Assistant è spento e si limita ad accendere o spegnere l'unità a un orario prestabilito. Per scenari più complessi (temperatura, modalità, ventola…) usa le automazioni di Home Assistant.",
+      "fields": {
+        "time": {
+          "name": "Ora",
+          "description": "Ora locale del giorno in cui scatta la programmazione."
+        },
+        "power": {
+          "name": "Accensione",
+          "description": "Se l'unità si accende o si spegne."
+        },
+        "repeat": {
+          "name": "Ripetizione",
+          "description": "Con quale frequenza si ripete la programmazione."
+        },
+        "days": {
+          "name": "Giorni",
+          "description": "Giorni della settimana (per 'una volta' e 'settimanale')."
+        },
+        "enabled": {
+          "name": "Abilitata",
+          "description": "Se la programmazione è attiva."
+        },
+        "schedule_id": {
+          "name": "ID programmazione",
+          "description": "ID di una programmazione esistente da modificare; lascia vuoto per crearne una nuova."
+        }
+      }
+    },
+    "delete_schedule": {
+      "name": "Elimina programmazione",
+      "description": "Elimina una programmazione dallo scheduler integrato dell'unità. Gestisce lo scheduler integrato del condizionatore: funziona anche quando Home Assistant è spento e si limita ad accendere o spegnere l'unità a un orario prestabilito. Per scenari più complessi (temperatura, modalità, ventola…) usa le automazioni di Home Assistant.",
+      "fields": {
+        "schedule_id": {
+          "name": "ID programmazione",
+          "description": "ID della programmazione da eliminare (vedi il sensore Programmazioni o get_schedules)."
+        }
+      }
+    }
+  },
+  "selector": {
+    "schedule_power": {
+      "options": {
+        "on": "Acceso",
+        "off": "Spento"
+      }
+    },
+    "schedule_repeat": {
+      "options": {
+        "once": "Una volta",
+        "daily": "Ogni giorno",
+        "weekly": "Settimanale (giorni scelti)"
+      }
+    },
+    "schedule_days": {
+      "options": {
+        "mon": "Lunedì",
+        "tue": "Martedì",
+        "wed": "Mercoledì",
+        "thu": "Giovedì",
+        "fri": "Venerdì",
+        "sat": "Sabato",
+        "sun": "Domenica"
       }
     }
   }

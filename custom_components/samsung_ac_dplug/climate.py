@@ -8,7 +8,8 @@ from homeassistant.components.climate import (
 )
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import ATTR_TEMPERATURE, UnitOfTemperature
-from homeassistant.core import HomeAssistant
+from homeassistant.core import HomeAssistant, ServiceResponse, SupportsResponse
+from homeassistant.helpers import entity_platform
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from .const import (
@@ -29,9 +30,19 @@ from .const import (
     MAX_TEMP,
     MIN_TEMP,
     PRESET_TO_DEVICE,
+    SERVICE_DELETE_SCHEDULE,
+    SERVICE_GET_SCHEDULES,
+    SERVICE_SET_SCHEDULE,
     SWING_ALL_TO_DEVICE,
 )
+from .const import ATTR_SCHEDULE_ID
 from .entity import SamsungAcEntity
+from .schedule_helpers import (
+    DELETE_SCHEDULE_SCHEMA,
+    SET_SCHEDULE_SCHEMA,
+    schedule_from_call,
+    schedule_to_dict,
+)
 
 
 PARALLEL_UPDATES = 0
@@ -40,12 +51,30 @@ PARALLEL_UPDATES = 0
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_entities: AddEntitiesCallback) -> None:
     async_add_entities([SamsungAcClimate(entry.runtime_data)])
 
+    # On-device scheduler, exposed as services on the climate entity.
+    platform = entity_platform.async_get_current_platform()
+    platform.async_register_entity_service(
+        SERVICE_GET_SCHEDULES,
+        None,
+        "async_get_schedules_service",
+        supports_response=SupportsResponse.ONLY,
+    )
+    platform.async_register_entity_service(
+        SERVICE_SET_SCHEDULE, SET_SCHEDULE_SCHEMA, "async_set_schedule_service"
+    )
+    platform.async_register_entity_service(
+        SERVICE_DELETE_SCHEDULE, DELETE_SCHEDULE_SCHEMA, "async_delete_schedule_service"
+    )
+
 
 class SamsungAcClimate(SamsungAcEntity, ClimateEntity):
     _attr_name = None
     _attr_translation_key = "samsung_ac"
     _attr_target_temperature_step = 1
     _attr_fan_modes = list(FAN_TO_DEVICE)
+    # We declare TURN_ON/TURN_OFF explicitly, so opt out of the legacy
+    # compatibility path (and its deprecation warning).
+    _enable_turn_on_off_backwards_compatibility = False
 
     def __init__(self, coordinator):
         super().__init__(coordinator)
@@ -180,3 +209,17 @@ class SamsungAcClimate(SamsungAcEntity, ClimateEntity):
 
     async def async_set_preset_mode(self, preset_mode: str) -> None:
         await self.coordinator.async_set(ATTR_COMODE, PRESET_TO_DEVICE[preset_mode])
+
+    # -- on-device scheduler services ---------------------------------------
+    async def async_get_schedules_service(self, **kwargs) -> ServiceResponse:
+        """Return the schedules stored on the unit (built-in scheduler)."""
+        schedules = await self.coordinator.async_refresh_schedules()
+        return {"schedules": [schedule_to_dict(s) for s in schedules]}
+
+    async def async_set_schedule_service(self, **kwargs) -> None:
+        """Create or edit an on-device on/off schedule."""
+        await self.coordinator.async_set_schedule(schedule_from_call(kwargs))
+
+    async def async_delete_schedule_service(self, **kwargs) -> None:
+        """Delete an on-device schedule by id."""
+        await self.coordinator.async_delete_schedule(kwargs[ATTR_SCHEDULE_ID])

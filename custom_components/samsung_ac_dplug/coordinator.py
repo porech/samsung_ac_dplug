@@ -15,7 +15,14 @@ from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.exceptions import ConfigEntryAuthFailed
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
-from samsung_dplug import AuthError, SamsungAcClient, SamsungAcError, SamsungAcStream
+from homeassistant.util import dt as dt_util
+from samsung_dplug import (
+    AuthError,
+    SamsungAcClient,
+    SamsungAcError,
+    SamsungAcStream,
+    Schedule,
+)
 
 from .const import DOMAIN
 
@@ -45,6 +52,8 @@ class SamsungAcCoordinator(DataUpdateCoordinator[dict]):
         self.client = client
         self.stream = stream
         self.entry = entry
+        # On-device schedules (cached; refreshed on demand and after mutations).
+        self.schedules: list[Schedule] = []
 
     async def _async_update_data(self) -> dict:
         if self.stream is not None:
@@ -66,6 +75,31 @@ class SamsungAcCoordinator(DataUpdateCoordinator[dict]):
     def device_clock(self):
         """The unit's internal clock (UTC datetime) from the last auth, or None."""
         return self.stream.start_from if self.stream is not None else self.client.start_from
+
+    # -- on-device scheduling -----------------------------------------------
+    @property
+    def _api(self):
+        """Whichever connection is active (stream in live mode, else client)."""
+        return self.stream if self.stream is not None else self.client
+
+    @property
+    def _tz(self):
+        """Home Assistant's configured timezone, for local<->UTC conversion."""
+        return dt_util.DEFAULT_TIME_ZONE
+
+    async def async_refresh_schedules(self) -> list[Schedule]:
+        """Fetch the schedules stored on the unit and cache them (local time)."""
+        self.schedules = await self._api.async_get_schedules(tz=self._tz)
+        self.async_update_listeners()
+        return self.schedules
+
+    async def async_set_schedule(self, sched: Schedule) -> None:
+        await self._api.async_set_schedule(sched, tz=self._tz)
+        await self.async_refresh_schedules()
+
+    async def async_delete_schedule(self, schedule_id: str) -> None:
+        await self._api.async_delete_schedule(schedule_id)
+        await self.async_refresh_schedules()
 
     async def async_set(self, attr: str, value: str) -> None:
         if self.stream is not None:

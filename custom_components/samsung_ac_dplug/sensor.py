@@ -26,6 +26,7 @@ from .const import (
     ATTR_USED_TIME,
 )
 from .entity import SamsungAcEntity
+from .schedule_helpers import schedule_to_dict
 
 
 def _to_int(v):
@@ -150,6 +151,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_e
         SamsungAcSensor(coordinator, desc) for desc in SENSORS if supported(desc)
     ]
     entities.append(SamsungAcClockSensor(coordinator))
+    entities.append(SamsungAcSchedulesSensor(coordinator))
     async_add_entities(entities)
 
 
@@ -167,6 +169,43 @@ class SamsungAcClockSensor(SamsungAcEntity, SensorEntity):
     @property
     def native_value(self):
         return self.coordinator.device_clock
+
+
+class SamsungAcSchedulesSensor(SamsungAcEntity, SensorEntity):
+    """Diagnostic view of the unit's built-in scheduler.
+
+    State is the number of on-device schedules; the schedules themselves (in
+    local time) are exposed as an attribute. The list is refreshed once when the
+    entity is added and again after any schedule service call; use the
+    ``get_schedules`` service to refresh on demand.
+    """
+
+    _attr_translation_key = "schedules"
+    _attr_entity_category = EntityCategory.DIAGNOSTIC
+    _attr_state_class = SensorStateClass.MEASUREMENT
+
+    def __init__(self, coordinator):
+        super().__init__(coordinator)
+        self._attr_unique_id = f"{self._duid}_schedules"
+
+    async def async_added_to_hass(self) -> None:
+        await super().async_added_to_hass()
+        # Pull the schedule list once on startup, without blocking setup.
+        self.hass.async_create_task(self._async_initial_refresh())
+
+    async def _async_initial_refresh(self) -> None:
+        try:
+            await self.coordinator.async_refresh_schedules()
+        except Exception:  # noqa: BLE001 - diagnostic only; don't break setup
+            self.coordinator.logger.debug("initial schedule refresh failed", exc_info=True)
+
+    @property
+    def native_value(self) -> int:
+        return len(self.coordinator.schedules)
+
+    @property
+    def extra_state_attributes(self) -> dict[str, Any]:
+        return {"schedules": [schedule_to_dict(s) for s in self.coordinator.schedules]}
 
 
 class SamsungAcSensor(SamsungAcEntity, SensorEntity):

@@ -18,6 +18,14 @@ DEFAULT_SCAN_INTERVAL = 30  # seconds (polling, or fallback poll when live)
 # Samsung Electronics OUIs used by the Wi-Fi modules (for DHCP discovery)
 SAMSUNG_OUIS = ("f8042e", "f47b5e", "8425db", "5cf6dc")
 
+
+def duid_to_mac(duid: str) -> str:
+    """The DUID is the Wi-Fi module's MAC without separators; render it as a
+    colon-separated MAC ('f8042e3f89a6' -> 'f8:04:2e:3f:89:a6'). Lowercase is
+    the device-registry convention; uppercase at the call site for display."""
+    d = duid[:12].lower()
+    return ":".join(d[i : i + 2] for i in range(0, 12, 2))
+
 # DeviceState attribute IDs
 ATTR_POWER = "AC_FUN_POWER"
 ATTR_OPMODE = "AC_FUN_OPMODE"
@@ -109,3 +117,23 @@ FILTER_TIME_TO_DEVICE = {"180": "180", "300": "300", "500": "500", "700": "700"}
 
 MIN_TEMP = 16
 MAX_TEMP = 30
+
+# On-device scheduler services. These drive the air conditioner's built-in
+# scheduler (it runs off the module's own clock, even while HA is offline) and
+# only switch the unit on/off; for richer scenarios use HA automations.
+SERVICE_GET_SCHEDULES = "get_schedules"
+SERVICE_SET_SCHEDULE = "set_schedule"
+SERVICE_DELETE_SCHEDULE = "delete_schedule"
+
+# set_schedule fields
+ATTR_SCHEDULE_ID = "schedule_id"
+ATTR_SCHEDULE_TIME = "time"
+ATTR_SCHEDULE_POWER = "power"
+ATTR_SCHEDULE_REPEAT = "repeat"
+ATTR_SCHEDULE_DAYS = "days"
+ATTR_SCHEDULE_ENABLED = "enabled"
+
+# HA repeat option -> library ScheduleType
+REPEAT_ONCE = "once"
+REPEAT_DAILY = "daily"
+REPEAT_WEEKLY = "weekly"

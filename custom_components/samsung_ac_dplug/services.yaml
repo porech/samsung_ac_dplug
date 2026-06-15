@@ -1,0 +1,73 @@
+get_schedules:
+  target:
+    entity:
+      integration: samsung_ac_dplug
+      domain: climate
+
+set_schedule:
+  target:
+    entity:
+      integration: samsung_ac_dplug
+      domain: climate
+  fields:
+    time:
+      required: true
+      example: "07:30:00"
+      selector:
+        time:
+    power:
+      required: true
+      default: "on"
+      selector:
+        select:
+          translation_key: schedule_power
+          options:
+            - "on"
+            - "off"
+    repeat:
+      required: false
+      default: once
+      selector:
+        select:
+          translation_key: schedule_repeat
+          options:
+            - once
+            - daily
+            - weekly
+    days:
+      required: false
+      selector:
+        select:
+          multiple: true
+          translation_key: schedule_days
+          options:
+            - mon
+            - tue
+            - wed
+            - thu
+            - fri
+            - sat
+            - sun
+    enabled:
+      required: false
+      default: true
+      selector:
+        boolean:
+    schedule_id:
+      required: false
+      advanced: true
+      example: "0"
+      selector:
+        text:
+
+delete_schedule:
+  target:
+    entity:
+      integration: samsung_ac_dplug
+      domain: climate
+  fields:
+    schedule_id:
+      required: true
+      example: "0"
+      selector:
+        text:

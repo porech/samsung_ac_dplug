@@ -27,6 +27,10 @@
           "token": "Token (optional)"
         }
       },
+      "save_token": {
+        "title": "Token acquired",
+        "description": "Done — the token for the unit at {host} was acquired and saved in this integration.\n\n💡 **Tip:** save this device's token so you don't have to acquire it again in the future (you can paste it directly when adding the unit):\n\n```\n{token}\n```\n\nPress **Submit** to finish."
+      },
       "reauth_confirm": {
         "title": "Re-authenticate Samsung air conditioner",
         "description": "The token for the unit at {host} was rejected (it can change after a module reset). Acquire a new one: turn the unit OFF, submit (leave empty), then turn it ON within ~30s. Or enter a known token below.",
@@ -101,28 +105,67 @@
       }
     },
     "sensor": {
-      "temperature": { "name": "Temperature" },
-      "humidity": { "name": "Humidity" },
-      "outdoor_temperature": { "name": "Outdoor temperature" },
-      "used_time": { "name": "Operating time" },
-      "filter_use_time": { "name": "Filter use time" },
-      "filter_life": { "name": "Filter life" },
-      "error": { "name": "Error code" },
-      "device_clock": { "name": "Device clock" }
+      "temperature": {
+        "name": "Temperature"
+      },
+      "humidity": {
+        "name": "Humidity"
+      },
+      "outdoor_temperature": {
+        "name": "Outdoor temperature"
+      },
+      "used_time": {
+        "name": "Operating time"
+      },
+      "filter_use_time": {
+        "name": "Filter use time"
+      },
+      "filter_life": {
+        "name": "Filter life"
+      },
+      "error": {
+        "name": "Error code"
+      },
+      "device_clock": {
+        "name": "Device clock"
+      },
+      "schedules": {
+        "name": "Schedules"
+      }
     },
     "switch": {
-      "purify": { "name": "Purify (SPi)" },
-      "auto_clean": { "name": "Auto clean" },
-      "light": { "name": "Display light" },
-      "sterilize": { "name": "Sterilize" },
-      "smart_on": { "name": "Smart on" },
-      "weather": { "name": "Weather" }
+      "purify": {
+        "name": "Purify (SPi)"
+      },
+      "auto_clean": {
+        "name": "Auto clean"
+      },
+      "light": {
+        "name": "Display light"
+      },
+      "sterilize": {
+        "name": "Sterilize"
+      },
+      "smart_on": {
+        "name": "Smart on"
+      },
+      "weather": {
+        "name": "Weather"
+      }
     },
     "number": {
-      "sleep_timer": { "name": "Sleep timer" },
-      "on_timer": { "name": "On timer" },
-      "off_timer": { "name": "Off timer" },
-      "energy_target": { "name": "Energy target" }
+      "sleep_timer": {
+        "name": "Sleep timer"
+      },
+      "on_timer": {
+        "name": "On timer"
+      },
+      "off_timer": {
+        "name": "Off timer"
+      },
+      "energy_target": {
+        "name": "Energy target"
+      }
     },
     "select": {
       "occupancy": {
@@ -157,6 +200,78 @@
           "500": "500 h",
           "700": "700 h"
         }
+      }
+    }
+  },
+  "services": {
+    "get_schedules": {
+      "name": "Get schedules",
+      "description": "List the schedules stored on the unit's built-in scheduler. This controls the air conditioner's built-in scheduler, which runs even when Home Assistant is offline and only switches the unit on or off at a set time. For more complex scenarios (temperature, mode, fan…) use Home Assistant automations."
+    },
+    "set_schedule": {
+      "name": "Set schedule",
+      "description": "Create or edit an on/off schedule. This controls the air conditioner's built-in scheduler, which runs even when Home Assistant is offline and only switches the unit on or off at a set time. For more complex scenarios (temperature, mode, fan…) use Home Assistant automations.",
+      "fields": {
+        "time": {
+          "name": "Time",
+          "description": "Local time of day when the schedule fires."
+        },
+        "power": {
+          "name": "Power",
+          "description": "Whether the unit turns on or off."
+        },
+        "repeat": {
+          "name": "Repeat",
+          "description": "How often the schedule repeats."
+        },
+        "days": {
+          "name": "Days",
+          "description": "Days of the week (used for 'once' and 'weekly')."
+        },
+        "enabled": {
+          "name": "Enabled",
+          "description": "Whether the schedule is active."
+        },
+        "schedule_id": {
+          "name": "Schedule ID",
+          "description": "ID of an existing schedule to edit; leave empty to create a new one."
+        }
+      }
+    },
+    "delete_schedule": {
+      "name": "Delete schedule",
+      "description": "Delete a schedule from the unit's built-in scheduler. This controls the air conditioner's built-in scheduler, which runs even when Home Assistant is offline and only switches the unit on or off at a set time. For more complex scenarios (temperature, mode, fan…) use Home Assistant automations.",
+      "fields": {
+        "schedule_id": {
+          "name": "Schedule ID",
+          "description": "ID of the schedule to delete (see the Schedules sensor or get_schedules)."
+        }
+      }
+    }
+  },
+  "selector": {
+    "schedule_power": {
+      "options": {
+        "on": "On",
+        "off": "Off"
+      }
+    },
+    "schedule_repeat": {
+      "options": {
+        "once": "Once",
+        "daily": "Every day",
+        "weekly": "Weekly (selected days)"
+      }
+    },
+    "schedule_days": {
+      "options": {
+        "mon": "Monday",
+        "tue": "Tuesday",
+        "wed": "Wednesday",
+        "thu": "Thursday",
+        "fri": "Friday",
+        "sat": "Saturday",
+        "sun": "Sunday"
       }
     }
   }
