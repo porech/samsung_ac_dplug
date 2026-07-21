@@ -53,6 +53,10 @@ jobs:
         with:
           body_path: RELEASE_BODY.md
           generate_release_notes: true
+          # PEP 440 pre-release tags (e.g. v1.2.0b1, v1.2.0rc1) → GitHub pre-release,
+          # so HACS hides them from normal users and only offers them to testers who
+          # have enabled beta versions for this repository.
+          prerelease: ${{ contains(github.ref_name, 'b') || contains(github.ref_name, 'rc') }}
           # Attach the provisioning helper as an asset so it downloads directly
           # (release assets are served as attachments) via
           # releases/latest/download/provision.py
