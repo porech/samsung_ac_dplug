@@ -97,7 +97,23 @@ class SamsungAcNumber(SamsungAcEntity, NumberEntity):
     @property
     def native_value(self) -> float | None:
         v = self._state.get(self.entity_description.attr)
-        return float(int(v)) if v and v.lstrip("-").isdigit() else None
+        if not v or not v.lstrip("-").isdigit():
+            return None
+        raw = int(v)
+        if (
+            self.entity_description.attr == ATTR_SLEEP
+            and self.coordinator.is_legacy_drc
+        ):
+            return float(raw * 30)
+        return float(raw)
 
     async def async_set_native_value(self, value: float) -> None:
-        await self.coordinator.async_set(self.entity_description.attr, str(int(value)))
+        if (
+            self.entity_description.attr == ATTR_SLEEP
+            and self.coordinator.is_legacy_drc
+        ):
+            value = value / 30
+        await self.coordinator.async_set(
+            self.entity_description.attr,
+            str(int(value)),
+        )

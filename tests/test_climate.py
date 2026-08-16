@@ -54,6 +54,21 @@ async def test_climate_without_capability_code(hass):
     assert st.attributes["preset_modes"] == ["none"]
 
 
+async def test_legacy_drc_presets_without_capability_code(hass):
+    from .common import STATE
+
+    state = {k: v for k, v in STATE.items() if k != "AC_ADD2_OPTIONCODE"}
+    await setup_polling(hass, state, greeting="DRC-1.00")
+    st = hass.states.get(await _climate_id(hass))
+    assert st.attributes["preset_modes"] == [
+        "none",
+        "quiet",
+        "good_sleep",
+        "dlight_cool",
+        "smart_saver",
+    ]
+
+
 async def test_climate_fixed_vane_swing(hass):
     from .common import STATE
 

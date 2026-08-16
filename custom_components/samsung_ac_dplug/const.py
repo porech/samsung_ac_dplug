@@ -102,6 +102,7 @@ DEVICE_TO_SWING = {v: k for k, v in SWING_ALL_TO_DEVICE.items()}
 PRESET_TO_DEVICE = {
     "none": "Off",
     "quiet": "Quiet",
+    "good_sleep": "Sleep",
     "fast_turbo": "TurboMode",
     "comfort": "SoftCool",
     "dlight_cool": "DlightCool",

@@ -102,6 +102,11 @@ class SamsungAcCoordinator(DataUpdateCoordinator[dict[str, str]]):
         return api
 
     @property
+    def is_legacy_drc(self) -> bool:
+        """Whether the connected unit uses the legacy DRC-1.00 protocol."""
+        return getattr(self._api, "greeting", None) == "DRC-1.00"
+
+    @property
     def _tz(self) -> datetime.tzinfo:
         """Home Assistant's configured timezone, for local<->UTC conversion."""
         return dt_util.DEFAULT_TIME_ZONE

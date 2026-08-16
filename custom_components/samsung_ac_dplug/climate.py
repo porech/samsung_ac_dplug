@@ -203,9 +203,19 @@ class SamsungAcClimate(SamsungAcEntity, ClimateEntity):
 
     @property
     def preset_modes(self) -> list[str]:
-        # Only presets the OptionCode proves are supported.
+        # Normal units advertise supported presets through OptionCode.
+        # Legacy DRC-1.00 units do not expose OptionCode, but the modes below
+        # are supported by observed DRC hardware.
         opts = self._options
         if not opts:
+            if self.coordinator.is_legacy_drc and ATTR_COMODE in self._state:
+                return [
+                    "none",
+                    "quiet",
+                    "good_sleep",
+                    "dlight_cool",
+                    "smart_saver",
+                ]
             return ["none"]
         presets = ["none"]
         if opts.quiet:
