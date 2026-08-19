@@ -63,10 +63,26 @@ async def test_legacy_drc_presets_without_capability_code(hass):
     assert st.attributes["preset_modes"] == [
         "none",
         "quiet",
+        "fast_turbo",
         "good_sleep",
         "dlight_cool",
         "smart_saver",
     ]
+
+
+async def test_legacy_drc_hvac_without_capability_code(hass):
+    from .common import STATE
+
+    state = {
+        k: v
+        for k, v in STATE.items()
+        if k not in ("AC_ADD2_OPTIONCODE", "AC_WARM_CAPABILITY")
+    }
+    await setup_polling(hass, state, greeting="DRC-1.00")
+    st = hass.states.get(await _climate_id(hass))
+
+    assert "heat" in st.attributes["hvac_modes"]
+    assert "auto" in st.attributes["hvac_modes"]
 
 
 async def test_climate_fixed_vane_swing(hass):

@@ -181,7 +181,7 @@ class SamsungAcClimate(SamsungAcEntity, ClimateEntity):
         modes = [HVACMode.OFF, HVACMode.COOL, HVACMode.DRY, HVACMode.FAN_ONLY]
         opts = self._options
         heater = opts.heater if opts else bool((self._state.get(ATTR_WARM_CAP) or "0").isdigit() and int(self._state.get(ATTR_WARM_CAP) or 0) > 0)
-        if heater:
+        if heater or self.coordinator.is_legacy_drc:
             modes += [HVACMode.HEAT, HVACMode.AUTO]
         return modes
 
@@ -212,6 +212,7 @@ class SamsungAcClimate(SamsungAcEntity, ClimateEntity):
                 return [
                     "none",
                     "quiet",
+                    "fast_turbo",
                     "good_sleep",
                     "dlight_cool",
                     "smart_saver",
