@@ -60,6 +60,7 @@ def _entry(live: bool) -> MockConfigEntry:
 def _arm_api(mock):
     """Give a mocked client/stream the async methods the integration calls."""
     mock.start_from = None
+    mock.greeting = "DPLUG-1.6"
     mock.async_set = AsyncMock()
     mock.async_set_schedule = AsyncMock()
     mock.async_delete_schedule = AsyncMock()
@@ -74,7 +75,7 @@ def _arm_api(mock):
     return mock
 
 
-async def setup_polling(hass, state=None):
+async def setup_polling(hass, state=None, greeting="DPLUG-1.6"):
     """Set up the integration in polling mode; return (entry, client_mock)."""
     entry = _entry(live=False)
     entry.add_to_hass(hass)
@@ -82,13 +83,14 @@ async def setup_polling(hass, state=None):
         f"{_INIT}.SamsungAcClient"
     ) as mock_client:
         inst = _arm_api(mock_client.return_value)
+        inst.greeting = greeting
         inst.async_get_state = AsyncMock(return_value=state or STATE)
         assert await hass.config_entries.async_setup(entry.entry_id)
         await hass.async_block_till_done()
     return entry, inst
 
 
-async def setup_live(hass, state=None):
+async def setup_live(hass, state=None, greeting="DPLUG-1.6"):
     """Set up the integration in live (push) mode; return (entry, stream_mock)."""
     entry = _entry(live=True)
     entry.add_to_hass(hass)
@@ -96,6 +98,7 @@ async def setup_live(hass, state=None):
         f"{_INIT}.SamsungAcStream"
     ) as mock_stream:
         inst = _arm_api(mock_stream.return_value)
+        inst.greeting = greeting
         inst.state = state or STATE
         inst.connected = True
         inst.auth_failed = False

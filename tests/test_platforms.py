@@ -57,6 +57,27 @@ async def test_number_set_value(hass):
     stream.async_set.assert_any_await("AC_FUN_SLEEP", "60")
 
 
+async def test_legacy_drc_sleep_timer_value(hass):
+    from .common import STATE
+
+    state = {**STATE, "AC_FUN_SLEEP": "4"}
+    await setup_polling(hass, state, greeting="DRC-1.00")
+    ent = _suffixed(hass, "number", "sleep_timer")
+    assert hass.states.get(ent).state == "120.0"
+
+
+async def test_legacy_drc_sleep_timer_set_value(hass):
+    _, stream = await setup_live(hass, greeting="DRC-1.00")
+    ent = _suffixed(hass, "number", "sleep_timer")
+    await hass.services.async_call(
+        "number",
+        "set_value",
+        {ATTR_ENTITY_ID: ent, "value": 180},
+        blocking=True,
+    )
+    stream.async_set.assert_any_await("AC_FUN_SLEEP", "6")
+
+
 async def test_select_option(hass):
     _, stream = await setup_live(hass)
     ent = _suffixed(hass, "select", "occupancy")
