@@ -40,7 +40,7 @@ class SamsungAcEntity(CoordinatorEntity[SamsungAcCoordinator]):
         data = self._state
         model = "Samsung AC (DPLUG)"
         cool = data.get(ATTR_COOL_CAP)
-        if cool and cool.isdigit():
+        if cool and cool.isdigit() and int(cool) > 0:
             model = f"Samsung AC ~{int(cool) * 100} W cooling (DPLUG/2878)"
         return DeviceInfo(
             identifiers={(DOMAIN, self._duid)},
