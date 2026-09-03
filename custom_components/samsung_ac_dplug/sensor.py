@@ -43,9 +43,10 @@ def _to_int(v: str | None) -> int | None:
 
 
 def _outdoor_c(v: str | None) -> float | None:
-    """AC_OUTDOOR_TEMP is reported in Fahrenheit -> convert to Celsius."""
+    """AC_OUTDOOR_TEMP is Celsius with a +55 offset, not Fahrenheit.
+    Note: For future Farenheit use the conversion is i - 128 """
     i = _to_int(v)
-    return round((i - 32) * 5 / 9, 1) if i is not None else None
+    return float(i - 55) if i is not None else None
 
 
 def _error(v: str | None) -> str:
